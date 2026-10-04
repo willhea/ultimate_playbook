@@ -14,7 +14,7 @@ These come from [00-open-questions.md](00-open-questions.md):
 - **Device:** laptop browser first. iPad is nice to have (V2).
 - **Field:** USA Ultimate only.
 - **Editing model:** steps ("magic move"). You set positions per step and the app animates between them.
-- **Players:** numbered 1–7 on each team, with a visible facing direction.
+- **Players:** Option A from the [mockup](mockups/player-styles.svg): numbered circles (1–7 on each team) with a facing wedge.
 - **Videos:** the mechanics are parked. The tool only has to make a play easy to record and talk over.
 
 ## 3. Goals and non-goals
@@ -108,7 +108,8 @@ Priority key: **MVP** = first usable version · **V2** = next round, after using
 |----|-------------|----------|
 | E-1 | Add/remove offense and defense players and drag them to position with mouse/trackpad. | MVP (touch/Pencil: V2) |
 | E-2 | Players are auto-numbered 1–7 per team. Default style: filled circle, number inside, team colour ([mockup](mockups/player-styles.svg), Option A). | MVP |
-| E-2b | Optional role/name label next to the number; alternative O/X style; custom team colours. | V2 |
+| E-2b | Optional role/name label next to the number; custom team colours. | V2 |
+| E-2c | Alternative O/X player style. | Later |
 | E-3 | Formation templates: vertical stack, horizontal stack, side stack, pull lineup, plus 7-person zone looks (cup, wall, deep). | V2 |
 | E-4 | Save your own formations as templates. | Later |
 | E-5 | Show which way each player is **facing** with a small wedge on the edge of the circle. Facing is **automatic by default**: a moving player faces where they run; a stationary defender faces the player they guard (the marker faces the thrower); a stationary offensive player faces the disc. Facing turns smoothly during animation. | MVP |

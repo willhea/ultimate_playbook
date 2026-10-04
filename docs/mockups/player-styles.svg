@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" font-family="Helvetica, Arial, sans-serif">
 <rect width="920" height="470" fill="#fafafa"/>
 <g transform="translate(30,70)">
-<text x="0" y="-34" font-size="17" font-weight="700" fill="#111">Option A (proposed): numbered circles + wedge</text>
+<text x="0" y="-34" font-size="17" font-weight="700" fill="#111">Option A (chosen): numbered circles + wedge</text>
 <text x="0" y="-14" font-size="13" fill="#444">Offense blue, defense orange; wedge shows which way each player faces</text>
 <rect width="420" height="330" rx="8" fill="#2E6B3A"/>
 <line x1="0" y1="22" x2="420" y2="22" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>

@@ -8,12 +8,11 @@
 | 2 | Where are plays built? | **Mostly laptop. iPad is nice to have.** | Desktop-first: mouse/trackpad and keyboard shortcuts are MVP. Touch/Pencil and iPad layout move to V2. |
 | 3 | Rules / field | **USA Ultimate.** | One field preset (USAU outdoor). WFDF/beach/indoor move to "Later". |
 | 4 | Step model ("magic move": set positions per step, app animates between) | **Yes.** | Steps-first editor. A detailed timeline stays V2. |
-| 5 | Player look | **Numbers 1–7 on each team and a facing direction are useful; style otherwise undecided.** | Numbers and facing indicator are MVP. Default style proposed below; see the [player style mockup](mockups/player-styles.svg). |
+| 5 | Player look | **Option A: numbered circles (1–7 per team) with a facing wedge.** Offense blue, defense orange. | Numbers and facing wedge are MVP. See the [player style mockup](mockups/player-styles.svg). |
 | 6 | Video mechanics | **Ignore for now.** The goal stays: make plays, then turn them into videos with voiceovers. | Spec 2 is parked. The tool keeps only what makes a play *recordable* (clean mode, speed control, pause points). |
 
 ## Proposed defaults (say if you disagree)
 
-- **Player style:** filled circles with the number inside and a small wedge on the edge showing facing. Offense and defense use two contrasting colours that stay distinguishable for colour-blind viewers. Defenders can optionally show as an "X" style instead. See [mockups/player-styles.svg](mockups/player-styles.svg).
 - **Automatic facing,** so you rarely have to set it by hand:
   - A player who is **moving** faces the direction they're running.
   - A **stationary defender** faces the player they're guarding. A **marker** faces the thrower.
