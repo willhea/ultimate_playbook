@@ -2,7 +2,7 @@
 
 ## 1. One-sentence summary
 
-A web app that runs on iPad and computers. You draw an ultimate frisbee play on
+A web app that runs in a laptop browser (iPad later). You draw an ultimate frisbee play on
 an overhead field, step through it, and play it back as a smooth animation of
 players and the disc. It is designed to look good when recorded for videos.
 
