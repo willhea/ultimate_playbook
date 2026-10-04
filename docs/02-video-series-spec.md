@@ -1,5 +1,10 @@
 # Spec 2: Strategy video series
 
+> **Status: parked.** The goal stands: make plays in the Play Animator and turn
+> them into videos with voiceovers. How videos are made (format, voice, recording,
+> editing) will be decided after the Play Animator MVP exists. This document is
+> kept as a starting point for that.
+
 ## 1. Summary
 
 Short instructional videos explaining ultimate strategy. Each one uses Play

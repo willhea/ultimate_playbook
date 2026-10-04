@@ -2,18 +2,21 @@
 
 Tools and a video series for teaching ultimate frisbee visually.
 
-> **Status: draft specs, nothing built yet.** These documents are meant to be
-> argued with. Anything marked **[ASSUMPTION]** is a guess to confirm or change.
-> The decisions that block building are collected in
-> [`docs/00-open-questions.md`](docs/00-open-questions.md).
+> **Status: specs revised with your first answers; nothing built yet.** Decisions
+> so far, and the questions still open, are in
+> [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
+> **[ASSUMPTION]** is a guess to confirm or change.
+>
+> **Current focus:** the Play Animator MVP (laptop-first, USA Ultimate field,
+> players numbered 1–7 with facing direction).
 
 ## The three workstreams
 
-| # | Workstream | What it is | Spec |
-|---|------------|------------|------|
-| 1 | **Play Animator** (the tool) | A web app, usable on iPad and computer, for drawing ultimate plays from overhead (X's and O's style) and animating players and the disc. | [`docs/01-play-animator-spec.md`](docs/01-play-animator-spec.md) |
-| 2 | **Strategy video series** | Instructional videos made by recording the Play Animator, with a voiceover. | [`docs/02-video-series-spec.md`](docs/02-video-series-spec.md) |
-| 3 | **3D technique videos** | Separate from the tool: 3D human-like figures showing body mechanics such as marking, footwork, and reading a defender's hips. | [`docs/03-3d-technique-videos-spec.md`](docs/03-3d-technique-videos-spec.md) |
+| # | Workstream | What it is | Spec | Status |
+|---|------------|------------|------|--------|
+| 1 | **Play Animator** (the tool) | A web app, laptop-first (iPad later), for drawing ultimate plays from overhead (X's and O's style) and animating players and the disc. | [`docs/01-play-animator-spec.md`](docs/01-play-animator-spec.md) | **Current focus** |
+| 2 | **Strategy video series** | Instructional videos made by recording the Play Animator, with a voiceover. | [`docs/02-video-series-spec.md`](docs/02-video-series-spec.md) | Parked until the tool MVP |
+| 3 | **3D technique videos** | Separate from the tool: 3D human-like figures showing body mechanics such as marking, footwork, and reading a defender's hips. | [`docs/03-3d-technique-videos-spec.md`](docs/03-3d-technique-videos-spec.md) | Not started |
 
 How they fit together:
 
@@ -29,12 +32,13 @@ can start whenever you want.
 
 ## Suggested order
 
-1. **Confirm the specs.** Answer the open questions and cut anything you don't need.
-2. **Play Animator MVP.** Draw a play, animate it, save it, and replay it on iPad and laptop.
-3. **Pilot episode.** One short video made with the MVP and screen recording. You learn the most from this step.
-4. **Tool v2.** Fix whatever made the pilot painful (presentation mode, camera, annotations, export).
-5. **3D pilot.** One 10–20 second clip, for example a mark shuffling to stop a break throw, to test the 3D pipeline before committing to it.
-6. **Sharing.** Share links, a playbook library, and video export.
+1. **Confirm the specs.** ✅ First round done.
+2. **Play Animator MVP.** Draw a play, animate it, save it, and replay it in a laptop browser.
+3. **Use it.** Build a handful of real plays and note what's slow or missing.
+4. **Revisit videos.** Decide the video workflow (Spec 2) and make a pilot episode.
+5. **Tool V2.** Fix whatever slowed down steps 3–4. iPad support, annotations, and presentation features land here.
+6. **3D pilot.** One 10–20 second clip, for example a mark shuffling to stop a break throw, to test the 3D pipeline before committing to it.
+7. **Sharing.** Share links, a playbook library, and video export.
 
 ## Glossary (for non-developers)
 

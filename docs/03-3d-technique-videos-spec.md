@@ -1,5 +1,7 @@
 # Spec 3: 3D technique videos
 
+> **Status: not started.** This is separate from the Play Animator and can be picked up at any time.
+
 ## 1. Summary
 
 Short 3D animated clips of human-like figures showing body mechanics that an

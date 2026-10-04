@@ -1,29 +1,35 @@
-# Open questions (please answer before building)
+# Decisions and open questions
 
-Short answers are fine. "Don't care, you pick" is also a fine answer.
+## Decided
 
-## Must answer before the tool MVP
+| # | Question | Decision | Effect on the spec |
+|---|----------|----------|--------------------|
+| 1 | Who uses the tool? | **Anyone should eventually be able to build plays; for now the target user is you.** | Public web app with no login needed to use it. Accounts and team features stay "Later". The tool needs to be self-explanatory to strangers, but polish for strangers is not MVP. |
+| 2 | Where are plays built? | **Mostly laptop. iPad is nice to have.** | Desktop-first: mouse/trackpad and keyboard shortcuts are MVP. Touch/Pencil and iPad layout move to V2. |
+| 3 | Rules / field | **USA Ultimate.** | One field preset (USAU outdoor). WFDF/beach/indoor move to "Later". |
+| 4 | Step model ("magic move": set positions per step, app animates between) | **Yes.** | Steps-first editor. A detailed timeline stays V2. |
+| 5 | Player look | **Numbers 1–7 on each team and a facing direction are useful; style otherwise undecided.** | Numbers and facing indicator are MVP. Default style proposed below; see the [player style mockup](mockups/player-styles.svg). |
+| 6 | Video mechanics | **Ignore for now.** The goal stays: make plays, then turn them into videos with voiceovers. | Spec 2 is parked. The tool keeps only what makes a play *recordable* (clean mode, speed control, pause points). |
 
-1. **Who uses the tool?** Only you, to make videos? Or should other coaches/players be able to build plays too? (This decides whether accounts and polish for strangers are needed.)
-2. **Where do you build plays?** Mostly iPad (finger or Apple Pencil?), mostly laptop, or both equally?
-3. **Rules / field:** USA Ultimate, WFDF, or both? Outdoor grass only to start?
-4. **How do you picture a step?** Like Keynote "magic move": you set positions for step 1, then step 2, and the app animates between them. Or do you want a video-editor-style timeline from the start? (The draft assumes simple steps first and a timeline in V2.)
-5. **Player look:** O's and X's like football, or coloured circles with numbers? Should players show which way they're **facing**?
-6. **Have you tried Ultisimulator, Ultimate Frisbee Toolbox, or FastDraw?** If one of them is 80% of what you want, that changes the plan.
+## Proposed defaults (say if you disagree)
 
-## Must answer before the video series
+- **Player style:** filled circles with the number inside and a small wedge on the edge showing facing. Offense and defense use two contrasting colours that stay distinguishable for colour-blind viewers. Defenders can optionally show as an "X" style instead. See [mockups/player-styles.svg](mockups/player-styles.svg).
+- **Automatic facing,** so you rarely have to set it by hand:
+  - A player who is **moving** faces the direction they're running.
+  - A **stationary defender** faces the player they're guarding. A **marker** faces the thrower.
+  - A **stationary offensive player** faces the disc.
+  - You can override any of these for a step, e.g. a defender "opening hips" toward the deep space.
+- **Defender numbering:** defender *n* guards offense player *n* by default, so D3 is on O3. You can change who guards whom.
 
-7. **Audience:** beginners, developing club/college players, or coaches?
-8. **Format:** long YouTube videos (16:9), vertical shorts (9:16), or both? Which comes first?
-9. **Voice:** your own voice, or an AI voice reading your script?
-10. **Do you want to time the animation to a recorded voiceover** (record the voice first), or narrate while the animation plays?
+## Still open (none of these block the MVP)
 
-## Can wait
+7. **Branching plays** ("if the under is taken, go deep"): essential, or later? *Current assumption: Later.*
+8. **Sharing:** for "anyone can build plays", is "send a link, they watch or copy the play" enough, or do you eventually want team playbooks with logins? *Current assumption: links first (V2), logins Later.*
+9. **Budget:** any monthly budget for hosting or services? *Current assumption: $0 for MVP (free static hosting).*
+10. **Your role in building:** do you want to learn to code along the way, or mostly direct while Claude writes the code? *This changes how the code is explained, not what gets built.*
+11. **Name:** "Play Animator" is a placeholder.
 
-11. **Branching plays** ("if the under is taken, go deep"): essential, or later?
-12. **Sharing:** is "send a link, they watch it" enough, or do you eventually want team playbooks with logins?
-13. **Built-in video export** vs screen recording: is screen recording acceptable for the first several videos?
-14. **3D style:** stylized mannequins (recommended) or realistic humans?
-15. **3D effort:** are you willing to learn Blender basics yourself, or would you rather keep 3D minimal and use filmed footage with overlays?
-16. **Budget:** any monthly budget for software or hosting (e.g. $0, under $20, or more)?
-17. **Your role in building:** do you want to learn to code along the way, or mostly direct while Claude writes the code?
+## Parked (revisit when we get to videos / 3D)
+
+- Video audience, format (16:9 vs 9:16), own voice vs AI voice, recording workflow, built-in export. See [Spec 2](02-video-series-spec.md).
+- 3D style and how much Blender you want to learn. See [Spec 3](03-3d-technique-videos-spec.md).
