@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createDemoPlay, createPlay } from '../model/defaults';
+import { createPlay } from '../model/defaults';
+import { createDemoPlay } from '../plays';
 import { movePlayer } from '../model/edit';
 import { currentPlay, libraryReducer, type LibraryState } from './library';
 

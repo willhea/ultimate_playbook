@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
-import { createDemoPlay } from './defaults';
+import { createDemoPlay } from '../plays';
 import { exportPlay, fileNameFor, importPlay, isPlay, loadCurrentId, loadPlays, saveCurrentId, savePlays } from './storage';
 import { anyPlay } from '../test/arbitraries';
 

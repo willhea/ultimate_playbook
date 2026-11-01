@@ -29,11 +29,11 @@ describe('validatePlay', () => {
   });
 
   it('flags throws that are too fast or float too long', () => {
-    let play = addStep(createPlay(), 0);
-    play = setHolder(play, 1, 'O7'); // ~26 yd throw
-    expect(codes(updateFrame(play, 1, { duration: 0.5, release: 0.5 }))).toContain('throw-too-fast');
-    expect(codes(updateFrame(play, 1, { duration: 6, release: 0 }))).toContain('throw-too-slow');
-    expect(codes(updateFrame(play, 1, { duration: 2, release: 0.4 }))).toEqual([]);
+    const toBack = setHolder(addStep(createPlay(), 0), 1, 'O7'); // the back of the stack, ~32 yd
+    expect(codes(updateFrame(toBack, 1, { duration: 0.5, release: 0.5 }))).toContain('throw-too-fast');
+    expect(codes(updateFrame(toBack, 1, { duration: 2.5, release: 0.3 }))).toEqual([]);
+    const toFront = setHolder(addStep(createPlay(), 0), 1, 'O3'); // the front of the stack, ~12 yd
+    expect(codes(updateFrame(toFront, 1, { duration: 6, release: 0 }))).toContain('throw-too-slow');
   });
 
   it('flags a defender who starts far from their player', () => {

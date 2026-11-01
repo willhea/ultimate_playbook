@@ -1,6 +1,7 @@
 /** The saved plays, which one is open, and undo/redo history for the open play. */
 import type { Play } from '../model/types';
-import { createDemoPlay, createPlay } from '../model/defaults';
+import { createPlay } from '../model/defaults';
+import { buildExamplePlays } from '../plays';
 import { newId } from '../model/edit';
 import { loadCurrentId, loadPlays } from '../model/storage';
 
@@ -28,7 +29,8 @@ export type LibraryAction =
 
 export function initLibrary(): LibraryState {
   let plays = loadPlays();
-  if (plays.length === 0) plays = [createDemoPlay()];
+  // First visit: start with the example plays so there's something to watch.
+  if (plays.length === 0) plays = buildExamplePlays();
   const savedId = loadCurrentId();
   const currentId = plays.some((p) => p.id === savedId) ? savedId! : plays[0].id;
   return { plays, currentId, past: [], future: [], dragBase: null };

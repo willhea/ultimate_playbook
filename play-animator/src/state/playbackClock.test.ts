@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createDemoPlay, createPlay } from '../model/defaults';
+import { createPlay } from '../model/defaults';
+import { createDemoPlay } from '../plays';
 import { frameTimes, totalDuration } from '../model/engine';
 import { MAX_DT, advance, frameAt, goToFrame, idleClock, seek, start, stepBack, stepForward, stop, type Clock } from './playbackClock';
 

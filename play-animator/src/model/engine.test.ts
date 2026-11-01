@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import type { Play } from './types';
-import { createDemoPlay, createPlay } from './defaults';
+import { createPlay } from './defaults';
+import { createDemoPlay } from '../plays';
 import { evaluate, frameAtTime, frameTimes, locate, staticFacing, throwGeometry, totalDuration } from './engine';
 import { addStep, movePlayer, setFacing, setHolder } from './edit';
 import { angleDiff, dist } from './geometry';
@@ -139,9 +140,10 @@ describe('motion is smooth', () => {
       fc.property(anyPlay, (play) => {
         expect(discontinuity(play)).toBeNull();
       }),
-      { numRuns: 40 },
+      // FC_RUNS=1000 npm test runs a much longer search.
+      { numRuns: Number(process.env.FC_RUNS ?? 40) },
     );
-  }, 60_000);
+  }, 600_000);
 });
 
 describe('the disc', () => {
@@ -201,16 +203,18 @@ describe('automatic facing', () => {
 
   it('turns a runner to face where they are running', () => {
     let p = addStep(play, 0);
-    p = movePlayer(p, 1, 'O7', { x: 61, y: 2 }); // straight toward the top sideline
+    const o7 = play.frames[0].positions.O7;
+    p = movePlayer(p, 1, 'O7', { x: o7.x, y: 2 }); // straight toward the top sideline
     const mid = evaluate(p, p.frames[1].duration / 2);
     expect(Math.abs(angleDiff(mid.players.O7.facing, 270))).toBeLessThan(5);
   });
 
   it('keeps a mark facing the thrower while shuffling', () => {
     let p = addStep(play, 0);
-    p = movePlayer(p, 1, 'D1', { x: 38, y: 20 });
+    const thrower = play.frames[0].positions.O1;
+    p = movePlayer(p, 1, 'D1', { x: thrower.x + 3, y: thrower.y });
     const mid = evaluate(p, p.frames[1].duration / 2);
-    const toThrower = (Math.atan2(20 - mid.players.D1.pos.y, 35 - mid.players.D1.pos.x) * 180) / Math.PI;
+    const toThrower = (Math.atan2(thrower.y - mid.players.D1.pos.y, thrower.x - mid.players.D1.pos.x) * 180) / Math.PI;
     expect(Math.abs(angleDiff(mid.players.D1.facing, toThrower))).toBeLessThan(5);
   });
 
