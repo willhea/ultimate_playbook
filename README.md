@@ -7,8 +7,8 @@ Tools and a video series for teaching ultimate frisbee visually.
 > [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
 > **[ASSUMPTION]** is a guess to confirm or change.
 >
-> **Current focus:** vertical and horizontal stack plays ([research](docs/research/stacks.md)),
-> and an automated test suite so the app can be built and checked without hands-on testing.
+> **Next up:** see [`docs/plan.md`](docs/plan.md). In order: defenders follow their player
+> automatically, show the force (open/break side), and an end-zone example play.
 
 ## The three workstreams
 
