@@ -16,7 +16,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - **Tests:** 82 unit tests (about 2 s) and 19 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
-- **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`. It hasn't been merged to `main` yet.
+- **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`, which is also the repository's default branch (there is no `main` yet).
 
 ### Coaching decisions to respect
 - USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
@@ -59,16 +59,41 @@ The coach's design (decision #10), built in `src/model/force.ts` and `Field.tsx`
 - **Downfield defenders** line up on the open side: even near the disc, deep further downfield to force the cut under (decision #12, `guardSpot`). The old `underSpot` is gone. Back-of-stack under cuts in the examples now curve out wide around the defenders, and "clear, then the next cut" starts with a covered deep cut (a defender playing deep doesn't cover the under).
 - **Force shading** uses a light orange tint that reads more clearly on the green.
 
-### 1. An end-zone example play
+### Direction: plays are described to an AI (decision #16)
 
-Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check.
+The coach expects to build plays mostly by describing them to an AI like Claude, then refining them in conversation; editing by hand stays as an option. What that means for the work:
+- **The play script is the main format.** `PlayScript` in `src/plays/script.ts` is already what an AI writes: a stack, then steps of runs (with bends), throws, release times and narration notes. The example plays are written this way.
+- **Automatic behavior is the multiplier.** The more the app fills in by itself (defense, how cuts look, timing), the less an AI or a person has to spell out, and the more real every play looks. That is the next step.
+- **An AI needs to check its own work,** because the coach reviews from a phone: `validatePlay` plus pictures of each step (as `npm run screenshots` does for the examples).
 
-### 2. Then
+### 1. Lock in the code (waiting on the coach)
+
+There is no `main` branch: this working branch is the repository's default. Options: create `main` from the current code and make it the default (then new work goes through pull requests), and/or tag this version (v0.7).
+
+### 2. Cutting: refine how offense and defense move (with the coach)
+
+Today every player in a step starts and stops together, along one smooth curve, and defenders react instantly. Candidates, to rank with the coach:
+1. **Timing within a step** (spec S-5): a cutter starts, their defender reacts a beat late; a clear finishes before the next cut starts; the receiver keeps running through the catch.
+2. **Cut shape:** a set-up (jab, or walking the defender away) and then a sharp change of direction, rather than one smooth arc. Probably a run with a plant point.
+3. **Defender reaction:** hip to hip with the cutter versus trailing, and who gets beaten by how much.
+4. **Lead passes** (spec S-6): the throw goes to space ahead of a running receiver.
+5. **The new mark** arrives after the catch, and the force shows once they're set.
+6. **Automatic clears:** a cutter who doesn't get the disc clears out to a sensible spot by themselves.
+7. **Speed:** sprints versus jogs; deep cuts flat out.
+
+### 3. AI authoring tools
+- **Authoring guide** (`docs/play-authoring.md`): field coordinates (yards; attacking to the right; home sideline at the bottom, y = 40), the script format, the coaching rules from the decisions, and what the app does automatically (so a script only describes the offense and any deliberate defense).
+- **Import a script:** the app's Import accepts a play script as well as a full play file, so a play an AI wrote can be pasted straight in.
+- **A review command:** `npm run play <script>` validates a script and saves a picture of each step, so an AI session can check a play and send the pictures to the coach.
+- **Later:** a "describe a play" box in the app that calls Claude directly. That needs hosting, an API key and a budget, so it waits on those decisions.
+
+### 4. An end-zone example play
+
+Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check. A good first play to build through the AI authoring loop.
+
+### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
-- **Go public:**
-  - Open a pull request from this branch into `main`.
-  - Host on GitHub Pages: the owner turns Pages on in the repository settings, and then a workflow publishes `npm run build`.
-  - Deal with Dependabot pull request #1 (a Vite bump) after the merge.
+- **Go public:** host on GitHub Pages (the owner turns Pages on in the repository settings, then a workflow publishes `npm run build`), and deal with Dependabot pull request #1 (a Vite bump, 8.3.2 → 8.3.5).
 - **Later:** iPad and touch, a stall count, the 3D pilot, and branching plays (decision #14).
 - **Still open with the coach:** sharing (links or team logins), hosting budget, and a name.
 

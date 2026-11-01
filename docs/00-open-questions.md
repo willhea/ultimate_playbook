@@ -19,6 +19,7 @@
 | 13 | Stack spacing | **The defaults are right (vertical: 12 yd to the stack, 5 yd apart; horizontal: 15 yd deep), and the coach wants to change them in the app.** | The setup step has sliders for the stack's depth and spacing. |
 | 14 | Branching plays | **Later.** "We can always add more complexity." | Not in V1/V2. |
 | 15 | What the coach wants from the project | **A good tool for sharing plays with their team, not learning to code.** | Claude writes the code; explanations stay at the level of what the app does. |
+| 16 | How will plays be built? | **Mostly by describing them to an AI and refining them in conversation. Editing by hand stays as an option.** | The play script becomes the main authoring format, with an authoring guide and a validate-and-picture loop (see the [plan](plan.md)). Good automatic behavior (defense, cutting, timing) matters more than editing controls. |
 
 ## Proposed defaults (say if you disagree)
 
