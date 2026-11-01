@@ -78,11 +78,12 @@ The coach asked for tighter version control: `main` is protected and every chang
   2. Settings → Rules → Rulesets → New branch ruleset for `main`: restrict deletions, require a pull request before merging (0 approvals, since the coach is the only reviewer and can't approve their own pull requests), require status checks "Lint, types and unit tests" and "Browser tests", and block force pushes.
   3. Releases → Draft a new release → new tag `v0.7` on `main`. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
   4. Close Dependabot pull request #1 (it targets the old default branch); the new config reopens updates against `main`.
+- **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026). Browser storage keys keep their old `ultimate-animations:` prefix on purpose, so plays already saved in browsers aren't lost.
 - **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
 
 ### 2. Go public: a web address, share links, and a phone watch view
 
-Decisions #17–#19: the plays are public (recreational league), anyone can make their own plays, most teammates will watch on phones, and GitHub Pages hosts it for free (`https://willhea.github.io/ultimate_animations/`; the coach's `willhea.com` can be pointed at it later).
+Decisions #17–#19: the plays are public (recreational league), anyone can make their own plays, most teammates will watch on phones, and GitHub Pages hosts it for free (`https://willhea.github.io/ultimate_playbook/`; the coach's `willhea.com` can be pointed at it later).
 
 1. **Publish on every merge** (small). A deploy job in CI, after the tests pass on `main`, builds the app and publishes it to GitHub Pages. Owner steps: make the repository public, then Settings → Pages → Source: "GitHub Actions". Add a license (MIT suggested; coach to confirm).
 2. **Watch view for phones.** Opening a play to watch, not edit: the field large, play/pause and step back/forward buttons sized for thumbs, the step's narration notes underneath, and the force and runs shown. Phones open this by default; the editor stays for laptops. Open question: in portrait, turn the field so the offense attacks up the screen.

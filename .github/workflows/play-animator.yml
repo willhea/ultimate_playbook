@@ -87,7 +87,7 @@ jobs:
   deploy:
     name: Publish to GitHub Pages
     # Each change that lands on main, once the tests pass, goes live at
-    # https://willhea.github.io/ultimate_animations/ (Settings → Pages → Source: GitHub Actions).
+    # https://willhea.github.io/ultimate_playbook/ (Settings → Pages → Source: GitHub Actions).
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [checks, browser]
     runs-on: ubuntu-latest
