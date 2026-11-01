@@ -1,8 +1,9 @@
 /** Example plays from a vertical stack. See docs/research/stacks.md. */
-import { verticalStack } from '../model/formations';
+import { DEFAULT_STACK, stackPositions } from '../model/formations';
 import type { PlayScript } from './script';
 
-const setup = verticalStack({ disc: { x: 40, y: 20 } });
+const stack = DEFAULT_STACK.vertical;
+const setup = stackPositions(stack, { x: 40, y: 20 });
 // Stack: O3 (52,20), O4 (57,20), O5 (62,20), O6 (67,20), O7 (72,20). Open side is the bottom (y → 40).
 
 // Coaching rule (see docs/research/stacks.md): cuts come from the back of the stack,
@@ -13,6 +14,7 @@ export const underThenDeep: PlayScript = {
   title: 'Vertical stack: back cuts under, then deep',
   setup: {
     positions: setup,
+    stack,
     notes:
       'A vertical stack: O1 has the disc, O2 is the dump behind, and five cutters line up down the middle. The mark forces home: our right-handed thrower is forced to flick toward the home sideline, the bottom of the screen. Cuts start from the back of the stack.',
   },
@@ -23,7 +25,8 @@ export const underThenDeep: PlayScript = {
         'The back of the stack has the most room. O7 builds speed down the open-side lane, toward the home sideline, and comes under for the flick.',
       duration: 3.4,
       runs: {
-        O7: { to: { x: 50, y: 30 }, bend: { x: 2, y: 4 } },
+        // Out wide first, around the defenders lined up on the open side, then under.
+        O7: { to: { x: 50, y: 30 }, bend: { x: 6, y: 8 } },
       },
       throwTo: 'O7',
       release: 0.65,
@@ -46,26 +49,29 @@ export const clearAndReCut: PlayScript = {
   title: 'Vertical stack: clear, then the next cut',
   setup: {
     positions: setup,
-    notes: 'Same stack. Watch how a cutter who doesn’t get the disc gets out of the way for the next one.',
+    stack,
+    notes:
+      'Same stack. The downfield defenders line up on the open side and play deep, so they make their cutters come under. Watch how a cutter who doesn’t get the disc gets out of the way for the next one.',
   },
   steps: [
     {
-      name: 'O7 cuts under, but it’s covered',
-      notes: 'O7 cuts from the back, but D7 stays between O7 and the disc, so there’s no throw.',
+      name: 'O7 goes deep, but it’s covered',
+      notes: 'O7 cuts deep from the back of the stack, but D7 is already playing deep and stays with them, so there’s no huck.',
       duration: 3.2,
       runs: {
-        O7: { to: { x: 52, y: 30 }, bend: { x: 2, y: 4 } },
-        D7: { to: { x: 49.8, y: 28.6 }, bend: { x: 2, y: 3.5 } },
+        O7: { to: { x: 90, y: 28 }, bend: { x: 0, y: 2 } },
+        // Placed by hand: D7 runs step for step on the deep side.
+        D7: { to: { x: 92, y: 30 }, bend: { x: 0, y: 2 } },
       },
     },
     {
       name: 'O7 clears, O6 cuts under',
       notes:
-        'O7 clears out of the lane, deep and toward the sideline, which leaves the under space empty for the next cutter from the back, O6.',
+        'O7 clears across to the break side, out of the open-side lane. O6 is now the back of the stack, and cuts under, out wide around the defenders, for the flick.',
       duration: 3.4,
       runs: {
-        O7: { to: { x: 80, y: 36 }, bend: { x: -2, y: 1 } },
-        O6: { to: { x: 50, y: 29 }, bend: { x: 2, y: 3 } },
+        O7: { to: { x: 86, y: 10 }, bend: { x: 2, y: 0 } },
+        O6: { to: { x: 50, y: 29 }, bend: { x: 6, y: 9 } },
       },
       throwTo: 'O6',
       release: 0.6,
@@ -77,6 +83,7 @@ export const breakSideFromFront: PlayScript = {
   title: 'Vertical stack: break-side cut from the front',
   setup: {
     positions: setup,
+    stack,
     notes:
       'The exception to cutting from the back: a break-side cut comes from the front of the stack, which is closest to the break-side space.',
   },
@@ -101,6 +108,7 @@ export const dumpSwing: PlayScript = {
   title: 'Vertical stack: dump and swing',
   setup: {
     positions: setup,
+    stack,
     notes:
       'The stall count is climbing and no cutter is open. The handlers reset the count and move the disc to the break side.',
   },

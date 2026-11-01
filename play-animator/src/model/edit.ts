@@ -1,9 +1,9 @@
 /** Pure editing operations. Each returns a new Play and never mutates its input. */
-import type { Frame, Play, Player, Team, Vec } from './types';
+import type { Frame, Play, Player, StackSpacing, Team, Vec } from './types';
 import { add, dist, sub } from './geometry';
 import { FIELD } from './field';
 import { isManual, placeDefenders } from './defenders';
-import { markSpot, underSpot } from './formations';
+import { guardSpot, markSpot, stackPositions, STACK_CUTTERS } from './formations';
 
 const SAME_SPOT = 0.01;
 
@@ -110,7 +110,8 @@ export function setGuards(play: Play, defenderId: string, targetId: string | nul
   const target = targetId ? setup.positions[targetId] : undefined;
   if (target) {
     const frames = [...next.frames];
-    shift(frames, 0, defenderId, setup.discHolder === targetId ? markSpot(target, play.open) : underSpot(target, play.open));
+    const disc = setup.positions[setup.discHolder];
+    shift(frames, 0, defenderId, setup.discHolder === targetId ? markSpot(target, play.open) : guardSpot(target, disc, play.open));
     next = withFrames(next, frames);
   }
   return placeDefenders(next);
@@ -244,4 +245,24 @@ export function flipForce(play: Play): Play {
       throwCurve: f.throwCurve && bend(f.throwCurve),
     })),
   };
+}
+
+/**
+ * Re-space the stack: line the cutters up again from where the thrower stands in the
+ * setup, with their defenders. Later steps where a cutter hadn't moved move with
+ * them; runs still end where they did.
+ */
+export function setStack(play: Play, stack: StackSpacing): Play {
+  const setup = play.frames[0];
+  const disc = setup.positions[setup.discHolder];
+  const spots = stackPositions(stack, disc, play.open);
+  let next = play;
+  for (const id of STACK_CUTTERS[stack.kind]) {
+    if (!spots[id] || !setup.positions[id]) continue;
+    next = movePlayer(next, 0, id, spots[id]);
+    for (const d of play.players) {
+      if (d.guards === id) next = movePlayer(next, 0, d.id, guardSpot(spots[id], disc, play.open));
+    }
+  }
+  return { ...next, stack };
 }

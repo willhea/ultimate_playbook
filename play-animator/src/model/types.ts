@@ -13,6 +13,11 @@ export type Team = 'O' | 'D';
  */
 export type OpenSide = 'bottom' | 'top';
 
+/** How a play's starting stack is spaced, so it can be adjusted from the setup. Yards. */
+export type StackSpacing =
+  | { kind: 'vertical'; /** Thrower to the front of the stack. */ depth: number; /** Between cutters. */ spacing: number }
+  | { kind: 'horizontal'; /** Thrower to the line of cutters. */ depth: number };
+
 export interface Player {
   /** Stable id, e.g. "O3" or "D3". */
   id: string;
@@ -62,4 +67,6 @@ export interface Play {
   frames: Frame[];
   /** The force for the whole play. Missing = 'bottom' (force home). */
   open?: OpenSide;
+  /** The stack the play started from, if any; the setup panel uses it to re-space the cutters. */
+  stack?: StackSpacing;
 }

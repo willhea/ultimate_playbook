@@ -740,26 +740,28 @@ input[type='range'] {
   opacity: 0.5;
 }
 
+/* The break side: a light orange tint reads clearly on the green, where the
+   darker defense orange turned muddy brown. */
 .force-stop-in {
-  stop-color: var(--defense);
-  stop-opacity: 0.34;
+  stop-color: #ffb48a;
+  stop-opacity: 0.42;
 }
 
 .force-stop-mid {
-  stop-color: var(--defense);
-  stop-opacity: 0.2;
+  stop-color: #ffb48a;
+  stop-opacity: 0.26;
 }
 
 .force-stop-out {
-  stop-color: var(--defense);
+  stop-color: #ffb48a;
   stop-opacity: 0;
 }
 
 .force-line {
-  stroke: #ffb48a;
-  stroke-width: 0.16;
+  stroke: #ffd2b3;
+  stroke-width: 0.2;
   stroke-dasharray: 0.5 0.5;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .mark-arms line {

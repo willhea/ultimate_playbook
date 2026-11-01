@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
 import { addStep, movePlayer, setGuards, setHolder, setManual } from './edit';
-import { markSpot, underSpot } from './formations';
+import { guardSpot, markSpot } from './formations';
 import { dist } from './geometry';
 import { evaluate, frameTimes } from './engine';
 import { PLAYER_RADIUS } from './field';
@@ -44,7 +44,7 @@ describe('automatic defenders', () => {
 
   it('move to guard a new player, and follow them from then on', () => {
     let play = setGuards(oneStep(), 'D3', 'O7');
-    expect(play.frames[0].positions.D3).toEqual(underSpot(play.frames[0].positions.O7));
+    expect(play.frames[0].positions.D3).toEqual(guardSpot(play.frames[0].positions.O7, play.frames[0].positions.O1));
     play = movePlayer(play, 1, 'O7', { x: 90, y: 30 });
     expect(dist(play.frames[1].positions.D3, play.frames[1].positions.O7)).toBeCloseTo(TRAIL, 5);
   });

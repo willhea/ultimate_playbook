@@ -15,6 +15,10 @@
 | 9 | How do we talk about the force? | **Name it home or away; the default thrower is right-handed; "force side" means where the disc is allowed to go.** | The force is where the throw is forced to go. Teams call home/away because it doesn't change with the thrower's hand; forehand/backhand would. A flick (forehand) force on a righty is the most common. So the **force side = the open side** (the forehand side for a righty forced to flick), and the **break side** is where you don't want the disc thrown (the backhand side). Left-handed throwers: the force stays home or away. |
 | 10 | How is the force drawn? | **Shade the break side, the area the mark takes away. Only the mark has arms, out straight, 180° apart, each one player radius long.** | A half circle (180°) is the simple start; real break throws can bend round it, so this is open to experiment. Built in v0.6: the split runs through the thrower, parallel to the mark's arms. |
 | 11 | Words | **"Cut in" = "under cut"; "flick" = "forehand"; "vert" = "vertical stack"; "ho stack" = "horizontal stack".** | Either word is fine in notes and narration. |
+| 12 | Where do downfield defenders line up? | **On the open side, defending the open-side throw. Far downfield they play deep to force their player under (make them cut in); closer to the disc they play even.** | `guardSpot` in `formations.ts`: always on the open side, level with the cutter near the disc, turning to 45° deep by about 24 yd downfield. Example cuts from the back now curve out wide around the defenders. |
+| 13 | Stack spacing | **The defaults are right (vertical: 12 yd to the stack, 5 yd apart; horizontal: 15 yd deep), and the coach wants to change them in the app.** | The setup step has sliders for the stack's depth and spacing. |
+| 14 | Branching plays | **Later.** "We can always add more complexity." | Not in V1/V2. |
+| 15 | What the coach wants from the project | **A good tool for sharing plays with their team, not learning to code.** | Claude writes the code; explanations stay at the level of what the app does. |
 
 ## Proposed defaults (say if you disagree)
 
@@ -27,11 +31,9 @@
 
 ## Still open (none of these block the MVP)
 
-7. **Branching plays** ("if the under is taken, go deep"): essential, or later? *Current assumption: Later.*
-8. **Sharing:** for "anyone can build plays", is "send a link, they watch or copy the play" enough, or do you eventually want team playbooks with logins? *Current assumption: links first (V2), logins Later.*
-9. **Budget:** any monthly budget for hosting or services? *Current assumption: $0 for MVP (free static hosting).*
-10. **Your role in building:** do you want to learn to code along the way, or mostly direct while Claude writes the code? *This changes how the code is explained, not what gets built.*
-11. **Name:** "Play Animator" is a placeholder.
+8. **Sharing:** for "anyone can build plays" and sharing with a team, is "send a link, they watch or copy the play" enough, or do you eventually want team playbooks with logins? *TBD (November 2026). Current assumption: links first (V2), logins Later.*
+9. **Budget:** any monthly budget for hosting or services? *Not sure yet. Current assumption: $0 for MVP (free static hosting).*
+11. **Name:** "Play Animator" is a placeholder. *Later.*
 
 ## Parked (revisit when we get to videos / 3D)
 

@@ -12,15 +12,16 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Watching it: playback, a close-up view, and Present mode.
   - Keeping it: undo/redo, autosave, import/export.
   - Seven example plays: four vertical stack, three horizontal stack.
-- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.6). Publishing steps are under "Working notes" below.
-- **Tests:** 79 unit tests (about 2 s) and 18 browser tests (about 16 s). CI runs both on every push.
+- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.7). Publishing steps are under "Working notes" below.
+- **Tests:** 82 unit tests (about 2 s) and 19 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
 - **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`. It hasn't been merged to `main` yet.
 
 ### Coaching decisions to respect
-- USA Ultimate field. Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
+- USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
+- **Downfield defenders line up on the open side:** deep far downfield (forcing the cut under), even near the disc.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
 
 **Words:** [`glossary.md`](glossary.md) defines the ultimate terms we use (open side, break side, mark, around and inside breaks, and so on). Use them in plays, notes and the UI.
@@ -53,20 +54,23 @@ The coach's design (decision #10), built in `src/model/force.ts` and `Field.tsx`
 - **`Play.open`** ('bottom' = force home, the default) is used by automatic marks. **Flip force** mirrors the whole play top to bottom (positions, bends, facing) and is undoable.
 - Next ideas, if the coach wants to experiment: a narrower angle than 180°, an arrow for the force, or hatching instead of shading.
 
+### Done: coach's feedback, November 2026
+- **Stack spacing in the app:** in the setup step, with nothing selected, a panel has sliders for the thrower to the front of the stack, and the space between cutters (horizontal: the thrower to the cutters). `Play.stack` records the spacing; `setStack` in `edit.ts` lines the cutters and their defenders up again. Old plays without `Play.stack` don't show the panel.
+- **Downfield defenders** line up on the open side: even near the disc, deep further downfield to force the cut under (decision #12, `guardSpot`). The old `underSpot` is gone. Back-of-stack under cuts in the examples now curve out wide around the defenders, and "clear, then the next cut" starts with a covered deep cut (a defender playing deep doesn't cover the under).
+- **Force shading** uses a light orange tint that reads more clearly on the green.
+
 ### 1. An end-zone example play
 
 Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check.
 
-### 2. Remaining question for the coach
-- Do the spacing defaults match your whiteboard? Vertical: 12 yd to the stack, 5 yd apart. Horizontal: cutters 15 yd deep. (Force is decided: force home, right-handed flick.)
-
-### 3. Then
+### 2. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
 - **Go public:**
   - Open a pull request from this branch into `main`.
   - Host on GitHub Pages: the owner turns Pages on in the repository settings, and then a workflow publishes `npm run build`.
   - Deal with Dependabot pull request #1 (a Vite bump) after the merge.
-- **Later:** iPad and touch, a stall count, branching plays, and the 3D pilot.
+- **Later:** iPad and touch, a stall count, the 3D pilot, and branching plays (decision #14).
+- **Still open with the coach:** sharing (links or team logins), hosting budget, and a name.
 
 ## Working notes (gotchas we've hit)
 

@@ -35,6 +35,15 @@ describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open
     }
   });
 
+  it('downfield defenders line up on the open side: even near the disc, deep further downfield to force the cut under', () => {
+    const pos = verticalStack({ open });
+    const ahead = (n: number) => pos[`D${n}`].x - pos[`O${n}`].x; // how far deep of their player
+    for (const n of [3, 4, 5, 6, 7]) expect(Math.sign(pos[`D${n}`].y - pos[`O${n}`].y)).toBe(-breakSide);
+    expect(Math.abs(ahead(3))).toBeLessThan(0.5); // the front of the stack: even
+    expect(ahead(7)).toBeGreaterThan(1.5); // the back of the stack: deep
+    for (const n of [4, 5, 6, 7]) expect(ahead(n)).toBeGreaterThanOrEqual(ahead(n - 1));
+  });
+
   it('horizontal stack: three handlers behind four cutters level across the field', () => {
     const pos = horizontalStack({ open });
     const cutters = ids(4, 5, 6, 7).map((id) => pos[id]);

@@ -1,6 +1,6 @@
 import type { Frame, Play, Player, Vec } from './types';
 import { newId } from './edit';
-import { horizontalStack, verticalStack } from './formations';
+import { DEFAULT_STACK, stackPositions } from './formations';
 
 function sevenOnSeven(): Player[] {
   const players: Player[] = [];
@@ -36,6 +36,7 @@ export function createPlay(title = 'Untitled play', formation: Formation = 'vert
     createdAt: now,
     updatedAt: now,
     players: sevenOnSeven(),
-    frames: [setupFrame(formation === 'horizontal' ? horizontalStack() : verticalStack())],
+    frames: [setupFrame(stackPositions(DEFAULT_STACK[formation]))],
+    stack: DEFAULT_STACK[formation],
   };
 }

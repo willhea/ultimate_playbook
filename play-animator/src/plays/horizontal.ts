@@ -1,8 +1,9 @@
 /** Example plays from a horizontal stack. See docs/research/stacks.md. */
-import { horizontalStack } from '../model/formations';
+import { DEFAULT_STACK, stackPositions } from '../model/formations';
 import type { PlayScript } from './script';
 
-const setup = horizontalStack({ disc: { x: 40, y: 20 } });
+const stack = DEFAULT_STACK.horizontal;
+const setup = stackPositions(stack, { x: 40, y: 20 });
 // Handlers: O1 (40,20) with the disc, O2 (37,8), O3 (37,32).
 // Cutters 15 yd downfield: O4 (55,5) wing, O5 (55,15) popper, O6 (55,25) popper, O7 (55,35) wing.
 
@@ -10,6 +11,7 @@ export const poppersSplit: PlayScript = {
   title: 'Horizontal stack: poppers split',
   setup: {
     positions: setup,
+    stack,
     notes:
       'A horizontal stack: three handlers across the field and four cutters in a line 15 yards downfield. The two middle cutters, the poppers, start the offense.',
   },
@@ -33,6 +35,7 @@ export const wingIso: PlayScript = {
   title: 'Horizontal stack: wing isolation',
   setup: {
     positions: setup,
+    stack,
     notes: 'Same stack. This time the poppers clear out to give a wing the whole open side.',
   },
   steps: [
@@ -62,6 +65,7 @@ export const swingThenCut: PlayScript = {
   title: 'Horizontal stack: swing, then cut',
   setup: {
     positions: setup,
+    stack,
     notes: 'Same stack. Moving the disc side to side between handlers gives the cutters a new throwing angle.',
   },
   steps: [

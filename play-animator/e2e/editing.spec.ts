@@ -63,6 +63,16 @@ test('show the force on the mark, flip it, and hide it', async ({ app, page }) =
   await expect(app.field.getByTestId('force-break-side')).toHaveCount(0);
 });
 
+test('re-space the stack from the setup', async ({ app, page }) => {
+  await app.open({ plays: [createPlay('Blank')] });
+  const gap = async () => (await app.playerState('O4')).x - (await app.playerState('O3')).x;
+  expect(await gap()).toBeCloseTo(5, 0);
+  await page.getByLabel('Space between cutters').fill('7');
+  expect(await gap()).toBeCloseTo(7, 0);
+  await app.button('Undo').click();
+  expect(await gap()).toBeCloseTo(5, 0);
+});
+
 test('undo and redo a drag from the keyboard and the toolbar', async ({ app, page }) => {
   await app.open({ plays: [createPlay('History')] });
   await expect(app.button('Undo')).toBeDisabled();

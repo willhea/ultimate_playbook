@@ -5,18 +5,21 @@
  * Conventions (see docs/research/stacks.md):
  * - The offense attacks toward increasing x. O1 is the handler with the disc.
  * - The mark (D1) forces the throw to the open side, so the mark stands on the
- *   break side of the thrower. Downfield defenders take away the under cut on
- *   the open side.
+ *   break side of the thrower.
+ * - The coach's rule for downfield defenders (decision #12): they line up on the
+ *   open side, defending the open-side throw. Far downfield they play deep, to force
+ *   their player to cut under; closer to the disc they play even.
  * - "bottom" means the open side is toward y = 40, the bottom of the screen, which is
  *   the home sideline.
  * - The default is the coach's: **force home**. For demos the thrower is right-handed,
  *   so facing downfield (to the right) they flick from their right side, toward the
  *   bottom: the mark forces flicks, and the open side is the home sideline.
  */
-import type { OpenSide, Vec } from './types';
+import type { OpenSide, StackSpacing, Vec } from './types';
 import { FIELD } from './field';
+import { smoothstep } from './geometry';
 
-export type { OpenSide };
+export type { OpenSide, StackSpacing };
 
 export interface FormationOptions {
   /** Where the disc (and O1) is. */
@@ -44,9 +47,35 @@ export function markSpot(thrower: Vec, open: OpenSide = 'bottom'): Vec {
   return { x: thrower.x + 1.2, y: thrower.y - 2.4 * openSign(open) };
 }
 
-/** Where a downfield defender stands to take away the under cut on the open side. */
-export function underSpot(cutter: Vec, open: OpenSide = 'bottom'): Vec {
-  return { x: cutter.x - 1.7, y: cutter.y + 2.1 * openSign(open) };
+/** How far a downfield defender starts from their player. */
+export const GUARD_GAP = 2.7;
+
+/**
+ * Where a downfield defender lines up: on the open side of their player. Level
+ * with them near the disc, turning to 45° deep by about 24 yd downfield.
+ */
+export function guardSpot(cutter: Vec, disc: Vec, open: OpenSide = 'bottom'): Vec {
+  const deep = (Math.PI / 4) * smoothstep(8, 24, cutter.x - disc.x);
+  return { x: cutter.x + GUARD_GAP * Math.sin(deep), y: cutter.y + GUARD_GAP * Math.cos(deep) * openSign(open) };
+}
+
+/** The spacing new plays start with. The coach confirmed these match the whiteboard. */
+export const DEFAULT_STACK: { vertical: StackSpacing; horizontal: StackSpacing } = {
+  vertical: { kind: 'vertical', depth: 12, spacing: 5 },
+  horizontal: { kind: 'horizontal', depth: 15 },
+};
+
+/** The cutters a stack lines up; the handlers stay put when the stack is re-spaced. */
+export const STACK_CUTTERS: Record<StackSpacing['kind'], string[]> = {
+  vertical: ['O3', 'O4', 'O5', 'O6', 'O7'],
+  horizontal: ['O4', 'O5', 'O6', 'O7'],
+};
+
+/** Everyone's starting spot for a stack, with the disc at `disc`. */
+export function stackPositions(stack: StackSpacing, disc?: Vec, open?: OpenSide): Record<string, Vec> {
+  return stack.kind === 'vertical'
+    ? verticalStack({ disc, open, depth: stack.depth, spacing: stack.spacing })
+    : horizontalStack({ disc, open, depth: stack.depth });
 }
 
 /**
@@ -70,7 +99,7 @@ export function verticalStack(opts: VerticalOptions = {}): Record<string, Vec> {
   for (let n = 3; n <= 7; n++) {
     const cutter = { x: disc.x + depth + (n - 3) * spacing, y: FIELD.width / 2 };
     pos[`O${n}`] = cutter;
-    pos[`D${n}`] = underSpot(cutter, open);
+    pos[`D${n}`] = guardSpot(cutter, disc, open);
   }
   return pos;
 }
@@ -101,7 +130,7 @@ export function horizontalStack(opts: HorizontalOptions = {}): Record<string, Ve
   lanes.forEach((y, k) => {
     const cutter = { x: disc.x + depth, y };
     pos[`O${k + 4}`] = cutter;
-    pos[`D${k + 4}`] = underSpot(cutter, open);
+    pos[`D${k + 4}`] = guardSpot(cutter, disc, open);
   });
   return pos;
 }

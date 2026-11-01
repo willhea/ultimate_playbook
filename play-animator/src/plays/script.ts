@@ -3,7 +3,7 @@
  * where and who throws to whom. Built with the same edit operations as the
  * editor, so a scripted play is exactly what someone could build by hand.
  */
-import type { Play, Vec } from '../model/types';
+import type { Play, StackSpacing, Vec } from '../model/types';
 import { createPlay } from '../model/defaults';
 import { addStep, movePlayer, setCurve, setFacing, setHolder, setThrowCurve, updateFrame } from '../model/edit';
 
@@ -29,7 +29,7 @@ export interface StepScript {
 
 export interface PlayScript {
   title: string;
-  setup: { positions: Record<string, Vec>; notes: string; name?: string; holder?: string };
+  setup: { positions: Record<string, Vec>; notes: string; name?: string; holder?: string; stack?: StackSpacing };
   steps: StepScript[];
 }
 
@@ -37,6 +37,7 @@ export function scriptPlay(script: PlayScript): Play {
   let play = createPlay(script.title);
   play = {
     ...play,
+    stack: script.setup.stack,
     frames: [
       {
         ...play.frames[0],

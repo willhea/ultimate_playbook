@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
-import { addPlayer, addStep, deleteStep, moveStep, movePlayer, removePlayer, resetMove, setCurve, setFacing, setHolder } from './edit';
+import { addPlayer, addStep, deleteStep, moveStep, movePlayer, removePlayer, resetMove, setCurve, setFacing, setHolder, setStack } from './edit';
+import { validatePlay } from './validate';
 import { anyPlay, fieldPoint } from '../test/arbitraries';
 
 const threeSteps = () => addStep(addStep(addStep(createPlay(), 0), 1), 2);
@@ -55,6 +56,19 @@ describe('editing', () => {
     expect(moveStep(play, 1, -1)).toBe(play);
     expect(deleteStep(play, 0)).toBe(play);
     expect(deleteStep(play, 2).frames).toHaveLength(3);
+  });
+
+  it('re-spaces the stack from the setup: cutters and their defenders move, runs still end where they did', () => {
+    let play = movePlayer(addStep(createPlay(), 0), 1, 'O7', { x: 50, y: 30 });
+    play = setStack(play, { kind: 'vertical', depth: 15, spacing: 7 });
+    const [setup, step] = play.frames;
+    expect(setup.positions.O3.x - setup.positions.O1.x).toBeCloseTo(15);
+    expect(setup.positions.O4.x - setup.positions.O3.x).toBeCloseTo(7);
+    expect(setup.positions.D4.x).toBeGreaterThan(setup.positions.O4.x - 1); // defenders came along
+    expect(step.positions.O4).toEqual(setup.positions.O4); // a cutter who didn't run moves with the stack
+    expect(step.positions.O7).toEqual({ x: 50, y: 30 }); // a run still ends where it did
+    expect(play.stack).toEqual({ kind: 'vertical', depth: 15, spacing: 7 });
+    expect(validatePlay(setStack(createPlay('h', 'horizontal'), { kind: 'horizontal', depth: 20 }))).toEqual([]);
   });
 
   it('removes and adds players, but never the one with the disc', () => {

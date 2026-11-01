@@ -14,6 +14,7 @@ import {
   setGuards,
   setHolder,
   setManual,
+  setStack,
   stepLabel,
   teamPlayers,
   updateFrame,
@@ -56,6 +57,7 @@ export function Inspector(props: Props) {
   return (
     <aside className="inspector" aria-label="Step and player details">
       {selectedId ? <PlayerPanel {...props} editIndex={editIndex} selectedId={selectedId} /> : <Tips play={play} editIndex={editIndex} />}
+      {editIndex === 0 && !selectedId && play.stack && <StackPanel {...props} />}
       <StepPanel {...props} editIndex={editIndex} />
       <TeamsPanel {...props} />
     </aside>
@@ -345,6 +347,41 @@ function TeamsPanel({ play, onEdit }: Props) {
           </div>
         );
       })}
+    </section>
+  );
+}
+
+/** Spacing of the starting stack, adjustable from the setup. */
+function StackPanel({ play, onPreview, onEndPreview }: Props) {
+  const stack = play.stack!;
+  const slider = (id: string, label: string, value: number, min: number, max: number, step: number, change: (v: number) => void) => (
+    <>
+      <label className="field-label" htmlFor={id}>
+        {label} <output className="value">{value} yd</output>
+      </label>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => change(Number(e.target.value))}
+        onPointerUp={onEndPreview}
+        onKeyUp={onEndPreview}
+        onBlur={onEndPreview}
+      />
+    </>
+  );
+  return (
+    <section className="panel">
+      <p className="eyebrow">{stack.kind === 'vertical' ? 'Vertical stack' : 'Horizontal stack'}</p>
+      {slider('stack-depth', stack.kind === 'vertical' ? 'Thrower to the front of the stack' : 'Thrower to the cutters', stack.depth, 8, 25, 1, (depth) =>
+        onPreview(setStack(play, { ...stack, depth })),
+      )}
+      {stack.kind === 'vertical' &&
+        slider('stack-spacing', 'Space between cutters', stack.spacing, 4, 8, 0.5, (spacing) => onPreview(setStack(play, { ...stack, spacing })))}
+      <p className="hint">Lines the cutters and their defenders up again from the thrower. Runs in later steps still end where they did.</p>
     </section>
   );
 }

@@ -120,8 +120,8 @@ adding next. They're listed in priority order, as a suggestion:
 
 - ~~Where do vertical-stack cuts start?~~ Answered: from the back, except end-zone sets and break-side cuts.
 - ~~Which force?~~ Answered: force home; for demos, a right-handed thrower forced to flick, so the open side is the home sideline at the bottom of the screen.
-- Do you set downfield defenders on the under/open side as the app does, or another way (for example, on the deep side for a team that hucks)?
-- Are the spacing defaults (vertical: 12 yd to the stack, 5 yd apart; horizontal: 15 yd deep) what you'd draw on a whiteboard?
+- ~~Where do downfield defenders line up?~~ Answered: on the open side; deep far downfield (forcing the cut under), even near the disc.
+- ~~Are the spacing defaults right?~~ Answered: yes, and they can now be changed in the setup step.
 
 ## Sources
 

@@ -134,7 +134,7 @@ The descriptions are for a right-handed thrower.
 - **Person defense ("man") (app).** Each defender guards one offensive player. The app's default: defender *n* guards offense *n*.
 - **Guarding (app).** Who a defender is assigned to.
 - **Under side / deep side.** Standing between your cutter and the disc (**under**, to stop the under cut) or behind them, toward the end zone (**deep**, to stop the huck).
-- **Shading.** Where a defender stands relative to their cutter: a little under, a little deep, a little to the open side. The app's default for downfield defenders is a little under and to the open side.
+- **Shading.** Where a defender stands relative to their cutter: a little under, a little deep, a little to the open side. The coach's rule (decision #12): downfield defenders line up on the **open side**. Far downfield they play **deep**, forcing their player to cut under; closer to the disc they play **even** (level with their player). The app's formations do this.
 - **Fronting (app: "covered" cut).** Getting fully between the cutter and the disc to deny the under cut. The "clear, then the next cut" play shows D7 fronting O7.
 - **Trailing (app).** Chasing a cutter from behind after they've got a step on you. The app's automatic defenders trail a runner a step behind.
 - **Reading the hips.** Watching a cutter's hips to tell which way they'll really go; the hips can't fake the way the head and shoulders can. Defenders also keep their own hips open so they can turn and run without crossing their feet. This is a topic for the 3D videos.
