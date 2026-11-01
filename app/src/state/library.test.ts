@@ -71,9 +71,14 @@ describe('opening the app', () => {
   afterEach(() => vi.unstubAllGlobals());
   const storage = (data: Record<string, string>) => ({ getItem: (k: string) => data[k] ?? null, setItem: () => {} });
 
-  it('starts with the example plays on a first visit', () => {
+  it('starts a first visit with a copy of the first playbook play, which a new play then replaces', () => {
     vi.stubGlobal('localStorage', storage({}));
-    expect(initLibrary().plays.map((p) => p.title)).toEqual(examplePlays.map((p) => p.title));
+    const first = initLibrary();
+    expect(first.firstVisit).toBe(true);
+    expect(first.plays.map((p) => p.title)).toEqual([examplePlays[0].title]);
+    const next = libraryReducer(first, { type: 'create', play: createPlay('Mine') });
+    expect(next.plays.map((p) => p.title)).toEqual(['Mine']); // the untouched starter play doesn't pile up
+    expect(libraryReducer(next, { type: 'create', play: createPlay('Second') }).plays).toHaveLength(2);
   });
 
   it('reopens the play that was open last time', () => {

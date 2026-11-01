@@ -13,7 +13,7 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Keeping it: undo/redo, autosave, import/export.
   - Seven example plays: four vertical stack, three horizontal stack.
 - **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.7). Publishing steps are under "Working notes" below.
-- **Tests:** 82 unit tests (about 2 s) and 19 browser tests (about 16 s). CI runs both on every push.
+- **Tests:** 87 unit tests (about 2 s) and 21 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
 - **Branches:** `main` holds the released code (v0.7) and is protected; work happens on `claude/wonderful-ptolemy-gluy7w` and reaches `main` through pull requests.
@@ -81,14 +81,14 @@ The coach asked for tighter version control: `main` is protected and every chang
 - **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026), and everything followed the new name (decision #20): the app is "Ultimate Playbook" in `app/`, CI is `.github/workflows/ci.yml`, and browser storage keys start `ultimate-playbook:`. The cloud session's clone may still sit in a folder with the old name, and GitHub forwards the old repository name.
 - **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
 
-### 2. Go public: a web address, share links, and a phone watch view
+### 2. Go public: a web address, share links, and a phone watch view (built, November 2026)
 
 Decisions #17–#19: the plays are public (recreational league), anyone can make their own plays, most teammates will watch on phones, and GitHub Pages hosts it for free (`https://willhea.github.io/ultimate_playbook/`; the coach's `willhea.com` can be pointed at it later).
 
-1. **Publish on every merge** (small). A deploy job in CI, after the tests pass on `main`, builds the app and publishes it to GitHub Pages. Owner steps: make the repository public, then Settings → Pages → Source: "GitHub Actions". Add a license (MIT suggested; coach to confirm).
-2. **Watch view for phones.** Opening a play to watch, not edit: the field large, play/pause and step back/forward buttons sized for thumbs, the step's narration notes underneath, and the force and runs shown. Phones open this by default; the editor stays for laptops. Open question: in portrait, turn the field so the offense attacks up the screen.
-3. **Share links (spec D-3).** A Share button packs the play into the link itself (compressed, a few kilobytes), so there's no server and nothing stored. The link opens the watch view, with "Make my own copy" to edit it.
-4. **The public playbook.** Plays committed to the repository (as the examples are now) appear for everyone, grouped in the Plays list and in the watch view. New ones arrive through the AI authoring loop: the coach describes a play, an AI writes the script, opens a pull request with a picture of each step, and the coach merges.
+1. **Publish on every merge.** The `deploy` job in `.github/workflows/ci.yml` publishes `npm run build` to GitHub Pages after the tests pass on `main`. Owner step: Settings → Pages → Source: "GitHub Actions". Still open: a license (MIT suggested; coach to confirm).
+2. **Watch view** (`src/components/Watch.tsx`). The field, play/pause and step buttons sized for thumbs, the step's notes, step dots, and Share. Phones open it by default (`(max-width: 760px), (pointer: coarse) and (max-height: 520px)`); portrait puts the controls at the bottom, landscape puts the field on the left. The editor's **Watch** button opens it on a computer. Open question: in portrait, turn the field so the offense attacks up the screen.
+3. **Share links** (`src/model/share.ts`, spec D-3). `#play=<code>`: the play, rounded to the centimetre, deflate-compressed and base64url-encoded (about 2 KB for an example play). No server, nothing stored. Opening a link shows the watch view with **Make my own copy**. Broken or cut-off links get a plain explanation. The editor and the watch view both have **Share** (the phone's share sheet when there is one, otherwise Copy link).
+4. **The public playbook** (`playbook()` in `src/plays/index.ts`). The built-in plays, always the latest version, each with a short link: `#playbook=<slug>`. The watch view's **Plays** list shows the playbook, then the plays saved in this browser. **First visits** now start with one copy of the first playbook play (not all of them); a phone's first visit watches the playbook. The next new play replaces that starter copy if it was never edited. Still to come: adding playbook plays through the AI authoring loop (step 4 below).
 
 ### 3. Cutting: refine how offense and defense move (with the coach)
 
@@ -119,7 +119,7 @@ Today every player in a step starts and stops together, along one smooth curve, 
 - **TypeScript is 6.0**, not 7, because `typescript-eslint` doesn't support 7 yet.
 - **Property tests use a fixed seed** (`src/test/setup.ts`). `FC_SEED=random npm test` explores new cases.
 - **Browser tests read what's drawn,** not test-only attributes: positions come from SVG transforms, and facing from the wedge's rotation. `e2e/fixtures.ts` `snapshot()` reads a whole frame in one go; don't read attributes one at a time while an animation runs.
-- **First visit seeds the example plays.** A browser that already has saved plays keeps them, so tell the user to use Plays → "Add a copy" to see new or changed examples.
+- **The playbook is always current; saved copies aren't.** Playbook plays (watch view → Plays, or `#playbook=` links) always show the latest version. A copy saved in a browser keeps whatever version was copied.
 - **Publishing the prototype link** (https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ). Run `npm run build:single`, then use whichever publishing tool the session has:
   - **The `Artifact` tool:** publish `dist-single/ultimate-playbook.html` (a page fragment) with `url` set to the link. If it refuses because the live version came from a different tool, Read the saved copy it names, confirm it's only an older build of this app, and publish again.
   - **The claude-artifacts connector:** publish `dist-single/index.html` as `index.html` with `publish_files`, slug `884e0831-9ebb-4784-a3bf-b182a257c5d3`, and `base_version` from `get_artifact`. First change the doctype to `<!DOCTYPE html>` and remove `viewport-fit=cover`.

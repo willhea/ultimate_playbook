@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import type { Play } from './model/types';
 import { evaluate, staticFacing } from './model/engine';
-import { addStep, flipForce, setFacing } from './model/edit';
+import { addStep, flipForce, newId, setFacing } from './model/edit';
 import { createPlay } from './model/defaults';
-import { examplePlays } from './plays';
+import { examplePlays, playbook } from './plays';
+import { decodePlay, pageAddress, parseHash } from './model/share';
 import { scriptPlay } from './plays/script';
 import { saveCurrentId, savePlays } from './model/storage';
 import { FULL_VIEW, type ViewBox } from './model/field';
@@ -13,10 +14,22 @@ import { usePlayback } from './state/usePlayback';
 import { Field } from './components/Field';
 import { Inspector } from './components/Inspector';
 import { Timeline } from './components/Timeline';
-import { ExportDialog, ImportDialog, PlaysDialog, ShortcutsDialog } from './components/Dialogs';
+import { ExportDialog, ImportDialog, PlaysDialog, ShareDialog, ShortcutsDialog, WatchPlaysDialog } from './components/Dialogs';
+import { Watch } from './components/Watch';
 import { Icon } from './components/Icon';
 
-type DialogName = 'plays' | 'export' | 'import' | 'shortcuts' | null;
+type DialogName = 'plays' | 'export' | 'import' | 'shortcuts' | 'share' | 'watchPlays' | null;
+
+/** Phones open the watch view; the editor is for bigger screens (decision #18). */
+const PHONE = '(max-width: 760px), (pointer: coarse) and (max-height: 520px)';
+const isPhone = () => window.matchMedia?.(PHONE).matches ?? false;
+
+/** A play being watched that isn't saved in this browser: from a share link or the playbook. */
+interface Guest {
+  play: Play;
+  /** Set for playbook plays, whose links are short. */
+  slug?: string;
+}
 
 function isTyping(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -28,7 +41,14 @@ function isTyping(target: EventTarget | null): boolean {
 export function App() {
   const [library, dispatch] = useReducer(libraryReducer, undefined, initLibrary);
   const play = currentPlay(library);
-  const playback = usePlayback(play);
+  const [watching, setWatching] = useState(() => isPhone() || parseHash(window.location.hash).kind !== 'none');
+  // A first visit on a phone watches the playbook's first play.
+  const [guest, setGuest] = useState<Guest | null>(() =>
+    library.firstVisit && isPhone() && parseHash(window.location.hash).kind === 'none' ? playbook()[0] : null,
+  );
+  const [notice, setNotice] = useState('');
+  const shown = guest?.play ?? play;
+  const playback = usePlayback(shown);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showRoutes, setShowRoutes] = useState(true);
   const [showForce, setShowForce] = useState(true);
@@ -36,11 +56,91 @@ export function App() {
   const [presenting, setPresenting] = useState(false);
   const [dialog, setDialog] = useState<DialogName>(null);
 
-  const view = evaluate(play, playback.time);
+  const view = evaluate(shown, playback.time);
   // Frame the close-up from the play as it was before a drag, so the view doesn't move under the pointer.
   const viewBox = closeUp ? fitView(library.dragBase ?? play) : FULL_VIEW;
   const editIndex = playback.frame;
   const activeIndex = editIndex ?? view.index;
+
+  // Links: #play=… opens a shared play, #playbook=… a playbook play, both in the watch view.
+  const playbackRef = useRef(playback);
+  useEffect(() => {
+    playbackRef.current = playback;
+  });
+  useEffect(() => {
+    let live = true;
+    const apply = async () => {
+      const route = parseHash(window.location.hash);
+      if (route.kind === 'none') return;
+      setWatching(true);
+      setDialog(null);
+      setPresenting(false);
+      if (route.kind === 'playbook') {
+        const entry = playbook().find((e) => e.slug === route.slug);
+        setGuest(entry ?? null);
+        setNotice(entry ? '' : 'That play isn’t in the playbook any more. Here is one of yours instead.');
+      } else {
+        try {
+          const shared = await decodePlay(route.code);
+          if (!live) return;
+          setGuest({ play: shared });
+          setNotice('');
+        } catch (err) {
+          if (!live) return;
+          setGuest(null);
+          setNotice(err instanceof Error ? err.message : 'That link could not be opened.');
+        }
+      }
+      playbackRef.current.goToFrame(0);
+    };
+    apply();
+    window.addEventListener('hashchange', apply);
+    return () => {
+      live = false;
+      window.removeEventListener('hashchange', apply);
+    };
+  }, []);
+
+  /** Forget the link in the address bar, so a reload shows your own plays. */
+  const clearLink = () => {
+    if (window.location.hash) window.history.replaceState(null, '', pageAddress());
+  };
+  const watchPlaybook = (slug: string) => {
+    const entry = playbook().find((e) => e.slug === slug);
+    if (!entry) return;
+    window.history.replaceState(null, '', `${pageAddress()}#playbook=${slug}`);
+    setGuest(entry);
+    setNotice('');
+    playback.goToFrame(0, entry.play);
+    setDialog(null);
+  };
+  const watchMine = (id: string) => {
+    clearLink();
+    setGuest(null);
+    setNotice('');
+    dispatch({ type: 'open', id });
+    playback.goToFrame(0);
+    setDialog(null);
+  };
+  const copyGuest = () => {
+    if (!guest) return;
+    const now = Date.now();
+    dispatch({ type: 'create', play: { ...guest.play, id: newId('play'), createdAt: now, updatedAt: now } });
+    clearLink();
+    setGuest(null);
+    setSelectedId(null);
+    playback.goToFrame(0);
+    // On a phone, keep watching your new copy; on a computer, start editing it.
+    if (isPhone()) setNotice('Saved to your plays. Open “Plays” to find it again.');
+    else setWatching(false);
+  };
+  const startEditing = () => {
+    clearLink();
+    setGuest(null);
+    setNotice('');
+    setWatching(false);
+    playback.goToFrame(0);
+  };
 
   // Save to the browser shortly after each change.
   useEffect(() => {
@@ -72,6 +172,7 @@ export function App() {
   const keys = useRef<(e: KeyboardEvent) => void>(() => {});
   const onKey = (e: KeyboardEvent) => {
     if (dialog || isTyping(e.target)) return;
+    if (watching && !['ArrowRight', 'ArrowLeft', 'Home', ' '].includes(e.key)) return;
     const mod = e.metaKey || e.ctrlKey;
     if (mod && e.key.toLowerCase() === 'z') {
       dispatch({ type: e.shiftKey ? 'redo' : 'undo' });
@@ -120,6 +221,38 @@ export function App() {
 
   const steps = play.frames.length - 1;
 
+  if (watching) {
+    return (
+      <>
+        <Watch
+          play={shown}
+          playback={playback}
+          guest={guest !== null}
+          notice={notice}
+          onPlays={() => setDialog('watchPlays')}
+          onShare={() => setDialog('share')}
+          onCopy={copyGuest}
+          onEdit={startEditing}
+        />
+        {dialog === 'watchPlays' && (
+          <WatchPlaysDialog
+            entries={playbook()}
+            mine={library.plays}
+            onPlaybook={watchPlaybook}
+            onMine={watchMine}
+            onNew={() => {
+              dispatch({ type: 'create', play: createPlay('Vertical stack play') });
+              setDialog(null);
+              startEditing();
+            }}
+            onClose={() => setDialog(null)}
+          />
+        )}
+        {dialog === 'share' && <ShareDialog play={shown} slug={guest?.slug} onClose={() => setDialog(null)} />}
+      </>
+    );
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -163,6 +296,20 @@ export function App() {
           </button>
           <button type="button" className="icon-btn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)" onClick={() => setDialog('shortcuts')}>
             <Icon name="keyboard" />
+          </button>
+          <button type="button" className="btn btn-quiet" onClick={() => setDialog('share')} title="A link that opens this play">
+            <Icon name="share" size={16} /> Share
+          </button>
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={() => {
+              setSelectedId(null);
+              setWatching(true);
+            }}
+            title="Watch the play the way your team will see it"
+          >
+            <Icon name="watch" size={16} /> Watch
           </button>
           <button type="button" className="btn btn-primary" onClick={() => setPresenting(true)} title="Clean full-screen view for recording (P)">
             <Icon name="present" size={16} /> Present
@@ -261,6 +408,7 @@ export function App() {
         />
       )}
       {dialog === 'shortcuts' && <ShortcutsDialog onClose={() => setDialog(null)} />}
+      {dialog === 'share' && <ShareDialog play={play} onClose={() => setDialog(null)} />}
     </div>
   );
 }

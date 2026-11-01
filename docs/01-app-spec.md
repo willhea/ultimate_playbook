@@ -241,7 +241,7 @@ Built in [`app/`](../app/). Covered by unit tests for the logic and a small set 
 | Steps | S-1, S-2 (one bend point), S-3, S-4 (curve control, no named throw types yet), S-8 (add, reorder, delete), release timing for each throw | S-5 per-player timing, S-6 automatic lead passes, S-7 timeline bars, S-9 branches, S-10 stall count |
 | Playback | P-1, P-2, P-3 scrubbing, P-4, P-5 loop, P-7 runs on/off, P-8 easing | P-6 pause points (→ "play the next step" covers most of it) |
 | Recording | R-1 Present mode (full screen), R-5 readable sizes and colours | Parked items |
-| Saving | D-1 autosave in the browser, D-2 export/import (file or copied text), six example stack plays to copy from | D-0 a public web address (the prototype is shared as a private claude.ai link for now), D-3 share links |
+| Saving | D-0 a public web address (GitHub Pages, published on every merge), D-1 autosave in the browser, D-2 export/import (file or copied text), **D-3 share links** that carry the whole play and open a phone-friendly watch view, and a public playbook of the built-in plays with short links | Team playbooks with logins (only if links aren't enough) |
 
 ## 11. MVP definition of done
 

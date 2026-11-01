@@ -30,6 +30,10 @@ test('no serious accessibility problems in the editor or a dialog', async ({ app
   await app.button('Plays').click();
   await expect(page.getByRole('button', { name: 'New vertical stack' })).toBeFocused();
   expect(await serious()).toEqual([]);
+  await page.keyboard.press('Escape');
+  await app.button('Watch').click();
+  await expect(app.watchField).toBeVisible();
+  expect(await serious()).toEqual([]);
 });
 
 test('laptop and narrow windows never scroll sideways', async ({ app, page }) => {

@@ -12,6 +12,8 @@ const PATHS = {
   list: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
   close: 'M6 6l12 12M18 6L6 18',
   keyboard: 'M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10',
+  share: 'M5 12v7h14v-7M12 3v12M7.5 7.5L12 3l4.5 4.5',
+  watch: 'M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12zM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z',
 } as const;
 
 const FILLED = new Set(['play', 'pause', 'stepForward', 'stepBack', 'restart']);
