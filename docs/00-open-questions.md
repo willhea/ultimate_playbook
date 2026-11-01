@@ -20,6 +20,9 @@
 | 14 | Branching plays | **Later.** "We can always add more complexity." | Not in V1/V2. |
 | 15 | What the coach wants from the project | **A good tool for sharing plays with their team, not learning to code.** | Claude writes the code; explanations stay at the level of what the app does. |
 | 16 | How will plays be built? | **Mostly by describing them to an AI and refining them in conversation. Editing by hand stays as an option.** | The play script becomes the main authoring format, with an authoring guide and a validate-and-picture loop (see the [plan](plan.md)). Good automatic behavior (defense, cutting, timing) matters more than editing controls. |
+| 17 | Public or private? | **Public. The plays are fine to be public (recreational leagues), and anyone should be able to make their own plays.** | The repository goes public; plays in it form a public playbook; the app stays open to anyone with no login. |
+| 18 | How will the team watch? | **Mostly on phones.** | A phone-friendly watch view comes before more editing features; share links open it. |
+| 19 | Hosting | **GitHub Pages for now, at no cost. The coach owns `willhea.com` and could point it at the app later.** | CI publishes every merge to `main`. |
 
 ## Proposed defaults (say if you disagree)
 
@@ -32,8 +35,8 @@
 
 ## Still open (none of these block the MVP)
 
-8. **Sharing:** for "anyone can build plays" and sharing with a team, is "send a link, they watch or copy the play" enough, or do you eventually want team playbooks with logins? *TBD (November 2026). Current assumption: links first (V2), logins Later.*
-9. **Budget:** any monthly budget for hosting or services? *Not sure yet. Current assumption: $0 for MVP (free static hosting).*
+8. **Sharing:** *Mostly settled by #17–#19:* share links for any play, plus a public playbook in the repository. Team logins only if those turn out not to be enough.
+9. **Budget:** *$0 so far (GitHub Pages is free for public repositories).* A budget only matters for paid services, such as calling Claude from inside the app.
 11. **Name:** "Play Animator" is a placeholder. *Later.*
 
 ## Parked (revisit when we get to videos / 3D)

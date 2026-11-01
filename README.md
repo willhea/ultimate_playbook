@@ -7,8 +7,8 @@ Tools and a video series for teaching ultimate frisbee visually.
 > [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
 > **[ASSUMPTION]** is a guess to confirm or change.
 >
-> **Next up:** see [`docs/plan.md`](docs/plan.md): refine how cutters and defenders move, then tools for
-> building plays by describing them to an AI (decision #16).
+> **Next up:** see [`docs/plan.md`](docs/plan.md): go public (a free web address, share links,
+> and a watch view for phones), then refine how cutters and defenders move.
 
 ## The three workstreams
 

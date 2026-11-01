@@ -66,7 +66,7 @@ The coach expects to build plays mostly by describing them to an AI like Claude,
 - **Automatic behavior is the multiplier.** The more the app fills in by itself (defense, how cuts look, timing), the less an AI or a person has to spell out, and the more real every play looks. That is the next step.
 - **An AI needs to check its own work,** because the coach reviews from a phone: `validatePlay` plus pictures of each step (as `npm run screenshots` does for the examples).
 
-### 1. Version control and CI (November 2026)
+### 1. Version control and CI (November 2026; owner steps pending)
 
 The coach asked for tighter version control: `main` is protected and every change goes through a pull request.
 - **`main`** was created from the v0.7 code. This session's branch keeps working and opens pull requests into it.
@@ -78,9 +78,18 @@ The coach asked for tighter version control: `main` is protected and every chang
   2. Settings → Rules → Rulesets → New branch ruleset for `main`: restrict deletions, require a pull request before merging (0 approvals, since the coach is the only reviewer and can't approve their own pull requests), require status checks "Lint, types and unit tests" and "Browser tests", and block force pushes.
   3. Releases → Draft a new release → new tag `v0.7` on `main`. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
   4. Close Dependabot pull request #1 (it targets the old default branch); the new config reopens updates against `main`.
-- **Deploying (CD) waits on hosting:** the repository is private, and GitHub Pages for a private repository needs a paid plan (or making the repository public). Until then, the shareable prototype is the claude.ai link, published from a session.
+- **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
 
-### 2. Cutting: refine how offense and defense move (with the coach)
+### 2. Go public: a web address, share links, and a phone watch view
+
+Decisions #17–#19: the plays are public (recreational league), anyone can make their own plays, most teammates will watch on phones, and GitHub Pages hosts it for free (`https://willhea.github.io/ultimate_animations/`; the coach's `willhea.com` can be pointed at it later).
+
+1. **Publish on every merge** (small). A deploy job in CI, after the tests pass on `main`, builds the app and publishes it to GitHub Pages. Owner steps: make the repository public, then Settings → Pages → Source: "GitHub Actions". Add a license (MIT suggested; coach to confirm).
+2. **Watch view for phones.** Opening a play to watch, not edit: the field large, play/pause and step back/forward buttons sized for thumbs, the step's narration notes underneath, and the force and runs shown. Phones open this by default; the editor stays for laptops. Open question: in portrait, turn the field so the offense attacks up the screen.
+3. **Share links (spec D-3).** A Share button packs the play into the link itself (compressed, a few kilobytes), so there's no server and nothing stored. The link opens the watch view, with "Make my own copy" to edit it.
+4. **The public playbook.** Plays committed to the repository (as the examples are now) appear for everyone, grouped in the Plays list and in the watch view. New ones arrive through the AI authoring loop: the coach describes a play, an AI writes the script, opens a pull request with a picture of each step, and the coach merges.
+
+### 3. Cutting: refine how offense and defense move (with the coach)
 
 Today every player in a step starts and stops together, along one smooth curve, and defenders react instantly. Candidates, to rank with the coach:
 1. **Timing within a step** (spec S-5): a cutter starts, their defender reacts a beat late; a clear finishes before the next cut starts; the receiver keeps running through the catch.
@@ -91,21 +100,16 @@ Today every player in a step starts and stops together, along one smooth curve, 
 6. **Automatic clears:** a cutter who doesn't get the disc clears out to a sensible spot by themselves.
 7. **Speed:** sprints versus jogs; deep cuts flat out.
 
-### 3. AI authoring tools
+### 4. AI authoring tools
 - **Authoring guide** (`docs/play-authoring.md`): field coordinates (yards; attacking to the right; home sideline at the bottom, y = 40), the script format, the coaching rules from the decisions, and what the app does automatically (so a script only describes the offense and any deliberate defense).
 - **Import a script:** the app's Import accepts a play script as well as a full play file, so a play an AI wrote can be pasted straight in.
 - **A review command:** `npm run play <script>` validates a script and saves a picture of each step, so an AI session can check a play and send the pictures to the coach.
-- **Later:** a "describe a play" box in the app that calls Claude directly. That needs hosting, an API key and a budget, so it waits on those decisions.
-
-### 4. An end-zone example play
-
-Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check. A good first play to build through the AI authoring loop.
+- **First play through the loop:** "Vertical stack: end zone, front cuts first" (the coach's rule: end-zone cuts come from the front). The cut-from-the-back test then needs an end-zone exemption, by title or tag.
+- **Later:** a "describe a play" box in the app that calls Claude directly. That needs an API key and a budget, so it waits.
 
 ### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
-- **Go public:** host somewhere public once sharing and budget are decided (GitHub Pages needs a public repository or a paid plan); then add a deploy job to CI.
-- **Later:** iPad and touch, a stall count, the 3D pilot, and branching plays (decision #14).
-- **Still open with the coach:** sharing (links or team logins), hosting budget, and a name.
+- **Later:** iPad and touch editing, a stall count, the 3D pilot, branching plays (decision #14), and a name.
 
 ## Working notes (gotchas we've hit)
 
