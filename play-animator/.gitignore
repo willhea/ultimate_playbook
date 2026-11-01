@@ -4,3 +4,5 @@ dist-single
 test-results
 playwright-report
 screenshots
+.stryker-tmp
+reports
