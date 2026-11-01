@@ -1,6 +1,6 @@
 import type { Frame, Play, Player, Vec } from './types';
 import { newId } from './edit';
-import { verticalStack } from './formations';
+import { horizontalStack, verticalStack } from './formations';
 
 function sevenOnSeven(): Player[] {
   const players: Player[] = [];
@@ -24,7 +24,10 @@ function setupFrame(positions: Record<string, Vec>): Frame {
   };
 }
 
-export function createPlay(title = 'Untitled play'): Play {
+export type Formation = 'vertical' | 'horizontal';
+
+/** A new play: seven on seven, set up in a stack, with no steps yet. */
+export function createPlay(title = 'Untitled play', formation: Formation = 'vertical'): Play {
   const now = Date.now();
   return {
     version: 1,
@@ -33,6 +36,6 @@ export function createPlay(title = 'Untitled play'): Play {
     createdAt: now,
     updatedAt: now,
     players: sevenOnSeven(),
-    frames: [setupFrame(verticalStack())],
+    frames: [setupFrame(formation === 'horizontal' ? horizontalStack() : verticalStack())],
   };
 }

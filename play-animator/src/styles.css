@@ -1024,6 +1024,28 @@ input[type='range'] {
   color: var(--muted);
 }
 
+.dialog-subhead {
+  margin: 22px 0 0;
+  font: 600 18px/1.2 var(--font-display);
+}
+
+.example-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.example-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0 6px 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
 .status {
   min-height: 1.4em;
   margin: 10px 0 0;

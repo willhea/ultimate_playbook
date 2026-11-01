@@ -8,7 +8,8 @@ test.describe('saving plays', () => {
     await app.open();
     await expect(page.getByLabel('Ultimate Play Animator')).toHaveValue(examplePlays[0].title);
     await app.button('Plays').click();
-    for (const p of examplePlays) await expect(page.getByRole('dialog').getByText(p.title, { exact: true })).toBeVisible();
+    const yours = page.getByRole('dialog').locator('.play-list');
+    for (const p of examplePlays) await expect(yours.getByText(p.title, { exact: true })).toBeVisible();
   });
 
   test('changes are saved automatically and survive a reload (D-1)', async ({ app, page }) => {
@@ -26,12 +27,15 @@ test.describe('saving plays', () => {
     const title = page.getByLabel('Ultimate Play Animator');
 
     await app.button('Plays').click();
-    await dialog.getByRole('button', { name: 'New play' }).click();
-    await expect(title).toHaveValue('Untitled play');
+    await dialog.getByRole('button', { name: 'New horizontal stack' }).click();
+    await expect(title).toHaveValue('Horizontal stack play');
     await expect(page.locator('.steps .step-chip')).toHaveCount(2);
+    // A horizontal stack: four cutters level with each other across the field.
+    const cutters = await Promise.all(['O4', 'O5', 'O6', 'O7'].map((id) => app.playerState(id)));
+    expect(new Set(cutters.map((c) => c.x)).size).toBe(1);
 
     await app.button('Plays').click();
-    await dialog.getByRole('button', { name: /Vertical stack: under, then deep/ }).click();
+    await dialog.locator('.play-list').getByRole('button', { name: /Vertical stack: under, then deep/ }).click();
     await expect(title).toHaveValue('Vertical stack: under, then deep');
 
     await app.button('Plays').click();
@@ -40,9 +44,18 @@ test.describe('saving plays', () => {
 
     await app.button('Plays').click();
     await expect(dialog.locator('.play-list li')).toHaveCount(3);
-    await dialog.locator('.play-list li').filter({ hasText: 'Untitled play' }).getByRole('button', { name: 'Delete' }).click();
+    await dialog.locator('.play-list li').filter({ hasText: 'Horizontal stack play' }).getByRole('button', { name: 'Delete' }).click();
     await dialog.getByRole('button', { name: 'Confirm delete' }).click();
     await expect(dialog.locator('.play-list li')).toHaveCount(2);
+  });
+
+  test('a copy of an example play can be added from the Plays list', async ({ app, page }) => {
+    await app.open({ plays: [createPlay('Mine')] });
+    await app.button('Plays').click();
+    await page.getByRole('button', { name: 'Add a copy of Horizontal stack: wing isolation' }).click();
+    await expect(page.getByLabel('Ultimate Play Animator')).toHaveValue('Horizontal stack: wing isolation');
+    await expect(page.locator('.steps .step-chip')).toHaveCount(4);
+    await expect.poll(async () => (await app.savedPlays()).length).toBe(2);
   });
 
   test('an exported play imports back as a new copy (D-2)', async ({ app, page }) => {

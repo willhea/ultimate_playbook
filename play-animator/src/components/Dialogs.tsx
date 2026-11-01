@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Play } from '../model/types';
+import type { Formation } from '../model/defaults';
 import { exportPlay, fileNameFor, importPlay } from '../model/storage';
 import { Icon } from './Icon';
 import { detectDownloads, saveFile, type DownloadSupport } from '../hostDownloads';
@@ -42,6 +43,8 @@ export function PlaysDialog({
   currentId,
   onOpen,
   onNew,
+  examples,
+  onAddExample,
   onDuplicate,
   onDelete,
   onClose,
@@ -49,7 +52,10 @@ export function PlaysDialog({
   plays: Play[];
   currentId: string;
   onOpen: (id: string) => void;
-  onNew: () => void;
+  onNew: (formation: Formation) => void;
+  /** Titles of the built-in example plays; picking one adds a fresh copy. */
+  examples: string[];
+  onAddExample: (index: number) => void;
   onDuplicate: () => void;
   onDelete: (id: string) => void;
   onClose: () => void;
@@ -60,8 +66,11 @@ export function PlaysDialog({
     <Modal title="Your plays" onClose={onClose}>
       <p className="hint">Plays are saved in this browser automatically. Use Export to keep a copy or move a play to another computer.</p>
       <div className="button-row">
-        <button type="button" className="btn btn-primary" onClick={onNew} data-autofocus>
-          New play
+        <button type="button" className="btn btn-primary" onClick={() => onNew('vertical')} data-autofocus>
+          New vertical stack
+        </button>
+        <button type="button" className="btn btn-primary" onClick={() => onNew('horizontal')}>
+          New horizontal stack
         </button>
         <button type="button" className="btn btn-quiet" onClick={onDuplicate}>
           Duplicate this play
@@ -86,6 +95,18 @@ export function PlaysDialog({
                 Delete
               </button>
             )}
+          </li>
+        ))}
+      </ul>
+      <h3 className="dialog-subhead">Example plays</h3>
+      <p className="hint">Add a fresh copy of an example to change it without losing the original.</p>
+      <ul className="example-list">
+        {examples.map((title, i) => (
+          <li key={title}>
+            <span>{title}</span>
+            <button type="button" className="btn btn-quiet" onClick={() => onAddExample(i)} aria-label={`Add a copy of ${title}`}>
+              Add a copy
+            </button>
           </li>
         ))}
       </ul>

@@ -2,6 +2,9 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import type { Play } from './model/types';
 import { evaluate, staticFacing } from './model/engine';
 import { addStep, setFacing } from './model/edit';
+import { createPlay } from './model/defaults';
+import { examplePlays } from './plays';
+import { scriptPlay } from './plays/script';
 import { saveCurrentId, savePlays } from './model/storage';
 import { FULL_VIEW, type ViewBox } from './model/field';
 import { fitView } from './model/view';
@@ -219,8 +222,15 @@ export function App() {
           plays={library.plays}
           currentId={library.currentId}
           onOpen={openPlay}
-          onNew={() => {
-            dispatch({ type: 'create' });
+          onNew={(formation) => {
+            dispatch({ type: 'create', play: createPlay(formation === 'horizontal' ? 'Horizontal stack play' : 'Vertical stack play', formation) });
+            setSelectedId(null);
+            playback.goToFrame(0);
+            setDialog(null);
+          }}
+          examples={examplePlays.map((e) => e.title)}
+          onAddExample={(i) => {
+            dispatch({ type: 'create', play: scriptPlay(examplePlays[i]) });
             setSelectedId(null);
             playback.goToFrame(0);
             setDialog(null);

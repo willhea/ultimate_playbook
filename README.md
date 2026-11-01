@@ -7,7 +7,8 @@ Tools and a video series for teaching ultimate frisbee visually.
 > [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
 > **[ASSUMPTION]** is a guess to confirm or change.
 >
-> **Current focus:** using the prototype on real plays and collecting what's slow or missing.
+> **Current focus:** vertical and horizontal stack plays ([research](docs/research/stacks.md)),
+> and an automated test suite so the app can be built and checked without hands-on testing.
 
 ## The three workstreams
 
@@ -33,7 +34,7 @@ can start whenever you want.
 
 1. **Confirm the specs.** ✅ First round done.
 2. **Play Animator MVP.** Draw a play, animate it, save it, and replay it in a laptop browser. 🟡 Prototype built; see the status table in the spec.
-3. **Use it.** Build a handful of real plays and note what's slow or missing.
+3. **Use it.** Build a handful of real plays and note what's slow or missing. 🟡 Six stack plays built; the main lesson so far is that defenders should follow their player automatically.
 4. **Revisit videos.** Decide the video workflow (Spec 2) and make a pilot episode.
 5. **Tool V2.** Fix whatever slowed down steps 3–4. iPad support, annotations, and presentation features land here.
 6. **3D pilot.** One 10–20 second clip, for example a mark shuffling to stop a break throw, to test the 3D pipeline before committing to it.

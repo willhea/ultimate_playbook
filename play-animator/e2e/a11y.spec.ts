@@ -47,7 +47,7 @@ test.describe('accessibility', () => {
     await app.button('Plays').focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByRole('dialog').getByRole('button', { name: 'New play' })).toBeFocused();
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'New vertical stack' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
