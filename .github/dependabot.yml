@@ -3,7 +3,7 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /play-animator
+    directory: /app
     target-branch: main
     schedule:
       interval: weekly

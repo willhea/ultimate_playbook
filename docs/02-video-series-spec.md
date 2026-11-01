@@ -1,14 +1,14 @@
 # Spec 2: Strategy video series
 
-> **Status: parked.** The goal stands: make plays in the Play Animator and turn
+> **Status: parked.** The goal stands: make plays in the Ultimate Playbook and turn
 > them into videos with voiceovers. How videos are made (format, voice, recording,
-> editing) will be decided after the Play Animator MVP exists. This document is
+> editing) will be decided after the Ultimate Playbook MVP exists. This document is
 > kept as a starting point for that.
 
 ## 1. Summary
 
-Short instructional videos explaining ultimate strategy. Each one uses Play
-Animator animations (Spec 1) with a voiceover, and some episodes also use 3D
+Short instructional videos explaining ultimate strategy. Each one uses Ultimate
+Playbook animations (Spec 1) with a voiceover, and some episodes also use 3D
 technique clips (Spec 3).
 
 ## 2. Things to decide (each one affects the tool)
@@ -35,7 +35,7 @@ A short-form version keeps steps 1, 3 (condensed), and 7.
 
 ## 4. Draft episode ideas
 
-Strategy (Play Animator):
+Strategy (Ultimate Playbook):
 1. Field, positions, and how to read these diagrams (a "legend" episode the others can link to).
 2. Vertical stack: cutting lanes and timing.
 3. Horizontal stack: isolating cutters.
@@ -55,7 +55,7 @@ Technique (3D, see Spec 3):
 ## 5. Production pipeline
 
 ```
-Script ─► Build play in Play Animator ─► Record voiceover ─► Record animation ─► Edit ─► Captions ─► Publish
+Script ─► Build play in Ultimate Playbook ─► Record voiceover ─► Record animation ─► Edit ─► Captions ─► Publish
             (match steps to script)         (or record first and fit the VO later)
 ```
 

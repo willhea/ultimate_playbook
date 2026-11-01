@@ -1,4 +1,4 @@
-# Spec 1: Play Animator (the tool)
+# Spec 1: Ultimate Playbook (the tool)
 
 ## 1. One-sentence summary
 
@@ -232,7 +232,7 @@ Do they show facing direction? Do they handle curved throws, force, and marks we
 
 ## 10. Prototype status (v0.2)
 
-Built in [`play-animator/`](../play-animator/). Covered by unit tests for the logic and a small set of browser tests (one per user journey) that run on every push; see the app's README.
+Built in [`app/`](../app/). Covered by unit tests for the logic and a small set of browser tests (one per user journey) that run on every push; see the app's README.
 
 | Area | Done in the prototype | Not yet |
 |------|----------------------|---------|

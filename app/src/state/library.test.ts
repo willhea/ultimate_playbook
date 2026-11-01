@@ -79,7 +79,7 @@ describe('opening the app', () => {
   it('reopens the play that was open last time', () => {
     const a = createPlay('A');
     const b = createPlay('B');
-    vi.stubGlobal('localStorage', storage({ 'ultimate-animations:plays': JSON.stringify([a, b]), 'ultimate-animations:current': b.id }));
+    vi.stubGlobal('localStorage', storage({ 'ultimate-playbook:plays': JSON.stringify([a, b]), 'ultimate-playbook:current': b.id }));
     expect(currentPlay(initLibrary()).title).toBe('B');
   });
 });

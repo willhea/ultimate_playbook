@@ -3,7 +3,7 @@
 The words this project uses for ultimate, so the coach, the app and the videos
 all mean the same thing. Where teams or sources use a word differently, the
 entry says so, and says which meaning **we** use. Terms marked **(app)** are
-also words on the Play Animator's screen or in its code.
+also words on the app's screen or in its code.
 
 > **How this was researched (November 2026).** From web search results: coaching
 > glossaries, USA Ultimate's rules pages and skills manual, Ultiworld, Flik,
@@ -23,7 +23,7 @@ also words on the Play Animator's screen or in its code.
 7. [Zone defense and zone offense](#zone-defense-and-zone-offense)
 8. [Rules, calls and the flow of a point](#rules-calls-and-the-flow-of-a-point)
 9. [Big plays](#big-plays)
-10. [Play Animator words](#play-animator-words)
+10. [App words](#app-words)
 11. [Where sources disagree](#where-sources-disagree)
 12. [Questions for you](#questions-for-you)
 
@@ -173,7 +173,7 @@ The descriptions are for a right-handed thrower.
 - **D / block.** A defensive stop: getting a hand, foot or body on the disc to stop a completion. "Getting a D" means making one.
 - **Box out.** Using your body position (legally) to keep an opponent away from where the disc will land.
 
-## Play Animator words
+## App words
 
 - **Play.** A saved sequence: a setup and steps.
 - **Setup.** Where everyone starts, before the first step.

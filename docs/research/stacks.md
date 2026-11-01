@@ -1,8 +1,8 @@
 # Research: the vertical and horizontal stack
 
-The two most common offensive formations in ultimate, and how the Play Animator
+The two most common offensive formations in ultimate, and how the Ultimate Playbook
 models them. This document is where the formation templates and example plays
-in `play-animator/src/model/formations.ts` and `play-animator/src/plays/` come from.
+in `app/src/model/formations.ts` and `app/src/plays/` come from.
 
 > **How this was researched.** These notes come from web search summaries of
 > coaching articles. Two of the best sources, Ultiworld and Flik, are blocked

@@ -1,7 +1,7 @@
-# Ultimate Play Animator (prototype)
+# Ultimate Playbook (prototype)
 
 A browser app for drawing ultimate plays on a USA Ultimate field and animating
-them step by step. See [`../docs/01-play-animator-spec.md`](../docs/01-play-animator-spec.md)
+them step by step. See [`../docs/01-app-spec.md`](../docs/01-app-spec.md)
 for what it's meant to become.
 
 ## Using it
@@ -23,7 +23,7 @@ for what it's meant to become.
 Requires Node.js 20 or later.
 
 ```sh
-cd play-animator
+cd app
 npm install
 npm run dev        # open the printed http://localhost:5173 link
 ```
@@ -38,7 +38,7 @@ Other commands:
 | `npm run test:mutation` | Mutation testing with [Stryker](https://stryker-mutator.io), about 15 min. It makes hundreds of small changes to the logic and reports any that no unit test notices; see `reports/mutation/index.html`. Run it after big changes to the logic. Not part of CI. |
 | `npm run screenshots` | Saves pictures of every example play step, dark mode and a narrow window to `screenshots/` for looking over. It never fails. |
 | `npm run build` | Builds a static site into `dist/` that any static host (e.g. GitHub Pages) can serve. |
-| `npm run build:single` | Builds everything into one HTML file, `dist-single/play-animator.html`, for sharing as a single page. |
+| `npm run build:single` | Builds everything into one HTML file, `dist-single/ultimate-playbook.html`, for sharing as a single page. |
 
 ## Tests
 

@@ -3,8 +3,8 @@ import type { Play } from './types';
 import { newId } from './edit';
 import { upgradeDefenders } from './defenders';
 
-const PLAYS_KEY = 'ultimate-animations:plays';
-const CURRENT_KEY = 'ultimate-animations:current';
+const PLAYS_KEY = 'ultimate-playbook:plays';
+const CURRENT_KEY = 'ultimate-playbook:current';
 
 export function loadPlays(): Play[] {
   try {

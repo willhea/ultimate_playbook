@@ -5,9 +5,9 @@ continue in a fresh session with no other context. Update it when a step lands.
 
 ## Where we are (November 2026)
 
-- **Specs:** [`01-play-animator-spec.md`](01-play-animator-spec.md) for the tool (its §10 has a status table), plus [`02-video-series-spec.md`](02-video-series-spec.md) (parked) and [`03-3d-technique-videos-spec.md`](03-3d-technique-videos-spec.md) (not started). Decisions so far are in [`00-open-questions.md`](00-open-questions.md).
+- **Specs:** [`01-app-spec.md`](01-app-spec.md) for the tool (its §10 has a status table), plus [`02-video-series-spec.md`](02-video-series-spec.md) (parked) and [`03-3d-technique-videos-spec.md`](03-3d-technique-videos-spec.md) (not started). Decisions so far are in [`00-open-questions.md`](00-open-questions.md).
 - **Research:** [`research/stacks.md`](research/stacks.md) covers the vertical and horizontal stack.
-- **App:** [`play-animator/`](../play-animator/), a laptop-first web app (React, TypeScript, Vite, SVG field).
+- **App:** [`app/`](../app/), a laptop-first web app (React, TypeScript, Vite, SVG field).
   - Building a play: numbered players with automatic facing, defenders who follow their player, step-by-step plays, curved runs and throws.
   - Watching it: playback, a close-up view, and Present mode.
   - Keeping it: undo/redo, autosave, import/export.
@@ -70,7 +70,7 @@ The coach expects to build plays mostly by describing them to an AI like Claude,
 
 The coach asked for tighter version control: `main` is protected and every change goes through a pull request.
 - **`main`** was created from the v0.7 code. This session's branch keeps working and opens pull requests into it.
-- **CI** (`.github/workflows/play-animator.yml`) runs lint, types, unit and browser tests on every pull request (no path filters, so required checks never hang) and on every push to `main`. On `main` it then builds the app and attaches a downloadable `play-animator-<commit>` file, kept for 90 days.
+- **CI** (`.github/workflows/ci.yml`) runs lint, types, unit and browser tests on every pull request (no path filters, so required checks never hang) and on every push to `main`. On `main` it then builds the app and attaches a downloadable `ultimate-playbook-<commit>` file, kept for 90 days.
 - **Dependabot** (`.github/dependabot.yml`) opens grouped weekly updates into `main`. It skips `@playwright/test` (pinned) and TypeScript 7.
 - **Pull request template** (`.github/pull_request_template.md`): what changes for the coach, how it was checked, and decisions.
 - **Owner steps (only the repository owner can do these, in GitHub's settings on the website):**
@@ -78,7 +78,7 @@ The coach asked for tighter version control: `main` is protected and every chang
   2. Settings → Rules → Rulesets → New branch ruleset for `main`: restrict deletions, require a pull request before merging (0 approvals, since the coach is the only reviewer and can't approve their own pull requests), require status checks "Lint, types and unit tests" and "Browser tests", and block force pushes.
   3. Releases → Draft a new release → new tag `v0.7` on `main`. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
   4. Close Dependabot pull request #1 (it targets the old default branch); the new config reopens updates against `main`.
-- **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026). Browser storage keys keep their old `ultimate-animations:` prefix on purpose, so plays already saved in browsers aren't lost.
+- **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026), and everything followed the new name (decision #20): the app is "Ultimate Playbook" in `app/`, CI is `.github/workflows/ci.yml`, and browser storage keys start `ultimate-playbook:`. The cloud session's clone may still sit in a folder with the old name, and GitHub forwards the old repository name.
 - **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
 
 ### 2. Go public: a web address, share links, and a phone watch view
@@ -110,18 +110,18 @@ Today every player in a step starts and stops together, along one smooth curve, 
 
 ### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
-- **Later:** iPad and touch editing, a stall count, the 3D pilot, branching plays (decision #14), and a name.
+- **Later:** iPad and touch editing, a stall count, the 3D pilot, and branching plays (decision #14).
 
 ## Working notes (gotchas we've hit)
 
-- **Commands** (run in `play-animator/`): `npm run check` before every push. It runs lint, types, unit tests and browser tests. `npm run screenshots` saves pictures to `screenshots/` for checking plays by eye; look at them after changing a play. `npm run test:mutation` runs Stryker (about 10 min, report in `reports/mutation/`).
+- **Commands** (run in `app/`): `npm run check` before every push. It runs lint, types, unit tests and browser tests. `npm run screenshots` saves pictures to `screenshots/` for checking plays by eye; look at them after changing a play. `npm run test:mutation` runs Stryker (about 10 min, report in `reports/mutation/`).
 - **Playwright is pinned to 1.56.1** because that version matches the Chromium pre-installed in cloud sessions (`/opt/pw-browsers/chromium-1194`). CI runs browser tests in the `mcr.microsoft.com/playwright:v1.56.1-noble` container, because GitHub's `ubuntu-latest` (26.04) can't install Playwright 1.56's browser. If you upgrade Playwright, update both.
 - **TypeScript is 6.0**, not 7, because `typescript-eslint` doesn't support 7 yet.
 - **Property tests use a fixed seed** (`src/test/setup.ts`). `FC_SEED=random npm test` explores new cases.
 - **Browser tests read what's drawn,** not test-only attributes: positions come from SVG transforms, and facing from the wedge's rotation. `e2e/fixtures.ts` `snapshot()` reads a whole frame in one go; don't read attributes one at a time while an animation runs.
 - **First visit seeds the example plays.** A browser that already has saved plays keeps them, so tell the user to use Plays → "Add a copy" to see new or changed examples.
 - **Publishing the prototype link** (https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ). Run `npm run build:single`, then use whichever publishing tool the session has:
-  - **The `Artifact` tool:** publish `dist-single/play-animator.html` (a page fragment) with `url` set to the link. If it refuses because the live version came from a different tool, Read the saved copy it names, confirm it's only an older build of this app, and publish again.
+  - **The `Artifact` tool:** publish `dist-single/ultimate-playbook.html` (a page fragment) with `url` set to the link. If it refuses because the live version came from a different tool, Read the saved copy it names, confirm it's only an older build of this app, and publish again.
   - **The claude-artifacts connector:** publish `dist-single/index.html` as `index.html` with `publish_files`, slug `884e0831-9ebb-4784-a3bf-b182a257c5d3`, and `base_version` from `get_artifact`. First change the doctype to `<!DOCTYPE html>` and remove `viewport-fit=cover`.
   - Either way, the artifact keeps its `downloads` capability, so Export's Download button works.
 - **Network:** ultiworld.com and flikulti.com are blocked in cloud sessions, so research uses search results only.

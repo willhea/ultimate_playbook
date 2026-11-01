@@ -44,7 +44,7 @@ test('laptop and narrow windows never scroll sideways', async ({ app, page }) =>
 test('the one-file build works when a host page wraps it (the shareable link)', async ({ app, page }) => {
   const root = fileURLToPath(new URL('..', import.meta.url));
   execSync('npx vite build --mode single && node scripts/to-artifact.mjs', { cwd: root, stdio: 'pipe' });
-  const fragment = readFileSync(`${root}/dist-single/play-animator.html`, 'utf8');
+  const fragment = readFileSync(`${root}/dist-single/ultimate-playbook.html`, 'utf8');
   const page_ = `<!doctype html><html><head><meta charset="utf-8"></head><body>${fragment}</body></html>`;
   await page.route('https://artifact.test/**', (route) => route.fulfill({ contentType: 'text/html', body: page_ }));
   await page.goto('https://artifact.test/');

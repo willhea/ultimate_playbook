@@ -131,7 +131,7 @@ export function App() {
         </div>
         <div className="title-block">
           <label htmlFor="play-title" className="eyebrow">
-            Ultimate Play Animator
+            Ultimate Playbook
           </label>
           <input
             id="play-title"

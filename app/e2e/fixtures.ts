@@ -7,8 +7,8 @@ import type { Play, Vec } from '../src/model/types';
 
 export { expect };
 
-const PLAYS_KEY = 'ultimate-animations:plays';
-const CURRENT_KEY = 'ultimate-animations:current';
+const PLAYS_KEY = 'ultimate-playbook:plays';
+const CURRENT_KEY = 'ultimate-playbook:current';
 
 export interface PlayerState {
   x: number;

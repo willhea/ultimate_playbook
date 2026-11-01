@@ -13,5 +13,5 @@ const body = html.match(/<body>([\s\S]*?)<\/body>/)?.[1] ?? '';
 const bodyWithoutScripts = body.replace(/<script[\s\S]*?<\/script>/g, '').trim();
 
 const out = [...title, ...links, ...styles, bodyWithoutScripts, ...scripts].join('\n');
-writeFileSync('dist-single/play-animator.html', out);
-console.log(`dist-single/play-animator.html (${(out.length / 1024).toFixed(0)} KB)`);
+writeFileSync('dist-single/ultimate-playbook.html', out);
+console.log(`dist-single/ultimate-playbook.html (${(out.length / 1024).toFixed(0)} KB)`);

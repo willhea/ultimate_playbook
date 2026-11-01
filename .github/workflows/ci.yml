@@ -1,4 +1,4 @@
-name: Play Animator
+name: Ultimate Playbook
 
 # Every pull request runs the checks (even docs-only ones, so required checks on
 # `main` never wait forever), and so does every change that lands on `main`.
@@ -9,12 +9,12 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: play-animator-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 defaults:
   run:
-    working-directory: play-animator
+    working-directory: app
 
 jobs:
   checks:
@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: play-animator/package-lock.json
+          cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: play-animator/package-lock.json
+          cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run test:e2e
         env:
@@ -57,8 +57,8 @@ jobs:
         with:
           name: playwright-report
           path: |
-            play-animator/playwright-report
-            play-animator/test-results
+            app/playwright-report
+            app/test-results
           retention-days: 14
 
   build:
@@ -75,13 +75,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: play-animator/package-lock.json
+          cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run build:single
       - uses: actions/upload-artifact@v5
         with:
-          name: play-animator-${{ github.sha }}
-          path: play-animator/dist-single/index.html
+          name: ultimate-playbook-${{ github.sha }}
+          path: app/dist-single/index.html
           retention-days: 90
 
   deploy:
@@ -108,12 +108,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: play-animator/package-lock.json
+          cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: play-animator/dist
+          path: app/dist
       - id: deployment
         uses: actions/deploy-pages@v4

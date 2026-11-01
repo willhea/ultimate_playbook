@@ -23,6 +23,7 @@
 | 17 | Public or private? | **Public. The plays are fine to be public (recreational leagues), and anyone should be able to make their own plays.** | The repository goes public; plays in it form a public playbook; the app stays open to anyone with no login. |
 | 18 | How will the team watch? | **Mostly on phones.** | A phone-friendly watch view comes before more editing features; share links open it. |
 | 19 | Hosting | **GitHub Pages for now, at no cost. The coach owns `willhea.com` and could point it at the app later.** | CI publishes every merge to `main`. |
+| 20 | Name | **Ultimate Playbook.** The coach renamed the repository `ultimate_playbook`; the app, docs, folders and browser storage follow (no one had used the app yet). | The app lives in `app/`; CI is `.github/workflows/ci.yml`. |
 
 ## Proposed defaults (say if you disagree)
 
@@ -37,7 +38,6 @@
 
 8. **Sharing:** *Mostly settled by #17–#19:* share links for any play, plus a public playbook in the repository. Team logins only if those turn out not to be enough.
 9. **Budget:** *$0 so far (GitHub Pages is free for public repositories).* A budget only matters for paid services, such as calling Claude from inside the app.
-11. **Name:** "Play Animator" is a placeholder. *Later.*
 
 ## Parked (revisit when we get to videos / 3D)
 
