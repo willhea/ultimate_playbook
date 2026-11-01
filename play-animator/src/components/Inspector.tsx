@@ -13,11 +13,13 @@ import {
   setFacing,
   setGuards,
   setHolder,
+  setManual,
   stepLabel,
   teamPlayers,
   updateFrame,
 } from '../model/edit';
 import { dist } from '../model/geometry';
+import { isManual } from '../model/defenders';
 import { FacingDial } from './FacingDial';
 import { Icon } from './Icon';
 
@@ -186,6 +188,11 @@ function PlayerPanel({ play, editIndex, selectedId, onSelect, onEdit, onPreview,
   const moved = prev ? dist(prev.positions[player.id], f.positions[player.id]) > 0.05 : false;
   const curved = Boolean(f.curves[player.id]);
   const hasDisc = f.discHolder === player.id;
+  const guarded = play.players.find((p) => p.id === player.guards);
+  // Defenders who guard someone follow them in each step unless placed by hand.
+  const followable = Boolean(guarded) && editIndex > 0;
+  const byHand = isManual(f, player.id);
+  const following = followable && !byHand;
   const color = player.team === 'O' ? 'var(--offense)' : 'var(--defense)';
 
   return (
@@ -253,18 +260,37 @@ function PlayerPanel({ play, editIndex, selectedId, onSelect, onEdit, onPreview,
         </>
       )}
 
+      {followable && guarded && (
+        <>
+          <p className="field-label">Position</p>
+          <div className="segmented" role="group" aria-label="Position mode">
+            <button type="button" className={following ? 'is-on' : ''} aria-pressed={following} onClick={() => onEdit(setManual(play, editIndex, player.id, false))}>
+              Automatic
+            </button>
+            <button type="button" className={byHand ? 'is-on' : ''} aria-pressed={byHand} onClick={() => onEdit(setManual(play, editIndex, player.id, true))}>
+              By hand
+            </button>
+          </div>
+          <p className="hint">
+            {byHand
+              ? 'Stays where you put them in this step.'
+              : `Follows Offense ${guarded.number}: trails them when they run and marks them when they catch the disc. Drag to place them yourself.`}
+          </p>
+        </>
+      )}
+
       <div className="button-row">
         {player.team === 'O' && !hasDisc && (
           <button type="button" className="btn btn-primary" onClick={() => onEdit(setHolder(play, editIndex, player.id))}>
             {editIndex === 0 ? 'Give them the disc' : 'Throw to them in this step'}
           </button>
         )}
-        {moved && (
+        {moved && !following && (
           <button type="button" className="btn btn-quiet" onClick={() => onEdit(resetMove(play, editIndex, player.id))}>
             Undo their run
           </button>
         )}
-        {curved && (
+        {curved && !following && (
           <button type="button" className="btn btn-quiet" onClick={() => onEdit(setCurve(play, editIndex, player.id, null))}>
             Straighten run
           </button>
@@ -342,6 +368,7 @@ function Tips({ play, editIndex }: { play: Play; editIndex: number }) {
           <li>Drag players to where they are at the end of {stepLabel(play, editIndex).toLowerCase() === `step ${editIndex}` ? 'this step' : `“${stepLabel(play, editIndex)}”`}.</li>
           <li>Drag the dot in the middle of a run to bend it. Double-click it to straighten.</li>
           <li>Drag the disc onto a teammate to throw it during this step.</li>
+          <li>Defenders follow the player they guard. Drag one to place them yourself.</li>
           <li>
             Press <kbd>→</kbd> to watch the next step, or <kbd>Space</kbd> to play.
           </li>

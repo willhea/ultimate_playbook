@@ -1,5 +1,5 @@
 /** Example plays from a horizontal stack. See docs/research/stacks.md. */
-import { horizontalStack, markSpot } from '../model/formations';
+import { horizontalStack } from '../model/formations';
 import type { PlayScript } from './script';
 
 const setup = horizontalStack({ disc: { x: 40, y: 20 } });
@@ -21,9 +21,7 @@ export const poppersSplit: PlayScript = {
       duration: 2.2,
       runs: {
         O6: { to: { x: 48, y: 27 }, bend: { x: 2, y: -1 } },
-        D6: { to: { x: 50.3, y: 25.5 }, bend: { x: 2, y: -1 } },
         O5: { to: { x: 70, y: 13 }, bend: { x: 0, y: -2 } },
-        D5: { to: { x: 67.8, y: 13.8 }, bend: { x: 0, y: -2 } },
       },
       throwTo: 'O6',
       release: 0.6,
@@ -44,9 +42,7 @@ export const wingIso: PlayScript = {
       duration: 2,
       runs: {
         O5: { to: { x: 68, y: 11 }, bend: { x: 0, y: -1 } },
-        D5: { x: 66.2, y: 12.6 },
         O6: { to: { x: 67, y: 19 }, bend: { x: 0, y: -2 } },
-        D6: { x: 65.2, y: 20.6 },
       },
     },
     {
@@ -55,7 +51,6 @@ export const wingIso: PlayScript = {
       duration: 2,
       runs: {
         O7: { to: { x: 47, y: 31 }, bend: { x: 2, y: 1 } },
-        D7: { to: { x: 49.2, y: 32.6 }, bend: { x: 2, y: 1 } },
       },
       throwTo: 'O7',
       release: 0.55,
@@ -76,7 +71,6 @@ export const swingThenCut: PlayScript = {
       duration: 1.6,
       runs: {
         O2: { x: 38, y: 9 },
-        D2: markSpot({ x: 38, y: 9 }),
       },
       throwTo: 'O2',
       release: 0.35,
@@ -87,7 +81,6 @@ export const swingThenCut: PlayScript = {
       duration: 2,
       runs: {
         O5: { to: { x: 46, y: 15 }, bend: { x: 2, y: -1 } },
-        D5: { to: { x: 48, y: 16.8 }, bend: { x: 2, y: -1 } },
       },
       throwTo: 'O5',
       release: 0.55,

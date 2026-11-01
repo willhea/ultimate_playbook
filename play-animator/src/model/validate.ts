@@ -7,7 +7,7 @@
 import type { Play } from './types';
 import { FIELD, FIELD_MARGIN, PLAYER_RADIUS } from './field';
 import { controlPoint, dist, quad } from './geometry';
-import { throwGeometry } from './engine';
+import { pathPos, throwGeometry } from './engine';
 
 export type IssueCode =
   | 'too-many-players'
@@ -17,6 +17,7 @@ export type IssueCode =
   | 'bad-duration'
   | 'bad-release'
   | 'overlap'
+  | 'run-through'
   | 'too-fast'
   | 'throw-too-fast'
   | 'throw-too-slow'
@@ -39,6 +40,8 @@ export const THROW_SPEED = { min: 5, max: 30 };
 export const MAX_GUARD_DISTANCE = 6;
 /** A defender can stand tighter on the player they guard (a mark on the thrower, say) than anyone else can stand to anyone. */
 export const MIN_GUARD_DISTANCE = 2.2;
+/** Partway through a step, players can brush past each other, but not run through each other. */
+export const MIN_PASSING_DISTANCE = 1.8;
 const TEAM_SIZE = 7;
 
 export function pathLength(p0: { x: number; y: number }, c: { x: number; y: number }, p1: { x: number; y: number }): number {
@@ -102,6 +105,23 @@ export function validatePlay(play: Play): Issue[] {
       if (!p0 || !p1) continue;
       const speed = pathLength(p0, controlPoint(p0, p1, f.curves[p.id]), p1) / f.duration;
       if (speed > MAX_RUN_SPEED) add('warning', 'too-fast', k, [p.id], `${p.id} runs ${speed.toFixed(1)} yd/s; that's faster than a person can run.`);
+    }
+
+    // Nobody runs through anybody partway through the step.
+    const through = new Set<string>();
+    for (let s = 1; s < 24; s++) {
+      const at = play.players.map((p) => (prev.positions[p.id] && f.positions[p.id] ? pathPos(play, k, p.id, s / 24) : null));
+      for (let a = 0; a < at.length; a++) {
+        for (let b = a + 1; b < at.length; b++) {
+          const pair = `${play.players[a].id} ${play.players[b].id}`;
+          const pa = at[a];
+          const pb = at[b];
+          if (pa && pb && !through.has(pair) && dist(pa, pb) < MIN_PASSING_DISTANCE) {
+            through.add(pair);
+            add('warning', 'run-through', k, [play.players[a].id, play.players[b].id], `${play.players[a].id} and ${play.players[b].id} run through each other.`);
+          }
+        }
+      }
     }
 
     const g = throwGeometry(play, k);

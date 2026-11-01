@@ -56,6 +56,6 @@ it('scriptPlay applies each step’s runs, bends, throw and facing', () => {
   const f = play.frames[1];
   expect(f.positions.O3).toEqual({ x: 40, y: 30 });
   expect(f.positions.O4).toEqual({ x: 50, y: 5 });
-  expect(f.curves).toEqual({ O3: { x: 2, y: 0 } });
+  expect(f.curves.O3).toEqual({ x: 2, y: 0 });
   expect([f.discHolder, f.throwCurve, f.release, f.facing.D5]).toEqual(['O3', { x: 0, y: 3 }, 0.6, 90]);
 });

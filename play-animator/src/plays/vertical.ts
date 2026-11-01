@@ -1,5 +1,5 @@
 /** Example plays from a vertical stack. See docs/research/stacks.md. */
-import { markSpot, verticalStack } from '../model/formations';
+import { verticalStack } from '../model/formations';
 import type { PlayScript } from './script';
 
 const setup = verticalStack({ disc: { x: 40, y: 20 } });
@@ -24,7 +24,6 @@ export const underThenDeep: PlayScript = {
       duration: 3.4,
       runs: {
         O7: { to: { x: 50, y: 30 }, bend: { x: 2, y: 4 } },
-        D7: { to: { x: 52.3, y: 28.6 }, bend: { x: 2, y: 3.5 } },
       },
       throwTo: 'O7',
       release: 0.65,
@@ -35,8 +34,6 @@ export const underThenDeep: PlayScript = {
       duration: 3.8,
       runs: {
         O6: { to: { x: 92, y: 28 }, bend: { x: -1, y: 4 } },
-        D6: { to: { x: 89.5, y: 26.4 }, bend: { x: -1, y: 3.5 } },
-        D7: markSpot({ x: 50, y: 30 }),
       },
       throwTo: 'O6',
       release: 0.45,
@@ -68,9 +65,7 @@ export const clearAndReCut: PlayScript = {
       duration: 3.4,
       runs: {
         O7: { to: { x: 80, y: 36 }, bend: { x: -2, y: 1 } },
-        D7: { to: { x: 78.3, y: 34.1 }, bend: { x: -2, y: 1 } },
         O6: { to: { x: 50, y: 29 }, bend: { x: 2, y: 3 } },
-        D6: { to: { x: 52.3, y: 27.8 }, bend: { x: 2, y: 3 } },
       },
       throwTo: 'O6',
       release: 0.6,
@@ -93,7 +88,6 @@ export const breakSideFromFront: PlayScript = {
       duration: 2.4,
       runs: {
         O3: { to: { x: 47, y: 11 }, bend: { x: 1, y: -1 } },
-        D3: { to: { x: 49.5, y: 13.5 }, bend: { x: 1, y: -1 } },
       },
       throwTo: 'O3',
       release: 0.55,
@@ -117,7 +111,6 @@ export const dumpSwing: PlayScript = {
       duration: 2,
       runs: {
         O2: { to: { x: 34, y: 25 }, bend: { x: -2, y: 0 } },
-        D2: { to: { x: 36.2, y: 23.3 }, bend: { x: -1.5, y: 0 } },
       },
       throwTo: 'O2',
       release: 0.6,
@@ -128,9 +121,7 @@ export const dumpSwing: PlayScript = {
         'O1 cuts up the break side and O2 swings it back. The disc is now on the side the defense was forcing away from, and the break-side lane is open.',
       duration: 2.2,
       runs: {
-        D2: markSpot({ x: 34, y: 25 }),
         O1: { to: { x: 45, y: 10 }, bend: { x: 2, y: 2 } },
-        D1: { to: { x: 46.4, y: 12.2 }, bend: { x: 2, y: 2 } },
       },
       throwTo: 'O1',
       release: 0.5,

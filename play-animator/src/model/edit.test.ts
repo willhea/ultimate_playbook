@@ -34,11 +34,12 @@ describe('editing', () => {
     let play = movePlayer(movePlayer(addStep(createPlay(), 0), 1, 'O4', { x: 70, y: 5 }), 1, 'O5', { x: 75, y: 5 });
     play = setCurve(setCurve(play, 1, 'O4', { x: 3, y: 3 }), 1, 'O5', { x: 1, y: 1 });
     play = setFacing(setFacing(play, 1, 'O4', 90), 1, 'O5', 45);
-    expect(play.frames[1].curves).toEqual({ O4: { x: 3, y: 3 }, O5: { x: 1, y: 1 } });
+    expect(play.frames[1].curves).toMatchObject({ O4: { x: 3, y: 3 }, O5: { x: 1, y: 1 } });
     expect(play.frames[1].facing).toEqual({ O4: 90, O5: 45 });
     play = resetMove(play, 1, 'O4');
     expect(play.frames[1].positions.O4).toEqual(play.frames[0].positions.O4);
-    expect(play.frames[1].curves).toEqual({ O5: { x: 1, y: 1 } });
+    expect(play.frames[1].curves.O4).toBeUndefined();
+    expect(play.frames[1].curves.O5).toEqual({ x: 1, y: 1 });
   });
 
   it('passes the disc on to later steps, without overwriting a later throw', () => {

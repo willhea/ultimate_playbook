@@ -1,6 +1,7 @@
 /** Saving plays in the browser, and reading/writing play files. */
 import type { Play } from './types';
 import { newId } from './edit';
+import { upgradeDefenders } from './defenders';
 
 const PLAYS_KEY = 'ultimate-animations:plays';
 const CURRENT_KEY = 'ultimate-animations:current';
@@ -10,7 +11,7 @@ export function loadPlays(): Play[] {
     const raw = localStorage.getItem(PLAYS_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isPlay) : [];
+    return Array.isArray(parsed) ? parsed.filter(isPlay).map(upgrade) : [];
   } catch {
     return [];
   }
@@ -44,11 +45,16 @@ function isVec(v: unknown): boolean {
   return typeof v === 'object' && v !== null && typeof (v as { x: unknown }).x === 'number' && typeof (v as { y: unknown }).y === 'number';
 }
 
-/** Checks that something looks like a saved play, so a bad file can't break the app. */
+/** Bring a play saved by an older version of the app up to date. */
+export function upgrade(play: Play): Play {
+  return (play.version as number) === 1 ? upgradeDefenders(play) : play;
+}
+
+/** Checks that something looks like a saved play (from this version or an older one), so a bad file can't break the app. */
 export function isPlay(value: unknown): value is Play {
   if (typeof value !== 'object' || value === null) return false;
   const p = value as Play;
-  if (p.version !== 1 || typeof p.title !== 'string' || !Array.isArray(p.players) || !Array.isArray(p.frames)) return false;
+  if (![1, 2].includes(p.version) || typeof p.title !== 'string' || !Array.isArray(p.players) || !Array.isArray(p.frames)) return false;
   if (p.frames.length === 0) return false;
   const ids = p.players.map((pl) => pl.id);
   return p.frames.every(
@@ -75,7 +81,7 @@ export function importPlay(text: string): Play {
   }
   if (!isPlay(parsed)) throw new Error('That file is missing parts of a play (players, steps or the disc).');
   const now = Date.now();
-  return { ...parsed, id: newId('play'), createdAt: now, updatedAt: now };
+  return { ...upgrade(parsed), id: newId('play'), createdAt: now, updatedAt: now };
 }
 
 export function fileNameFor(play: Play): string {

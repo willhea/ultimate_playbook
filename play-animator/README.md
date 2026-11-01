@@ -10,6 +10,7 @@ for what it's meant to become.
 - **Add step**, then drag players to where they end up. The app animates the run.
 - Drag the **disc onto a teammate** to throw to them during that step.
 - Drag the **dot in the middle of a run or throw** to bend it. Double-click it to straighten it.
+- **Defenders follow the player they guard**: they trail a step behind a runner and step up to mark whoever catches the disc. Drag a defender to place them by hand in that step; click them and choose **Automatic** to undo that.
 - Click a player to set their **facing** (automatic by default) or who a defender **guards**.
 - **Space** plays, **→** plays just the next step, **←** goes back. Press **?** for all shortcuts.
 - **Present** hides everything except the field, for screen recording.

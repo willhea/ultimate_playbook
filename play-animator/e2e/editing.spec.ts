@@ -28,6 +28,21 @@ test('build a step: drag a run, bend it, and throw to the runner', async ({ app,
   expect(Math.hypot(disc.x - end.x, disc.y - end.y)).toBeLessThan(1.5);
 });
 
+test('defenders follow the player they guard, unless placed by hand', async ({ app, page }) => {
+  await app.open({ plays: [createPlay('Blank')] });
+  await app.button('Add step').click();
+  const o5 = await app.playerState('O5');
+  const run = { x: o5.x + 12, y: 32 };
+  await app.dragPlayer('O5', run);
+  const following = await app.playerState('D5');
+  expect(Math.hypot(following.x - run.x, following.y - run.y)).toBeCloseTo(2.7, 0); // a step behind
+
+  await app.dragPlayer('D5', { x: run.x - 6, y: 25 });
+  expect(await app.playerState('D5')).toMatchObject({ x: expect.closeTo(run.x - 6, 0), y: expect.closeTo(25, 0) });
+  await page.getByRole('group', { name: 'Position mode' }).getByRole('button', { name: 'Automatic' }).click();
+  expect(await app.playerState('D5')).toMatchObject({ x: expect.closeTo(following.x, 1), y: expect.closeTo(following.y, 1) });
+});
+
 test('undo and redo a drag from the keyboard and the toolbar', async ({ app, page }) => {
   await app.open({ plays: [createPlay('History')] });
   await expect(app.button('Undo')).toBeDisabled();

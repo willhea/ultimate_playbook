@@ -30,7 +30,7 @@ export type Formation = 'vertical' | 'horizontal';
 export function createPlay(title = 'Untitled play', formation: Formation = 'vertical'): Play {
   const now = Date.now();
   return {
-    version: 1,
+    version: 2,
     id: newId('play'),
     title,
     createdAt: now,

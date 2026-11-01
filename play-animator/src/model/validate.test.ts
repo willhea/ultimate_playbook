@@ -21,6 +21,13 @@ describe('validatePlay', () => {
     expect(codes(movePlayer(createPlay(), 0, 'D1', { x: o1.x + 1, y: o1.y }))).toContain('overlap');
   });
 
+  it('flags players who run through each other partway through a step', () => {
+    const play = addStep(createPlay(), 0);
+    const { x, y } = play.frames[0].positions.O7; // the back of the stack
+    expect(codes(movePlayer(play, 1, 'O7', { x: x - 12, y }))).toContain('run-through'); // straight up the stack
+    expect(codes(movePlayer(play, 1, 'O7', { x: x + 6, y }))).not.toContain('run-through');
+  });
+
   it('flags runs faster than a person can run', () => {
     let play = addStep(createPlay(), 0);
     play = updateFrame(play, 1, { duration: 1 });

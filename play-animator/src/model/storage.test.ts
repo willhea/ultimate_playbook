@@ -41,7 +41,7 @@ describe('play files', () => {
     // A parsed file is untyped JSON; breaking it on purpose needs a loose type.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const broken: [string, (p: any) => void][] = [
-      ['wrong version', (p) => (p.version = 2)],
+      ['an unknown version', (p) => (p.version = 3)],
       ['no title', (p) => delete p.title],
       ['no players', (p) => delete p.players],
       ['no steps', (p) => (p.frames = [])],

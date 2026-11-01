@@ -37,10 +37,16 @@ export interface Frame {
   throwCurve: Vec | null;
   /** When the disc is released, as a fraction of the step (0–0.9). */
   release: number;
+  /**
+   * Defenders placed by hand in this step. Every other defender who guards someone
+   * follows them automatically (see defenders.ts). Missing = all automatic.
+   */
+  manual?: Record<string, true>;
 }
 
 export interface Play {
-  version: 1;
+  /** 2 since automatic defenders. Version 1 files are upgraded when they load. */
+  version: 2;
   id: string;
   title: string;
   createdAt: number;
