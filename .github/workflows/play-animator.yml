@@ -83,3 +83,37 @@ jobs:
           name: play-animator-${{ github.sha }}
           path: play-animator/dist-single/index.html
           retention-days: 90
+
+  deploy:
+    name: Publish to GitHub Pages
+    # Each change that lands on main, once the tests pass, goes live at
+    # https://willhea.github.io/ultimate_animations/ (Settings → Pages → Source: GitHub Actions).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [checks, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: play-animator/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: play-animator/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
