@@ -42,6 +42,8 @@ can start whenever you want.
 
 ## Glossary (for non-developers)
 
+Ultimate terms (force, mark, open and break side, cuts, throws) are in [`docs/glossary.md`](docs/glossary.md). This list is the software terms.
+
 - **MVP (minimum viable product):** the smallest version that is actually useful. You build it first and learn from it.
 - **Web app / PWA:** a website that works like an app. A *Progressive Web App* can be added to the iPad home screen and can work offline. You don't need the App Store.
 - **Keyframe:** a saved snapshot of where everything is at one moment. Animation fills in the motion between keyframes.

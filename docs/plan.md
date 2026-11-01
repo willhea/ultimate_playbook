@@ -23,6 +23,8 @@ continue in a fresh session with no other context. Update it when a step lands.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
 
+**Words:** [`glossary.md`](glossary.md) defines the ultimate terms we use (open side, break side, mark, around and inside breaks, and so on). Use them in plays, notes and the UI, and check its open questions.
+
 ## Next steps, in order
 
 ### Done: defenders follow their player automatically (spec E-8)
@@ -44,9 +46,14 @@ How it works (`src/model/defenders.ts`; the rules are in its header comment):
 
 **Why:** the stack plays, especially the break-side cut, only make sense when viewers can see which side is open.
 
+**The coach's design (November 2026):**
+- The force is shown as a **shaded angle**.
+- **Only the mark** gets **arms**: straight out to each side, 180° apart (a line through the mark, at right angles to the way the mark faces), each arm as long as the player's radius (`PLAYER_RADIUS`).
+- Open question in [`glossary.md`](glossary.md#questions-for-you): does the shading cover the open side (a wedge from the thrower that lines up with the mark's arms) or the break side the mark takes away? Ask before building.
+
 **Design**
 - Add `Play.open?: 'bottom' | 'top'`, defaulting to `'bottom'` (force home), and pass it to the formation functions. Automatic defenders mark with `markSpot` in `src/model/defenders.ts` (`guardMove`), so pass it there too. Show the force in the coach's words, e.g. "Force home (flick)"; flipping makes it "Force away (backhand)" for a right-handed thrower.
-- `Field.tsx` draws a light shading on the open side downfield of the disc, and a short arrow from the mark showing the force. A "Show force" toggle sits next to "Show runs while playing" and is on by default.
+- `Field.tsx` draws the shaded angle and the mark's arms (above). The mark is whoever guards the disc holder; arms show while they stand within a few yards of the thrower, including during playback. A "Show force" toggle sits next to "Show runs while playing" and is on by default.
 - A **Flip force** button mirrors the play top to bottom: y → 40 − y, bends mirrored, facing angle → −angle. That gives each play for both forces.
 
 **Tests:**

@@ -13,6 +13,8 @@ in `play-animator/src/model/formations.ts` and `play-animator/src/plays/` come f
 
 ## Terms used here
 
+The full list is in [`glossary.md`](../glossary.md); these are the ones this page leans on.
+
 | Term | Meaning |
 |------|---------|
 | **Handler** | A player whose main job is to throw and keep possession: the thrower, the dump and the swing. |

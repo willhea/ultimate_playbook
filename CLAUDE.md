@@ -9,6 +9,8 @@ next (with designs), the coach's decisions, and the gotchas we've hit.
 ## Conventions
 - The user coaches ultimate and reviews from a phone. Explain in plain language, and look at
   `npm run screenshots` output after changing a play, because the user can't easily check it.
+- Use the ultimate terms as defined in [`docs/glossary.md`](docs/glossary.md) (say "open side" and
+  "break side", never "force side").
 - Coaching decisions in `docs/00-open-questions.md` are rules, e.g. vertical-stack cuts come
   from the back (break-side and end-zone cuts come from the front).
 - Run `npm run check` in `play-animator/` before every push. Logic goes in unit tests;
