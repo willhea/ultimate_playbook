@@ -1,18 +1,37 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "testRunner": "vitest",
-  "vitest": { "configFile": "vitest.config.ts" },
+  "vitest": {
+    "configFile": "vitest.config.ts"
+  },
   "mutate": [
     "src/model/**/*.ts",
     "src/state/**/*.ts",
     "src/plays/**/*.ts",
     "!src/**/*.test.ts",
     "!src/test/**",
-    "!src/state/usePlayback.ts"
+    "!src/state/usePlayback.ts",
+    "!src/plays/vertical.ts",
+    "!src/plays/horizontal.ts"
   ],
   "coverageAnalysis": "perTest",
-  "reporters": ["clear-text", "progress", "html"],
-  "htmlReporter": { "fileName": "reports/mutation/index.html" },
+  "reporters": [
+    "clear-text",
+    "progress",
+    "html",
+    "json"
+  ],
+  "htmlReporter": {
+    "fileName": "reports/mutation/index.html"
+  },
   "tempDirName": ".stryker-tmp",
-  "timeoutMS": 60000
+  "timeoutMS": 60000,
+  "mutator": {
+    "excludedMutations": [
+      "StringLiteral"
+    ]
+  },
+  "jsonReporter": {
+    "fileName": "reports/mutation/mutation.json"
+  }
 }

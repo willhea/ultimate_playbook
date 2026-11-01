@@ -30,9 +30,12 @@ describe('playback clock', () => {
     expect(advance(start(idleClock(total - 0.01), play), 0.05, play, { speed: 1, loop: true }).time).toBe(0);
   });
 
-  it('plays exactly one step at a time, and goes back a step', () => {
-    const { clock } = run(stepForward(goToFrame(1, play), play));
+  it('plays exactly one step at a time (even with Loop on), and goes back a step', () => {
+    const { clock } = run(stepForward(goToFrame(1, play), play), { speed: 1, loop: true });
     expect(frameAt(clock, play)).toBe(2);
+    expect(stepForward(clock, play)).toEqual(clock); // nothing after the last step
+    const midStep = advance(stepForward(goToFrame(0, play), play), 0.1, play, { speed: 1, loop: false });
+    expect(stepForward(midStep, play)).toEqual(idleClock(times[1])); // pressed again: finish the step now
     expect(frameAt(stepBack(clock, play), play)).toBe(1);
     expect(frameAt(stepBack(seek((times[1] + times[2]) / 2, play), play), play)).toBe(1);
   });

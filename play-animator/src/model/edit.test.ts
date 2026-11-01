@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
-import { addPlayer, addStep, deleteStep, moveStep, movePlayer, removePlayer, resetMove, setCurve, setHolder } from './edit';
+import { addPlayer, addStep, deleteStep, moveStep, movePlayer, removePlayer, resetMove, setCurve, setFacing, setHolder } from './edit';
 import { anyPlay, fieldPoint } from '../test/arbitraries';
 
 const threeSteps = () => addStep(addStep(addStep(createPlay(), 0), 1), 2);
@@ -30,11 +30,15 @@ describe('editing', () => {
     );
   });
 
-  it('puts a run back, curve and all', () => {
-    let play = movePlayer(addStep(createPlay(), 0), 1, 'O4', { x: 70, y: 5 });
-    play = resetMove(setCurve(play, 1, 'O4', { x: 3, y: 3 }), 1, 'O4');
+  it('bends, sets facing for and resets one player without touching anyone else', () => {
+    let play = movePlayer(movePlayer(addStep(createPlay(), 0), 1, 'O4', { x: 70, y: 5 }), 1, 'O5', { x: 75, y: 5 });
+    play = setCurve(setCurve(play, 1, 'O4', { x: 3, y: 3 }), 1, 'O5', { x: 1, y: 1 });
+    play = setFacing(setFacing(play, 1, 'O4', 90), 1, 'O5', 45);
+    expect(play.frames[1].curves).toEqual({ O4: { x: 3, y: 3 }, O5: { x: 1, y: 1 } });
+    expect(play.frames[1].facing).toEqual({ O4: 90, O5: 45 });
+    play = resetMove(play, 1, 'O4');
     expect(play.frames[1].positions.O4).toEqual(play.frames[0].positions.O4);
-    expect(play.frames[1].curves.O4).toBeUndefined();
+    expect(play.frames[1].curves).toEqual({ O5: { x: 1, y: 1 } });
   });
 
   it('passes the disc on to later steps, without overwriting a later throw', () => {
@@ -55,9 +59,12 @@ describe('editing', () => {
   it('removes and adds players, but never the one with the disc', () => {
     const play = createPlay();
     expect(removePlayer(play, 'O1')).toBe(play);
-    const fewer = removePlayer(play, 'O7');
-    expect(fewer.players.find((p) => p.id === 'D7')?.guards).toBeNull();
-    expect(addPlayer(fewer, 'O').players).toHaveLength(14);
+    const fewer = removePlayer(play, 'O3');
+    expect(fewer.frames[0].positions.O3).toBeUndefined();
+    expect(fewer.frames[0].positions.O4).toEqual(play.frames[0].positions.O4); // everyone else stays put
+    expect(fewer.players.find((p) => p.id === 'D3')?.guards).toBeNull();
+    const back = addPlayer(fewer, 'O');
+    expect(back.players.find((p) => p.team === 'O' && p.number === 3)).toBeDefined(); // the free number is reused
     expect(addPlayer(play, 'O')).toBe(play); // already seven
   });
 });

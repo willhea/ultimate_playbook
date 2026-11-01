@@ -27,8 +27,15 @@ describe('close-up view', () => {
     );
   });
 
-  it('zooms in on a play that uses only part of the field', () => {
-    const v = fitView(createPlay());
-    expect(v.w).toBeLessThan(FULL_VIEW.w);
+  it('zooms in close on a play that uses only part of the field, without leaving the field', () => {
+    // The default stack spans about 40 yards, so a close-up should be well under the 116-yard full view.
+    expect(fitView(createPlay()).w).toBeLessThan(60);
+    const nearEndZone = createPlay();
+    nearEndZone.frames[0].positions = Object.fromEntries(
+      Object.keys(nearEndZone.frames[0].positions).map((id, k) => [id, { x: 100 + (k % 7), y: 30 + (k % 5) }]),
+    );
+    const v = fitView(nearEndZone);
+    expect(v.x + v.w).toBeLessThanOrEqual(FULL_VIEW.x + FULL_VIEW.w + 1e-9);
+    expect(v.y + v.h).toBeLessThanOrEqual(FULL_VIEW.y + FULL_VIEW.h + 1e-9);
   });
 });

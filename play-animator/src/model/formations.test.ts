@@ -12,6 +12,9 @@ const asPlay = (positions: Record<string, { x: number; y: number }>) => {
 const ids = (...n: number[]) => n.map((k) => `O${k}`);
 
 describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open) => {
+  /** −1 when the break side is toward y = 0 (the top of the screen), +1 when toward y = 40. */
+  const breakSide = open === 'bottom' ? -1 : 1;
+
   it('vertical stack: five cutters in an evenly spaced line downfield, the dump behind on the break side', () => {
     const pos = verticalStack({ open });
     const stack = ids(3, 4, 5, 6, 7).map((id) => pos[id]);
@@ -20,8 +23,15 @@ describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open
     expect(new Set(gaps).size).toBe(1);
     expect(stack[0].x).toBeGreaterThan(pos.O1.x);
     expect(pos.O2.x).toBeLessThan(pos.O1.x);
-    expect(Math.sign(pos.O2.y - pos.O1.y)).toBe(open === 'bottom' ? -1 : 1);
+    expect(Math.sign(pos.O2.y - pos.O1.y)).toBe(breakSide);
     expect(validatePlay(asPlay(pos))).toEqual([]);
+  });
+
+  it('the mark stands on the break side of the thrower; downfield defenders take away the open side', () => {
+    for (const pos of [verticalStack({ open }), horizontalStack({ open })]) {
+      expect(Math.sign(pos.D1.y - pos.O1.y)).toBe(breakSide);
+      for (const n of [4, 5, 6]) expect(Math.sign(pos[`D${n}`].y - pos[`O${n}`].y)).toBe(-breakSide);
+    }
   });
 
   it('horizontal stack: three handlers behind four cutters level across the field', () => {
@@ -31,4 +41,10 @@ describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open
     for (const h of ids(1, 2, 3)) expect(pos[h].x).toBeLessThan(cutters[0].x);
     expect(validatePlay(asPlay(pos))).toEqual([]);
   });
+});
+
+it('new plays can start from either stack', () => {
+  const cutters = (formation: 'vertical' | 'horizontal') => ids(4, 5, 6, 7).map((id) => createPlay('x', formation).frames[0].positions[id]);
+  expect(new Set(cutters('horizontal').map((p) => p.x)).size).toBe(1); // level across the field
+  expect(new Set(cutters('vertical').map((p) => p.y)).size).toBe(1); // in a line down the middle
 });

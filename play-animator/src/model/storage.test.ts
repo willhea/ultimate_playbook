@@ -36,6 +36,28 @@ describe('play files', () => {
     );
   });
 
+  it('rejects play files with any required part missing or the wrong type', () => {
+    const good = JSON.parse(exportPlay(createDemoPlay()));
+    // A parsed file is untyped JSON; breaking it on purpose needs a loose type.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const broken: [string, (p: any) => void][] = [
+      ['wrong version', (p) => (p.version = 2)],
+      ['no title', (p) => delete p.title],
+      ['no players', (p) => delete p.players],
+      ['no steps', (p) => (p.frames = [])],
+      ['a position that is not a point', (p) => (p.frames[0].positions.O2 = { x: 'left', y: 3 })],
+      ['a step with no length', (p) => delete p.frames[1].duration],
+      ['the disc held by nobody', (p) => (p.frames[1].discHolder = 'O9')],
+      ['not an object', (p) => (p.frames[1] = null)],
+    ];
+    expect(isPlay(good)).toBe(true);
+    for (const [what, breakIt] of broken) {
+      const p = structuredClone(good);
+      breakIt(p);
+      expect(isPlay(p), what).toBe(false);
+    }
+  });
+
   it('rejects text that is not a play, with a message a person can act on', () => {
     expect(() => importPlay('hello')).toThrow(/isn't a play file/);
     expect(() => importPlay('{"version":1}')).toThrow(/missing parts/);

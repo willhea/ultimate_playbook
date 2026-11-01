@@ -83,6 +83,20 @@ describe('automatic facing', () => {
     expect(Math.abs(angleDiff(mid.players.D1.facing, angleTo(mid.players.D1.pos, pos.O1)))).toBeLessThan(5);
   });
 
+  it('turns the thrower to face the receiver by the moment the disc is released', () => {
+    const f = demo.frames[2];
+    const atRelease = evaluate(demo, times[1] + f.duration * f.release);
+    const thrower = demo.frames[1].discHolder;
+    expect(Math.abs(angleDiff(atRelease.players[thrower].facing, angleTo(atRelease.players[thrower].pos, f.positions[f.discHolder])))).toBeLessThan(1);
+  });
+
+  it('turns the short way between two facings set by hand', () => {
+    let p = setFacing(play, 0, 'D6', 350);
+    p = setFacing(addStep(p, 0), 1, 'D6', 30);
+    const mid = evaluate(p, p.frames[1].duration / 2).players.D6.facing;
+    expect(Math.abs(angleDiff(mid, 10))).toBeLessThan(1); // through 0°, not the long way round via 190°
+  });
+
   it('lets a facing set by hand override the automatic one, and undo it', () => {
     const p = setFacing(play, 0, 'D3', 90);
     expect(staticFacing(p, 0, 'D3')).toBe(90);
