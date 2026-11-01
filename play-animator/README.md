@@ -29,31 +29,25 @@ Other commands:
 
 | Command | What it does |
 |---------|--------------|
-| `npm run check` | Everything CI runs: lint, typecheck, unit tests, browser tests. Run this before pushing. |
-| `npm test` | Unit and property tests (Vitest, about 2 s). |
-| `npm run test:e2e` | Browser tests (Playwright) against the production build. |
-| `npm run test:visual` | Screenshot comparisons. Not run in CI, because rendering differs between machines. |
-| `npm run test:visual:update` | Re-take the screenshots after an intended visual change. Look at the new images before committing them. |
-| `npm run test:deep` | A long random search (2,000 generated plays) for animation glitches. |
-| `npm run lint` / `npm run typecheck` | ESLint (including React hook rules) / TypeScript. |
+| `npm run check` | Everything CI runs: lint, typecheck, unit tests, browser tests. Run it before pushing. |
+| `npm test` | Unit tests (Vitest, about 2 s). |
+| `npm run test:e2e` | Browser tests (Playwright) against the production build (about 15 s). |
+| `npm run screenshots` | Saves pictures of every example play step, dark mode and a narrow window to `screenshots/` for looking over. It never fails. |
 | `npm run build` | Builds a static site into `dist/` that any static host (e.g. GitHub Pages) can serve. |
 | `npm run build:single` | Builds everything into one HTML file, `dist-single/play-animator.html`, for sharing as a single page. |
 
 ## Tests
 
-The tests are layered so that each kind of mistake is caught by the cheapest test that can catch it.
+Two layers, each with one job.
 
-| Layer | Where | What it proves |
-|-------|-------|----------------|
-| **Unit** | `src/**/*.test.ts` | The pieces work: geometry, timing, editing, saving, undo/redo, the playback clock. |
-| **Property** | the same files, using [fast-check](https://fast-check.dev) | Rules that must hold for *any* play, checked on hundreds of generated plays. For example, no player or disc ever jumps, export → import loses nothing, and the close-up always contains every player. When one fails, fast-check shrinks it to the smallest failing play. |
-| **Ultimate rules** | `src/model/validate.ts` | `validatePlay()` flags plays that make no sense as ultimate: players on top of each other, faster-than-human runs, floating or impossible throws, defenders far from their player. Every built-in play must pass. |
-| **Browser** | `e2e/*.spec.ts` | The real app in Chromium: dragging, throwing, playback on a fake clock, saving, import/export, Present mode, the stack plays, layout at several window sizes, accessibility (axe), and the single-file build. Any console error fails a test. |
-| **Visual** | `e2e/visual.spec.ts` | Screenshots of every stack-play step, dark mode, narrow windows and dialogs, compared pixel by pixel. |
+**Unit tests** (`src/**/*.test.ts`, next to the code they test) cover all the logic: the animation engine, editing, the playback clock, undo/redo, saving, formations, and the ultimate checks in `validatePlay()`. A few are **property tests** ([fast-check](https://fast-check.dev)), which check a rule against many generated plays. For example, nothing in an animation ever jumps (`src/test/continuity.ts`), and moving a player never changes earlier steps. They use a fixed seed, so results repeat. `FC_SEED=random npm test` explores new cases.
 
-Property tests use a fixed random seed, so results repeat. `FC_SEED=random npm test` explores new cases; `FC_SEED=<n>` replays one that fast-check reported.
+**Browser tests** (`e2e/`) check that the app wires that logic up, with one test per thing a person does: building a step, undo, facing and guarding, managing steps, playing, saving and reloading, the plays list, import/export, Present mode, accessibility, small windows, and the one-file build. Helpers are in `e2e/fixtures.ts`. Tests read positions from `data-testid`, `data-x`, `data-y` and `data-facing` on the field's SVG, never from pixels. Any console error fails a test.
 
-Browser tests read state from `data-testid`, `data-x`, `data-y` and `data-facing` attributes on the field's SVG elements, so they don't depend on pixels. Helpers live in `e2e/fixtures.ts`.
+When adding a test:
+- Put rules in unit tests. Add a browser test only for a new thing a person can do, and keep it to that one journey.
+- Test behaviour and shape, not exact numbers that are meant to be tuned (e.g. "the stack is evenly spaced", not "the stack starts 12 yd out").
+- Don't add screenshot comparisons. To check how something looks, run `npm run screenshots` and look.
 
 ## How the code is organized
 

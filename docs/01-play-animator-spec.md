@@ -232,7 +232,7 @@ Do they show facing direction? Do they handle curved throws, force, and marks we
 
 ## 10. Prototype status (v0.2)
 
-Built in [`play-animator/`](../play-animator/). Covered by an automated test suite (unit, property, browser, visual and accessibility tests) that runs on every push; see the app's README.
+Built in [`play-animator/`](../play-animator/). Covered by unit tests for the logic and a small set of browser tests (one per user journey) that run on every push; see the app's README.
 
 | Area | Done in the prototype | Not yet |
 |------|----------------------|---------|

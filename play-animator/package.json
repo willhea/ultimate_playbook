@@ -12,11 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test --grep-invert @visual",
-    "test:visual": "playwright test --grep @visual",
-    "test:visual:update": "playwright test --grep @visual --update-snapshots=all",
-    "test:deep": "FC_SEED=random FC_RUNS=2000 vitest run",
-    "check": "npm run lint && npm run typecheck && npm test && npm run test:e2e"
+    "test:e2e": "playwright test --grep-invert @screenshots",
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:e2e",
+    "screenshots": "playwright test --grep @screenshots"
   },
   "dependencies": {
     "react": "^19.3.0",

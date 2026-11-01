@@ -110,13 +110,6 @@ export class AppPage {
     return v === '' || v === null ? null : Number(v);
   }
 
-  async shownStep(): Promise<{ step: number; u: number }> {
-    return {
-      step: Number(await this.field.getAttribute('data-step')),
-      u: Number(await this.field.getAttribute('data-u')),
-    };
-  }
-
   /** Screen coordinates for a point on the field, in yards. Works whatever the zoom. */
   async toScreen(p: Vec): Promise<Vec> {
     return this.field.evaluate((svg, p) => {

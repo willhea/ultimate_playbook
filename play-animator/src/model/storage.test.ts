@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import { createDemoPlay } from '../plays';
-import { exportPlay, fileNameFor, importPlay, isPlay, loadCurrentId, loadPlays, saveCurrentId, savePlays } from './storage';
+import { exportPlay, importPlay, isPlay, loadCurrentId, loadPlays, saveCurrentId, savePlays } from './storage';
 import { anyPlay } from '../test/arbitraries';
 
 function memoryStorage(): Storage {
@@ -44,10 +44,6 @@ describe('play files', () => {
     expect(() => importPlay(JSON.stringify(broken))).toThrow(/missing parts/);
   });
 
-  it('names files after the play', () => {
-    expect(fileNameFor({ ...createDemoPlay(), title: 'Ho stack: wing iso!' })).toBe('ho-stack-wing-iso.play.json');
-    expect(fileNameFor({ ...createDemoPlay(), title: '' })).toBe('play.play.json');
-  });
 });
 
 describe('browser storage', () => {

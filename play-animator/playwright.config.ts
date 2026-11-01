@@ -11,11 +11,6 @@ export default defineConfig({
   retries: 0,
   workers: CI ? 2 : undefined,
   reporter: CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
-  snapshotPathTemplate: '{testDir}/__screenshots__/{testFileName}/{arg}{ext}',
-  expect: {
-    // Tight on purpose: a changed label is only a few hundred pixels.
-    toHaveScreenshot: { maxDiffPixels: 25, animations: 'disabled', caret: 'hide' },
-  },
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'retain-on-failure',

@@ -167,7 +167,6 @@ export function Field({
       data-testid="field"
       data-frame={editIndex ?? ''}
       data-step={view.index}
-      data-u={round(view.u, 3)}
       data-time={time === undefined ? undefined : round(time, 4)}
     >
       <defs>
@@ -219,7 +218,7 @@ export function Field({
       {editing && prevFrame && (
         <g className="ghosts" aria-hidden="true">
           {movers.map((p) => (
-            <g key={p.id} data-testid={`ghost-${p.id}`} transform={`translate(${prevFrame.positions[p.id].x} ${prevFrame.positions[p.id].y})`}>
+            <g key={p.id} transform={`translate(${prevFrame.positions[p.id].x} ${prevFrame.positions[p.id].y})`}>
               <circle r={R} className={`ghost ghost-${p.team}`} />
               <text className="ghost-number" dy="0.5">
                 {p.number}
@@ -363,12 +362,12 @@ function FieldMarkings({ view }: { view: ViewBox }) {
       </text>
       {/* In a close-up a sideline can be out of view; say where it is so viewers keep their bearings. */}
       {view.y > 0.5 && (
-        <text x={view.x + view.w / 2} y={view.y + labelSize * 1.6} className="sideline-label" style={{ fontSize: labelSize }} data-testid="sideline-top">
+        <text x={view.x + view.w / 2} y={view.y + labelSize * 1.6} className="sideline-label" style={{ fontSize: labelSize }}>
           ↑ SIDELINE {Math.round(view.y)} YD
         </text>
       )}
       {view.y + view.h < W - 0.5 && (
-        <text x={view.x + view.w / 2} y={view.y + view.h - labelSize * 0.8} className="sideline-label" style={{ fontSize: labelSize }} data-testid="sideline-bottom">
+        <text x={view.x + view.w / 2} y={view.y + view.h - labelSize * 0.8} className="sideline-label" style={{ fontSize: labelSize }}>
           ↓ SIDELINE {Math.round(W - (view.y + view.h))} YD
         </text>
       )}
