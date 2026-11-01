@@ -172,6 +172,7 @@ export function App() {
             selectedId={selectedId}
             showRoutes={showRoutes}
             viewBox={viewBox}
+            time={playback.time}
             onSelect={setSelectedId}
             onPreview={preview}
             onEndPreview={endPreview}

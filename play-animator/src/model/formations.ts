@@ -37,12 +37,12 @@ export const openSign = (open: OpenSide = 'bottom'): number => (open === 'bottom
 
 /** Where a mark stands: just downfield of the thrower, on the break side. */
 export function markSpot(thrower: Vec, open: OpenSide = 'bottom'): Vec {
-  return { x: thrower.x + 1, y: thrower.y - 2.1 * openSign(open) };
+  return { x: thrower.x + 1.2, y: thrower.y - 2.4 * openSign(open) };
 }
 
 /** Where a downfield defender stands to take away the under cut on the open side. */
 export function underSpot(cutter: Vec, open: OpenSide = 'bottom'): Vec {
-  return { x: cutter.x - 1.6, y: cutter.y + 1.9 * openSign(open) };
+  return { x: cutter.x - 1.7, y: cutter.y + 2.1 * openSign(open) };
 }
 
 /**

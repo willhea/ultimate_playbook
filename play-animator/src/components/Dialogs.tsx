@@ -14,7 +14,9 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       }
     };
     window.addEventListener('keydown', onKey, true);
-    ref.current?.querySelector<HTMLElement>('[data-autofocus], button, input, textarea')?.focus();
+    // Focus the dialog's main action if it has one, otherwise its first control.
+    const root = ref.current;
+    (root?.querySelector<HTMLElement>('[data-autofocus]') ?? root?.querySelector<HTMLElement>('button, input, textarea'))?.focus();
     return () => window.removeEventListener('keydown', onKey, true);
   }, [onClose]);
 

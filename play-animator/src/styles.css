@@ -707,6 +707,7 @@ input[type='range'] {
 
 .endzone-label,
 .attack-label,
+.sideline-label,
 .scale-label {
   font-family: var(--font-display);
   font-weight: 700;
@@ -725,6 +726,12 @@ input[type='range'] {
   letter-spacing: 0.1em;
   text-anchor: end;
   opacity: 0.75;
+}
+
+.sideline-label {
+  letter-spacing: 0.1em;
+  text-anchor: middle;
+  opacity: 0.6;
 }
 
 .scale-label {

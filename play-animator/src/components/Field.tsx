@@ -25,6 +25,8 @@ interface Props {
   selectedId: string | null;
   showRoutes: boolean;
   viewBox?: ViewBox;
+  /** Playhead time in seconds, exposed for tests. */
+  time?: number;
   onSelect?: (id: string | null) => void;
   onPreview?: (play: Play) => void;
   onEndPreview?: () => void;
@@ -52,6 +54,7 @@ export function Field({
   selectedId,
   showRoutes,
   viewBox = FULL_VIEW,
+  time,
   onSelect,
   onPreview,
   onEndPreview,
@@ -165,6 +168,7 @@ export function Field({
       data-frame={editIndex ?? ''}
       data-step={view.index}
       data-u={round(view.u, 3)}
+      data-time={time === undefined ? undefined : round(time, 4)}
     >
       <defs>
         {(['O', 'D', 'disc'] as const).map((k) => (
@@ -357,6 +361,17 @@ function FieldMarkings({ view }: { view: ViewBox }) {
       <text x={labelX} y={labelY} className="attack-label" style={{ fontSize: labelSize }}>
         ATTACKING →
       </text>
+      {/* In a close-up a sideline can be out of view; say where it is so viewers keep their bearings. */}
+      {view.y > 0.5 && (
+        <text x={view.x + view.w / 2} y={view.y + labelSize * 1.6} className="sideline-label" style={{ fontSize: labelSize }} data-testid="sideline-top">
+          ↑ SIDELINE {Math.round(view.y)} YD
+        </text>
+      )}
+      {view.y + view.h < W - 0.5 && (
+        <text x={view.x + view.w / 2} y={view.y + view.h - labelSize * 0.8} className="sideline-label" style={{ fontSize: labelSize }} data-testid="sideline-bottom">
+          ↓ SIDELINE {Math.round(W - (view.y + view.h))} YD
+        </text>
+      )}
       {view.x <= 0 && view.y <= -1 && (
         <text x={0} y={-1.3} className="scale-label">
           USA Ultimate · 70 × 40 yd + 20 yd end zones
