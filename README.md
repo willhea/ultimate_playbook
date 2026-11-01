@@ -54,3 +54,7 @@ Ultimate terms (force, mark, open and break side, cuts, throws) are in [`docs/gl
 - **Rigged character:** a 3D model with a skeleton, so it can be posed and animated.
 - **Motion capture (mocap):** recording a real person's movement and applying it to a 3D character. You can now do this from ordinary phone video.
 - **Render:** turning a 3D scene into video frames.
+
+## License
+
+[MIT](LICENSE): anyone may use, copy, change and share the code and the plays, as long as they keep the copyright notice.
