@@ -5,35 +5,40 @@ import type { PlayScript } from './script';
 const setup = verticalStack({ disc: { x: 40, y: 20 } });
 // Stack: O3 (52,20), O4 (57,20), O5 (62,20), O6 (67,20), O7 (72,20). Open side is the bottom (y → 40).
 
+// Coaching rule (see docs/research/stacks.md): cuts come from the back of the stack,
+// where the cutter has the most room to build speed. The exceptions are end-zone sets
+// and break-side cuts, which come from the front.
+
 export const underThenDeep: PlayScript = {
-  title: 'Vertical stack: under, then deep',
+  title: 'Vertical stack: back cuts under, then deep',
   setup: {
     positions: setup,
     notes:
-      'A vertical stack: O1 has the disc, O2 is the dump behind, and five cutters line up down the middle. The mark forces throws to the open side, the bottom of the screen.',
+      'A vertical stack: O1 has the disc, O2 is the dump behind, and five cutters line up down the middle. The mark forces throws to the open side, the bottom of the screen. Cuts start from the back of the stack.',
   },
   steps: [
     {
-      name: 'O3 cuts under',
-      notes: 'The front of the stack plants and comes back toward the disc into the open-side lane.',
-      duration: 2.2,
+      name: 'O7 cuts under from the back',
+      notes:
+        'The back of the stack has the most room. O7 builds speed down the open-side lane and comes under toward the disc.',
+      duration: 3.4,
       runs: {
-        O3: { to: { x: 46, y: 30 }, bend: { x: 3, y: -1.5 } },
-        D3: { to: { x: 48.4, y: 29 }, bend: { x: 2.5, y: -1.5 } },
+        O7: { to: { x: 50, y: 30 }, bend: { x: 2, y: 4 } },
+        D7: { to: { x: 52.3, y: 28.6 }, bend: { x: 2, y: 3.5 } },
       },
-      throwTo: 'O3',
-      release: 0.55,
+      throwTo: 'O7',
+      release: 0.65,
     },
     {
-      name: 'O4 goes deep',
-      notes: 'The next cutter attacks the space behind the defense, and O3 puts up the huck.',
+      name: 'O6 goes deep',
+      notes: 'The next cutter from the back attacks the space behind the defense, and O7 puts up the huck.',
       duration: 3.8,
       runs: {
-        O4: { to: { x: 84, y: 29 }, bend: { x: -1, y: 4 } },
-        D4: { to: { x: 81.5, y: 27.6 }, bend: { x: -1, y: 3.5 } },
-        D3: markSpot({ x: 46, y: 30 }),
+        O6: { to: { x: 92, y: 28 }, bend: { x: -1, y: 4 } },
+        D6: { to: { x: 89.5, y: 26.4 }, bend: { x: -1, y: 3.5 } },
+        D7: markSpot({ x: 50, y: 30 }),
       },
-      throwTo: 'O4',
+      throwTo: 'O6',
       release: 0.45,
       throwBend: { x: -2, y: 5 },
     },
@@ -44,31 +49,56 @@ export const clearAndReCut: PlayScript = {
   title: 'Vertical stack: clear, then the next cut',
   setup: {
     positions: setup,
-    notes: 'Same stack. Watch how a cutter who doesn’t get the disc gets out of the way.',
+    notes: 'Same stack. Watch how a cutter who doesn’t get the disc gets out of the way for the next one.',
   },
   steps: [
     {
-      name: 'O3 cuts under, but it’s covered',
-      notes: 'O3 cuts under, but D3 stays between O3 and the disc, so there’s no throw.',
-      duration: 1.8,
+      name: 'O7 cuts under, but it’s covered',
+      notes: 'O7 cuts from the back, but D7 stays between O7 and the disc, so there’s no throw.',
+      duration: 3.2,
       runs: {
-        O3: { to: { x: 47, y: 29 }, bend: { x: 2, y: -1 } },
-        D3: { x: 45.2, y: 27.2 },
+        O7: { to: { x: 52, y: 30 }, bend: { x: 2, y: 4 } },
+        D7: { to: { x: 49.8, y: 28.6 }, bend: { x: 2, y: 3.5 } },
       },
     },
     {
-      name: 'O3 clears, O4 cuts under',
+      name: 'O7 clears, O6 cuts under',
       notes:
-        'O3 clears out of the lane, away to the break side, which opens space for O4 to cut under on the open side behind them.',
-      duration: 2.6,
+        'O7 clears out of the lane, deep and toward the sideline, which leaves the under space empty for the next cutter from the back, O6.',
+      duration: 3.4,
       runs: {
-        O3: { to: { x: 56, y: 9 }, bend: { x: 6, y: 4 } },
-        D3: { to: { x: 54.6, y: 11.5 }, bend: { x: 5, y: 4 } },
-        O4: { to: { x: 50, y: 29 }, bend: { x: 2.5, y: -2 } },
-        D4: { to: { x: 52.4, y: 27.6 }, bend: { x: 2, y: -2 } },
+        O7: { to: { x: 80, y: 36 }, bend: { x: -2, y: 1 } },
+        D7: { to: { x: 78.3, y: 34.1 }, bend: { x: -2, y: 1 } },
+        O6: { to: { x: 50, y: 29 }, bend: { x: 2, y: 3 } },
+        D6: { to: { x: 52.3, y: 27.8 }, bend: { x: 2, y: 3 } },
       },
-      throwTo: 'O4',
+      throwTo: 'O6',
       release: 0.6,
+    },
+  ],
+};
+
+export const breakSideFromFront: PlayScript = {
+  title: 'Vertical stack: break-side cut from the front',
+  setup: {
+    positions: setup,
+    notes:
+      'The exception to cutting from the back: a break-side cut comes from the front of the stack, which is closest to the break-side space.',
+  },
+  steps: [
+    {
+      name: 'O3 cuts to the break side',
+      notes:
+        'The front of the stack cuts to the break side, away from where the mark is forcing. O1 has to throw around the mark to reach it.',
+      duration: 2.4,
+      runs: {
+        O3: { to: { x: 47, y: 11 }, bend: { x: 1, y: -1 } },
+        D3: { to: { x: 49.5, y: 13.5 }, bend: { x: 1, y: -1 } },
+      },
+      throwTo: 'O3',
+      release: 0.55,
+      // Bend the throw away from the mark, like an inside-out break.
+      throwBend: { x: 4, y: 3 },
     },
   ],
 };
@@ -109,4 +139,4 @@ export const dumpSwing: PlayScript = {
   ],
 };
 
-export const verticalPlays: PlayScript[] = [underThenDeep, clearAndReCut, dumpSwing];
+export const verticalPlays: PlayScript[] = [underThenDeep, clearAndReCut, breakSideFromFront, dumpSwing];

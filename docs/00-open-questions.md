@@ -10,6 +10,7 @@
 | 4 | Step model ("magic move": set positions per step, app animates between) | **Yes.** | Steps-first editor. A detailed timeline stays V2. |
 | 5 | Player look | **Option A: numbered circles (1–7 per team) with a facing wedge.** Offense blue, defense orange. | Numbers and facing wedge are MVP. See the [player style mockup](mockups/player-styles.svg). |
 | 6 | Video mechanics | **Ignore for now.** The goal stays: make plays, then turn them into videos with voiceovers. | Spec 2 is parked. The tool keeps only what makes a play *recordable* (clean mode, speed control, pause points). |
+| 7 | Vertical stack: where do cuts start? | **From the back of the stack. Exceptions: end-zone sets, and break-side cuts, which come from the front.** | The vertical example plays start from the back (or cut break side from the front), and a test enforces it for every vertical example. See [research](research/stacks.md). |
 
 ## Proposed defaults (say if you disagree)
 

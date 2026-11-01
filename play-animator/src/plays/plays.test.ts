@@ -7,6 +7,21 @@ import { createPlay } from '../model/defaults';
 import { scriptPlay } from './script';
 
 describe('example plays', () => {
+  // Coaching rule: in a vertical stack, the first cut comes from the back of the stack,
+  // unless it's a break-side cut (or an end-zone set), which comes from the front.
+  for (const play of buildExamplePlays().filter((p) => p.title.startsWith('Vertical stack'))) {
+    it(`${play.title}: the first cut comes from the back of the stack, unless it is to the break side`, () => {
+      const stack = ['O3', 'O4', 'O5', 'O6', 'O7'];
+      const setup = play.frames[0].positions;
+      const step = play.frames.findIndex((f, k) => k > 0 && stack.some((id) => dist(f.positions[id], play.frames[k - 1].positions[id]) > 3));
+      if (step === -1) return; // a handler-only play, like the dump and swing
+      const cutter = stack.find((id) => dist(play.frames[step].positions[id], play.frames[step - 1].positions[id]) > 3)!;
+      const back = stack.reduce((a, b) => (setup[b].x > setup[a].x ? b : a));
+      const breakSide = play.frames[step].positions[cutter].y < setup[cutter].y; // the open side is the bottom (y → 40)
+      expect(cutter === back || breakSide, `${cutter} cut first`).toBe(true);
+    });
+  }
+
   for (const play of buildExamplePlays()) {
     it(`${play.title}: makes sense as ultimate and is ready to narrate`, () => {
       expect(validatePlay(play)).toEqual([]);

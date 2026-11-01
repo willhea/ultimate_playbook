@@ -79,6 +79,8 @@ export function locate(play: Play, time: number): { index: number; u: number } {
   if (time <= 0 || play.frames.length === 1) return { index: 0, u: 1 };
   for (let i = 1; i < times.length; i++) {
     if (time <= times[i] + 1e-9) {
+      // Step times are sums of floats, so treat "a hair before step i" as on step i.
+      if (Math.abs(time - times[i]) < 1e-9) return { index: i, u: 1 };
       const d = play.frames[i].duration;
       return { index: i, u: d > 0 ? clamp((time - times[i - 1]) / d, 0, 1) : 1 };
     }

@@ -42,8 +42,9 @@ attacks a lane, one on one, while the rest stay out of the way.
 | The dump | Behind the thrower, on the break side | **5 yd behind, 7 yd to the break side** |
 
 **How it runs**
-1. **The first cut.** One or two designated cutters at the front make the first move, usually an under cut into the open-side lane. Ultimate Rob argues for starting with the cutter furthest from the disc instead, to avoid picks and gain more yards; that idea isn't modelled yet.
-2. **Continuation.** After a catch, the next cutter attacks, often deep, into the space the first cut left.
+1. **The first cut comes from the back.** The cutter at the back of the stack has the most room to build speed down the open-side lane. This is the rule the app follows (your coaching decision; Ultimate Rob argues the same, to avoid picks and gain yards). Some sources start from the front instead.
+   - **Exceptions:** in **end-zone sets**, and for **break-side cuts**, the cut comes from the front of the stack, which is closest to that space.
+2. **Continuation.** After a catch, the next cutter from the back attacks, often deep, into the space the first cut left.
 3. **Clearing.** A cutter who doesn't get the disc clears out of the lane, back to the stack or away to the break side, so the lane is empty for the next cutter.
 4. **Reset.** When the stall count climbs and nobody is open, the dump cuts for an easy pass, and then a swing moves the disc to the break side.
 
@@ -88,14 +89,15 @@ over.
 
 | Example play | What it shows |
 |--------------|---------------|
-| Vertical stack: under, then deep | The front cutter cuts under; the next cutter goes deep for the huck. |
-| Vertical stack: clear, then the next cut | A covered under cut, the cutter clears to the break side, the next cutter cuts under. |
+| Vertical stack: back cuts under, then deep | The back of the stack cuts under; the next cutter from the back goes deep for the huck. |
+| Vertical stack: clear, then the next cut | A covered under cut from the back; the cutter clears deep and wide; the next cutter from the back cuts under. |
+| Vertical stack: break-side cut from the front | The exception: the front of the stack cuts to the break side, and the throw goes around the mark. |
 | Vertical stack: dump and swing | The dump cuts back for the reset, then a swing to the break side. |
 | Horizontal stack: poppers split | One popper under, one deep; the throw goes to the under. |
 | Horizontal stack: wing isolation | The poppers clear and a wing has the open side to themselves. |
 | Horizontal stack: swing, then cut | A swing to a side handler, then a popper cuts under toward the new angle. |
 
-Every example passes the app's ultimate checks (`validatePlay`). No one stands on
+Every example passes the app's ultimate checks (`validatePlay`), and every vertical example follows the cut-from-the-back rule (checked by a test). No one stands on
 top of anyone, runs are at human speed (≤ 9 yd/s), throws travel at believable
 speeds, defenders start near their player, and nobody travels with the disc.
 "New vertical stack" and "New horizontal stack" in the Plays list start a play
@@ -114,6 +116,7 @@ adding next. They're listed in priority order, as a suggestion:
 
 ## Questions for you
 
+- ~~Where do vertical-stack cuts start?~~ Answered: from the back, except end-zone sets and break-side cuts.
 - Which force do you usually teach (forehand/flick or backhand), and should the open side default to the top or bottom of the screen?
 - Do you set downfield defenders on the under/open side as the app does, or another way (for example, on the deep side for a team that hucks)?
 - Are the spacing defaults (vertical: 12 yd to the stack, 5 yd apart; horizontal: 15 yd deep) what you'd draw on a whiteboard?
