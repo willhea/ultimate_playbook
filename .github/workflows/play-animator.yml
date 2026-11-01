@@ -1,0 +1,63 @@
+name: Play Animator
+
+on:
+  push:
+    paths:
+      - 'play-animator/**'
+      - '.github/workflows/play-animator.yml'
+  pull_request:
+    paths:
+      - 'play-animator/**'
+      - '.github/workflows/play-animator.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: play-animator-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: play-animator
+
+jobs:
+  checks:
+    name: Lint, types and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: play-animator/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  browser:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: play-animator/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: true
+      - name: Upload the test report if anything failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            play-animator/playwright-report
+            play-animator/test-results
+          retention-days: 14

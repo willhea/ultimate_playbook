@@ -64,9 +64,9 @@ export function App() {
     setDialog(null);
   };
 
-  // Keyboard shortcuts. A ref keeps the handler reading the latest state.
+  // Keyboard shortcuts. The listener is added once and calls the latest handler through a ref.
   const keys = useRef<(e: KeyboardEvent) => void>(() => {});
-  keys.current = (e: KeyboardEvent) => {
+  const onKey = (e: KeyboardEvent) => {
     if (dialog || isTyping(e.target)) return;
     const mod = e.metaKey || e.ctrlKey;
     if (mod && e.key.toLowerCase() === 'z') {
@@ -105,6 +105,9 @@ export function App() {
     }
     e.preventDefault();
   };
+  useEffect(() => {
+    keys.current = onKey;
+  });
   useEffect(() => {
     const handler = (e: KeyboardEvent) => keys.current(e);
     window.addEventListener('keydown', handler);
