@@ -2,11 +2,11 @@ import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import type { Play, Player, Vec } from '../model/types';
 import type { PlayView } from '../model/engine';
 import { throwGeometry } from '../model/engine';
-import { BRICKS, FIELD, FIELD_MARGIN, FULL_VIEW, GOAL_LINES, type ViewBox } from '../model/field';
+import { BRICKS, FIELD, FIELD_MARGIN, FULL_VIEW, GOAL_LINES, PLAYER_RADIUS, type ViewBox } from '../model/field';
 import { bendFromHandle, clamp, controlPoint, dist, handlePoint, quad } from '../model/geometry';
 import { movePlayer, setCurve, setHolder, setThrowCurve } from '../model/edit';
 
-const R = 1.45; // player radius, yards (bigger than life so numbers are readable)
+const R = PLAYER_RADIUS;
 /** Runs shorter than this (yards) aren't drawn, so tiny adjustments don't clutter the field. */
 const MIN_PATH = 1;
 const CATCH_RADIUS = 3;
@@ -33,6 +33,8 @@ interface Props {
   onNeedFrame?: () => void;
   className?: string;
 }
+
+const round = (n: number, digits: number) => Number(n.toFixed(digits));
 
 /** A path from a to b with its end trimmed so the arrowhead stops at the player's edge. */
 function trimmedPath(p0: Vec, c: Vec, p1: Vec, trim: number): string {
@@ -159,6 +161,10 @@ export function Field({
       onPointerDown={() => onSelect?.(null)}
       role="img"
       aria-label={`Ultimate field showing ${play.title}`}
+      data-testid="field"
+      data-frame={editIndex ?? ''}
+      data-step={view.index}
+      data-u={round(view.u, 3)}
     >
       <defs>
         {(['O', 'D', 'disc'] as const).map((k) => (
@@ -190,6 +196,7 @@ export function Field({
                 key={p.id}
                 d={trimmedPath(p0, c, p1, R + 0.3)}
                 className={`route route-${p.team}`}
+                data-testid={`route-${p.id}`}
                 markerEnd={`url(#arrow-${p.team})`}
               />
             );
@@ -198,6 +205,7 @@ export function Field({
             <path
               d={trimmedPath(throwGeo.from, controlPoint(throwGeo.from, throwGeo.to, frame.throwCurve), throwGeo.to, 0.8)}
               className="route route-throw"
+              data-testid="route-throw"
               markerEnd="url(#arrow-disc)"
             />
           )}
@@ -207,7 +215,7 @@ export function Field({
       {editing && prevFrame && (
         <g className="ghosts" aria-hidden="true">
           {movers.map((p) => (
-            <g key={p.id} transform={`translate(${prevFrame.positions[p.id].x} ${prevFrame.positions[p.id].y})`}>
+            <g key={p.id} data-testid={`ghost-${p.id}`} transform={`translate(${prevFrame.positions[p.id].x} ${prevFrame.positions[p.id].y})`}>
               <circle r={R} className={`ghost ghost-${p.team}`} />
               <text className="ghost-number" dy="0.5">
                 {p.number}
@@ -228,6 +236,11 @@ export function Field({
               key={p.id}
               className={`player player-${p.team} ${selected ? 'is-selected' : ''}`}
               transform={`translate(${pv.pos.x} ${pv.pos.y})`}
+              data-testid={`player-${p.id}`}
+              data-x={round(pv.pos.x, 2)}
+              data-y={round(pv.pos.y, 2)}
+              data-facing={round(pv.facing, 1)}
+              data-selected={selected || undefined}
               onPointerDown={(e) => {
                 onSelect?.(p.id);
                 const pos = frame.positions[p.id];
@@ -251,6 +264,10 @@ export function Field({
       <g
         className={`disc ${view.disc.inFlight ? 'in-flight' : ''}`}
         transform={`translate(${(discDrag?.pos ?? view.disc.pos).x} ${(discDrag?.pos ?? view.disc.pos).y})`}
+        data-testid="disc"
+        data-x={round(view.disc.pos.x, 2)}
+        data-y={round(view.disc.pos.y, 2)}
+        data-in-flight={view.disc.inFlight}
         onPointerDown={(e) => {
           begin(e, { kind: 'disc', base: play });
           if (editing) setDiscDrag({ pos: view.disc.pos, target: null });
@@ -272,6 +289,7 @@ export function Field({
                 cy={h.y}
                 r={0.55}
                 className={`handle handle-${p.team}`}
+                data-testid={`handle-${p.id}`}
                 onPointerDown={(e) => begin(e, { kind: 'curve', id: p.id, base: play })}
                 onDoubleClick={() => onEdit?.(setCurve(play, stepIndex, p.id, null))}
               >
@@ -285,6 +303,7 @@ export function Field({
               cy={handlePoint(throwGeo.from, throwGeo.to, frame.throwCurve).y}
               r={0.55}
               className="handle handle-throw"
+              data-testid="handle-throw"
               onPointerDown={(e) => begin(e, { kind: 'throw', base: play })}
               onDoubleClick={() => onEdit?.(setThrowCurve(play, stepIndex, null))}
             >

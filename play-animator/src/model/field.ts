@@ -35,3 +35,6 @@ export const FULL_VIEW: ViewBox = {
 };
 
 export const VIEW_ASPECT = FULL_VIEW.w / FULL_VIEW.h;
+
+/** Drawn radius of a player, in yards. Bigger than life so the numbers are readable. */
+export const PLAYER_RADIUS = 1.45;

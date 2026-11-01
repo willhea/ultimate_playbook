@@ -50,6 +50,23 @@ export function angleDiff(a: number, b: number): number {
   return d === -180 ? 180 : d;
 }
 
+/**
+ * Blend two directions by mixing their unit vectors. Unlike angleLerp it never
+ * jumps when the two directions are themselves changing over time. A small
+ * sideways nudge in the middle of the blend means an exact about-turn (very
+ * common: players in a stack stand in a straight line) still rotates smoothly,
+ * turning to the left of `a`, instead of flipping all at once.
+ */
+export function directionBlend(a: number, b: number, t: number): number {
+  const ra = (a * Math.PI) / 180;
+  const rb = (b * Math.PI) / 180;
+  const nudge = t * (1 - t);
+  const x = (1 - t) * Math.cos(ra) + t * Math.cos(rb) - nudge * Math.sin(ra);
+  const y = (1 - t) * Math.sin(ra) + t * Math.sin(rb) + nudge * Math.cos(ra);
+  if (Math.hypot(x, y) < 1e-9) return angleLerp(a, b, t);
+  return normalizeAngle((Math.atan2(y, x) * 180) / Math.PI);
+}
+
 export function angleLerp(a: number, b: number, t: number): number {
   return normalizeAngle(a + angleDiff(a, b) * t);
 }

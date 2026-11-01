@@ -8,6 +8,7 @@ import {
   add,
   angleDiff,
   angleLerp,
+  directionBlend,
   angleOfVec,
   angleTo,
   clamp,
@@ -108,9 +109,14 @@ function isThrowStep(play: Play, i: number): boolean {
   return i > 0 && play.frames[i - 1].discHolder !== play.frames[i].discHolder;
 }
 
+/** When the disc leaves the thrower's hand, as a fraction of the step. Never exactly at the start, so the thrower has time to turn. */
+function releaseAt(f: Frame): number {
+  return clamp(f.release, 0.05, 0.95);
+}
+
 /** Where the thrower's body is when the disc leaves their hand in step i. */
 function releaseBody(play: Play, i: number): Vec {
-  return pathPos(play, i, play.frames[i - 1].discHolder, play.frames[i].release);
+  return pathPos(play, i, play.frames[i - 1].discHolder, releaseAt(play.frames[i]));
 }
 
 /** The angle the thrower faces at release: toward where the receiver will catch it. */
@@ -170,7 +176,7 @@ export function evaluate(play: Play, time: number): PlayView {
   const thrower = prev.discHolder;
   const receiver = cur.discHolder;
   const throwing = thrower !== receiver;
-  const r = clamp(cur.release, 0, 0.95);
+  const r = releaseAt(cur);
   const e = easeInOut(u);
 
   const positions: Record<string, Vec> = {};
@@ -184,11 +190,12 @@ export function evaluate(play: Play, time: number): PlayView {
     const fromOverride = prev.facing[id];
     const toOverride = cur.facing[id];
     let base = live;
-    if (fromOverride !== undefined || toOverride !== undefined) {
-      // Turn from the start facing to the end facing, always the same way round.
-      const a = fromOverride ?? live;
-      const ref = angleDiff(staticFacing(play, i - 1, id), staticFacing(play, i, id));
-      base = normalizeAngle(a + closestTurn(angleDiff(a, toOverride ?? live), ref) * e);
+    if (fromOverride !== undefined && toOverride !== undefined) {
+      // Both ends set by hand: turn the short way between them, the same way for the whole step.
+      base = normalizeAngle(fromOverride + angleDiff(fromOverride, toOverride) * e);
+    } else if (fromOverride !== undefined || toOverride !== undefined) {
+      // One end set by hand, the other automatic (and possibly moving).
+      base = directionBlend(fromOverride ?? live, toOverride ?? live, e);
     }
     // A mark shuffling with the thrower keeps facing them rather than turning to run.
     const shuffling =
@@ -202,23 +209,30 @@ export function evaluate(play: Play, time: number): PlayView {
     const run = angleOfVec(quadDeriv(p0, c, p1, e), base);
     const w = clamp(easeInOutDeriv(u), 0, 1);
     if (w >= 1) return run;
-    // Turning into (or out of) the run can mean a turn of nearly 180°. Pick the
-    // turn direction once per step, from the standing facing at that end of the
-    // step, so the player doesn't flip between turning left and right.
+    // Turning into (or out of) the run can mean a turn of nearly 180°. Blend from
+    // the standing facing at that end of the step, and pick the turn direction once
+    // from where the run starts (or ends), so the player never flips between turning
+    // left and right partway through.
     const starting = u < 0.5;
-    const refBase = starting ? staticFacing(play, i - 1, id) : staticFacing(play, i, id);
-    const refRun = angleOfVec(quadDeriv(p0, c, p1, starting ? 0 : 1), refBase);
-    return normalizeAngle(base + closestTurn(angleDiff(base, run), angleDiff(refBase, refRun)) * w);
+    const anchor = starting ? staticFacing(play, i - 1, id) : staticFacing(play, i, id);
+    const runAtEnd = angleOfVec(quadDeriv(p0, c, p1, starting ? 0 : 1), anchor);
+    return normalizeAngle(anchor + closestTurn(angleDiff(anchor, run), angleDiff(anchor, runAtEnd)) * w);
   };
 
   // 1. Whoever has the disc at the start of the step, since the disc's position depends on them.
   const holderPlayer = playerById(play, thrower)!;
   let toCatch = 0;
   if (throwing) {
+    // The thrower squares up to the receiver by the moment of release, whatever they
+    // were doing before (running, facing set by hand), so the disc leaves from the
+    // same spot the flight starts from.
     toCatch = throwAngle(play, i);
-    const start = autoFacing(play, i - 1, thrower);
-    const live = u < r ? angleLerp(start, toCatch, smoothstep(0, r, u)) : toCatch;
-    facing[thrower] = finish(holderPlayer, live);
+    if (u < r) {
+      const natural = finish(holderPlayer, autoFacing(play, i - 1, thrower));
+      facing[thrower] = directionBlend(natural, toCatch, smoothstep(0, r, u));
+    } else {
+      facing[thrower] = toCatch;
+    }
   } else {
     const live = angleLerp(autoFacing(play, i - 1, thrower), autoFacing(play, i, thrower), e);
     facing[thrower] = finish(holderPlayer, live);
@@ -253,10 +267,10 @@ export function evaluate(play: Play, time: number): PlayView {
     facing[p.id] = finish(p, live);
   }
 
-  // After letting go, the thrower turns from the throw to follow the disc.
+  // After letting go, the thrower eases out of the throw back to their normal facing.
   if (throwing && u >= r) {
-    const follow = angleTo(positions[thrower], disc.pos, toCatch);
-    facing[thrower] = finish(holderPlayer, angleLerp(toCatch, follow, smoothstep(r, 1, u)));
+    const natural = finish(holderPlayer, angleTo(positions[thrower], disc.pos, toCatch));
+    facing[thrower] = directionBlend(toCatch, natural, smoothstep(r, r + (1 - r) * 0.5, u));
   }
 
   const players: Record<string, PlayerView> = {};
