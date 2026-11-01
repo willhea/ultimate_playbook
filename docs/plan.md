@@ -12,7 +12,7 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Watching it: playback, a close-up view, and Present mode.
   - Keeping it: undo/redo, autosave, import/export.
   - Seven example plays: four vertical stack, three horizontal stack.
-- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.3). Publishing steps are under "Working notes" below.
+- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.4). Publishing steps are under "Working notes" below.
 - **Tests:** 66 unit tests (about 2 s) and 16 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
@@ -89,8 +89,8 @@ Your rule says end-zone cuts come from the front of the stack. Add "Vertical sta
 - **Property tests use a fixed seed** (`src/test/setup.ts`). `FC_SEED=random npm test` explores new cases.
 - **Browser tests read what's drawn,** not test-only attributes: positions come from SVG transforms, and facing from the wedge's rotation. `e2e/fixtures.ts` `snapshot()` reads a whole frame in one go; don't read attributes one at a time while an animation runs.
 - **First visit seeds the example plays.** A browser that already has saved plays keeps them, so tell the user to use Plays → "Add a copy" to see new or changed examples.
-- **Publishing the prototype link:**
-  1. Run `npm run build:single`.
-  2. Take `dist-single/index.html`. It must start with `<!DOCTYPE html>`; remove `viewport-fit=cover` from its viewport meta.
-  3. Republish it as `index.html` to the artifact (slug `884e0831-9ebb-4784-a3bf-b182a257c5d3`) with the claude-artifacts `publish_files` tool, passing the current version from `get_artifact` as `base_version`. The artifact has the `downloads` capability, so Export's Download button works.
+- **Publishing the prototype link** (https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ). Run `npm run build:single`, then use whichever publishing tool the session has:
+  - **The `Artifact` tool:** publish `dist-single/play-animator.html` (a page fragment) with `url` set to the link. If it refuses because the live version came from a different tool, Read the saved copy it names, confirm it's only an older build of this app, and publish again.
+  - **The claude-artifacts connector:** publish `dist-single/index.html` as `index.html` with `publish_files`, slug `884e0831-9ebb-4784-a3bf-b182a257c5d3`, and `base_version` from `get_artifact`. First change the doctype to `<!DOCTYPE html>` and remove `viewport-fit=cover`.
+  - Either way, the artifact keeps its `downloads` capability, so Export's Download button works.
 - **Network:** ultiworld.com and flikulti.com are blocked in cloud sessions, so research uses search results only.
