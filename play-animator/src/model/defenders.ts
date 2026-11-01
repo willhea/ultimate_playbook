@@ -12,7 +12,7 @@
  * Automatic spots are written into `frame.positions` and `frame.curves`, so the
  * engine and the file format don't need to know about any of this.
  */
-import type { Frame, Play, Vec } from './types';
+import type { Frame, OpenSide, Play, Vec } from './types';
 import { add, controlPoint, dist, mid, scale, sub } from './geometry';
 import { markSpot } from './formations';
 
@@ -31,7 +31,13 @@ export function isManual(frame: Frame, id: string): boolean {
 }
 
 /** Where an automatic defender ends a step, and the bend of their path, given where everyone was before it. */
-export function guardMove(prev: Frame, f: Frame, defender: string, guarded: string): { to: Vec; bend: Vec | null } | null {
+export function guardMove(
+  prev: Frame,
+  f: Frame,
+  defender: string,
+  guarded: string,
+  open: OpenSide = 'bottom',
+): { to: Vec; bend: Vec | null } | null {
   const o0 = prev.positions[guarded];
   const o1 = f.positions[guarded];
   const d0 = prev.positions[defender];
@@ -40,7 +46,7 @@ export function guardMove(prev: Frame, f: Frame, defender: string, guarded: stri
   const oc = controlPoint(o0, o1, f.curves[guarded]);
   let to: Vec;
   if (f.discHolder === guarded && prev.discHolder !== guarded) {
-    to = markSpot(o1);
+    to = markSpot(o1, open);
   } else if (dist(o0, o1) > RUN) {
     // A step behind, angled toward the side of the run the defender started on,
     // the way a defender chases without running through their player.
@@ -90,7 +96,7 @@ export function placeDefenders(play: Play): Play {
     let f = frames[i];
     for (const d of guarding) {
       if (isManual(f, d.id)) continue;
-      const move = guardMove(frames[i - 1], f, d.id, d.guards!);
+      const move = guardMove(frames[i - 1], f, d.id, d.guards!, play.open);
       if (!move) continue;
       const curves = { ...f.curves };
       if (move.bend) curves[d.id] = move.bend;
@@ -113,7 +119,7 @@ export function upgradeDefenders(play: Play): Play {
     if (i === 0) return f;
     const manual: Record<string, true> = { ...f.manual };
     for (const d of guarding) {
-      const move = guardMove(play.frames[i - 1], f, d.id, d.guards!);
+      const move = guardMove(play.frames[i - 1], f, d.id, d.guards!, play.open);
       const bend = f.curves[d.id];
       const same =
         move &&

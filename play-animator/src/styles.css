@@ -740,6 +740,42 @@ input[type='range'] {
   opacity: 0.5;
 }
 
+.force-stop-in {
+  stop-color: var(--defense);
+  stop-opacity: 0.34;
+}
+
+.force-stop-mid {
+  stop-color: var(--defense);
+  stop-opacity: 0.2;
+}
+
+.force-stop-out {
+  stop-color: var(--defense);
+  stop-opacity: 0;
+}
+
+.force-line {
+  stroke: #ffb48a;
+  stroke-width: 0.16;
+  stroke-dasharray: 0.5 0.5;
+  opacity: 0.7;
+}
+
+.mark-arms line {
+  stroke-linecap: round;
+}
+
+.mark-arms .arm-outline {
+  stroke: var(--chalk);
+  stroke-width: 0.62;
+}
+
+.mark-arms .arm {
+  stroke: var(--defense);
+  stroke-width: 0.38;
+}
+
 .route {
   fill: none;
   stroke-width: 0.28;

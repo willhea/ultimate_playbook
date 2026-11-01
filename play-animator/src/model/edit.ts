@@ -1,6 +1,7 @@
 /** Pure editing operations. Each returns a new Play and never mutates its input. */
 import type { Frame, Play, Player, Team, Vec } from './types';
 import { add, dist, sub } from './geometry';
+import { FIELD } from './field';
 import { isManual, placeDefenders } from './defenders';
 import { markSpot, underSpot } from './formations';
 
@@ -109,7 +110,7 @@ export function setGuards(play: Play, defenderId: string, targetId: string | nul
   const target = targetId ? setup.positions[targetId] : undefined;
   if (target) {
     const frames = [...next.frames];
-    shift(frames, 0, defenderId, setup.discHolder === targetId ? markSpot(target) : underSpot(target));
+    shift(frames, 0, defenderId, setup.discHolder === targetId ? markSpot(target, play.open) : underSpot(target, play.open));
     next = withFrames(next, frames);
   }
   return placeDefenders(next);
@@ -219,4 +220,28 @@ export function removePlayer(play: Play, id: string): Play {
 export function stepLabel(play: Play, i: number): string {
   if (i === 0) return play.frames[0].name || 'Setup';
   return play.frames[i].name || `Step ${i}`;
+}
+
+/**
+ * Switch the force (home ↔ away) by mirroring the whole play across the middle of
+ * the field: every position, bend and facing flips top to bottom, so the marks
+ * end up on the new break side.
+ */
+export function flipForce(play: Play): Play {
+  const W = FIELD.width;
+  const mirror = (v: Vec): Vec => ({ x: v.x, y: W - v.y });
+  const bend = (v: Vec): Vec => ({ x: v.x, y: -v.y });
+  const map = <T, U>(r: Record<string, T>, fn: (t: T) => U): Record<string, U> =>
+    Object.fromEntries(Object.entries(r).map(([k, v]) => [k, fn(v)]));
+  return {
+    ...play,
+    open: (play.open ?? 'bottom') === 'bottom' ? 'top' : 'bottom',
+    frames: play.frames.map((f) => ({
+      ...f,
+      positions: map(f.positions, mirror),
+      curves: map(f.curves, bend),
+      facing: map(f.facing, (a) => (360 - a) % 360),
+      throwCurve: f.throwCurve && bend(f.throwCurve),
+    })),
+  };
 }

@@ -6,6 +6,13 @@ export interface Vec {
 
 export type Team = 'O' | 'D';
 
+/**
+ * Which side of the field the mark leaves open: "bottom" is toward y = 40, the home
+ * sideline. With the offense attacking to the right and a right-handed thrower,
+ * bottom is force home (forced to flick) and top is force away (forced to backhand).
+ */
+export type OpenSide = 'bottom' | 'top';
+
 export interface Player {
   /** Stable id, e.g. "O3" or "D3". */
   id: string;
@@ -53,4 +60,6 @@ export interface Play {
   updatedAt: number;
   players: Player[];
   frames: Frame[];
+  /** The force for the whole play. Missing = 'bottom' (force home). */
+  open?: OpenSide;
 }

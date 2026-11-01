@@ -112,7 +112,7 @@ function isThrowStep(play: Play, i: number): boolean {
 }
 
 /** When the disc leaves the thrower's hand, as a fraction of the step. Never exactly at the start, so the thrower has time to turn. */
-function releaseAt(f: Frame): number {
+export function releaseAt(f: Frame): number {
   return clamp(f.release, 0.05, 0.95);
 }
 

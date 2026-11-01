@@ -43,6 +43,26 @@ test('defenders follow the player they guard, unless placed by hand', async ({ a
   expect(await app.playerState('D5')).toMatchObject({ x: expect.closeTo(following.x, 1), y: expect.closeTo(following.y, 1) });
 });
 
+test('show the force on the mark, flip it, and hide it', async ({ app, page }) => {
+  await app.open({ plays: [createDemoPlay()] });
+  await expect(app.field.getByTestId('force-label')).toHaveText(/force home \(flick\)/i);
+  await expect(app.field.getByTestId('mark-arms')).toHaveCount(1); // only the mark has arms
+  await expect(app.field.getByTestId('player-D1').getByTestId('mark-arms')).toHaveCount(1);
+  await expect(app.field.getByTestId('force-break-side')).toBeVisible();
+  const before = await app.playerState('D1');
+
+  await app.button('Flip force').click();
+  await expect(app.field.getByTestId('force-label')).toHaveText(/force away \(backhand\)/i);
+  const o1 = await app.playerState('O1');
+  expect((await app.playerState('D1')).y).toBeGreaterThan(o1.y); // the mark moved to the new break side
+  await app.button('Undo').click();
+  expect((await app.playerState('D1')).y).toBeCloseTo(before.y, 1);
+
+  await page.getByLabel('Show force').uncheck();
+  await expect(app.field.getByTestId('mark-arms')).toHaveCount(0);
+  await expect(app.field.getByTestId('force-break-side')).toHaveCount(0);
+});
+
 test('undo and redo a drag from the keyboard and the toolbar', async ({ app, page }) => {
   await app.open({ plays: [createPlay('History')] });
   await expect(app.button('Undo')).toBeDisabled();

@@ -237,7 +237,7 @@ Built in [`play-animator/`](../play-animator/). Covered by unit tests for the lo
 | Area | Done in the prototype | Not yet |
 |------|----------------------|---------|
 | Field | F-1, F-2. Also an early F-4: a **close-up** view that frames the area the play uses, plus a whole-field view. | F-5 themes, F-6 grid |
-| Pieces | E-1 (mouse), E-2, **E-3 vertical and horizontal stack formations** (see [research](research/stacks.md)), E-5/5b/5c automatic and by-hand facing, who guards whom, E-6, E-7 undo/redo, **E-8 defenders follow their player** (trail a runner, mark a catcher, or place by hand), E-9 shortcuts, add/remove players | E-4 saving your own formations |
+| Pieces | E-1 (mouse), E-2, **E-3 vertical and horizontal stack formations** (see [research](research/stacks.md)), E-5/5b/5c automatic and by-hand facing, who guards whom, E-6, E-7 undo/redo, **E-8 defenders follow their player** (trail a runner, mark a catcher, or place by hand), **A-2/A-3 the force**: break side shaded, arms on the mark, flip home/away, E-9 shortcuts, add/remove players | E-4 saving your own formations |
 | Steps | S-1, S-2 (one bend point), S-3, S-4 (curve control, no named throw types yet), S-8 (add, reorder, delete), release timing for each throw | S-5 per-player timing, S-6 automatic lead passes, S-7 timeline bars, S-9 branches, S-10 stall count |
 | Playback | P-1, P-2, P-3 scrubbing, P-4, P-5 loop, P-7 runs on/off, P-8 easing | P-6 pause points (→ "play the next step" covers most of it) |
 | Recording | R-1 Present mode (full screen), R-5 readable sizes and colours | Parked items |

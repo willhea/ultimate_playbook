@@ -1,15 +1,18 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useId, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Play, Player, Vec } from '../model/types';
 import type { PlayView } from '../model/engine';
 import { throwGeometry } from '../model/engine';
 import { BRICKS, FIELD, FIELD_MARGIN, FULL_VIEW, GOAL_LINES, PLAYER_RADIUS, type ViewBox } from '../model/field';
 import { bendFromHandle, clamp, controlPoint, dist, handlePoint, quad } from '../model/geometry';
 import { movePlayer, setCurve, setHolder, setThrowCurve } from '../model/edit';
+import { forceLabel, forceView, type ForceView } from '../model/force';
 
 const R = PLAYER_RADIUS;
 /** Runs shorter than this (yards) aren't drawn, so tiny adjustments don't clutter the field. */
 const MIN_PATH = 1;
 const CATCH_RADIUS = 3;
+/** How far the break-side shading reaches from the thrower, in yards. */
+const FORCE_RADIUS = 10;
 
 type Drag =
   | { kind: 'player'; id: string; base: Play; grab: Vec }
@@ -24,6 +27,8 @@ interface Props {
   editIndex: number | null;
   selectedId: string | null;
   showRoutes: boolean;
+  /** Shade the break side and draw the mark's arms. */
+  showForce?: boolean;
   viewBox?: ViewBox;
   /** Playhead time in seconds, exposed for tests. */
   time?: number;
@@ -53,6 +58,7 @@ export function Field({
   editIndex,
   selectedId,
   showRoutes,
+  showForce = true,
   viewBox = FULL_VIEW,
   time,
   onSelect,
@@ -150,6 +156,9 @@ export function Field({
     ...play.players.filter((p) => p.team === 'O'),
   ];
 
+  const force = showForce ? forceView(play, view) : null;
+  const labelSize = viewBox.w * 0.014;
+
   const cursorClass = editing ? 'is-editing' : editable ? 'is-viewing' : '';
 
   return (
@@ -187,6 +196,18 @@ export function Field({
       </defs>
 
       <FieldMarkings view={viewBox} />
+      {showForce && (
+        <text
+          x={Math.min(FIELD.length, viewBox.x + viewBox.w - labelSize)}
+          y={viewBox.y + labelSize * 3.1}
+          className="attack-label"
+          style={{ fontSize: labelSize }}
+          data-testid="force-label"
+        >
+          {forceLabel(play.open).toUpperCase()}
+        </text>
+      )}
+      {force && <BreakSide force={force} at={view.players[force.thrower].pos} />}
 
       {showPaths && prevFrame && (
         <g className={editing ? 'routes' : 'routes routes-faint'}>
@@ -248,6 +269,13 @@ export function Field({
               }}
             >
               {(selected || hoverCatch) && <circle r={R + 0.7} className={hoverCatch ? 'catch-ring' : 'select-ring'} />}
+              {force?.mark === p.id && (
+                // The mark's arms, straight out to each side: one radius past the body each way.
+                <g transform={`rotate(${pv.facing})`} className="mark-arms" style={{ opacity: force.strength }} data-testid="mark-arms">
+                  <line x1={0} y1={-2 * R} x2={0} y2={2 * R} className="arm-outline" />
+                  <line x1={0} y1={-2 * R} x2={0} y2={2 * R} className="arm" />
+                </g>
+              )}
               <g transform={`rotate(${pv.facing})`}>
                 <path d={`M${R * 0.78},${-0.75} L${R + 1},0 L${R * 0.78},0.75 Z`} className="wedge" />
               </g>
@@ -309,6 +337,31 @@ export function Field({
         </g>
       )}
     </svg>
+  );
+}
+
+/**
+ * The break side: a half circle around the thrower on the mark's side, split from
+ * the open side by a line through the thrower parallel to the mark's arms.
+ */
+function BreakSide({ force, at }: { force: ForceView; at: Vec }) {
+  const gradient = useId();
+  const n = force.breakSide;
+  const side = { x: n.y, y: -n.x };
+  const pt = (v: Vec, s: number) => `${round(at.x + v.x * s, 3)},${round(at.y + v.y * s, 3)}`;
+  const r = FORCE_RADIUS;
+  return (
+    <g className="force" style={{ opacity: force.strength }} data-testid="force-break-side" aria-hidden="true">
+      <defs>
+        <radialGradient id={gradient} gradientUnits="userSpaceOnUse" cx={at.x} cy={at.y} r={r}>
+          <stop offset="0" className="force-stop-in" />
+          <stop offset="0.7" className="force-stop-mid" />
+          <stop offset="1" className="force-stop-out" />
+        </radialGradient>
+      </defs>
+      <path d={`M${pt(side, r)} A${r},${r} 0 0 1 ${pt(n, r)} A${r},${r} 0 0 1 ${pt(side, -r)} Z`} fill={`url(#${gradient})`} />
+      <line x1={at.x + side.x * r} y1={at.y + side.y * r} x2={at.x - side.x * r} y2={at.y - side.y * r} className="force-line" />
+    </g>
   );
 }
 

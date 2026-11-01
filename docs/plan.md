@@ -12,8 +12,8 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Watching it: playback, a close-up view, and Present mode.
   - Keeping it: undo/redo, autosave, import/export.
   - Seven example plays: four vertical stack, three horizontal stack.
-- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.5). Publishing steps are under "Working notes" below.
-- **Tests:** 75 unit tests (about 2 s) and 17 browser tests (about 16 s). CI runs both on every push.
+- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.6). Publishing steps are under "Working notes" below.
+- **Tests:** 79 unit tests (about 2 s) and 18 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
 - **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`. It hasn't been merged to `main` yet.
@@ -23,7 +23,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
 
-**Words:** [`glossary.md`](glossary.md) defines the ultimate terms we use (open side, break side, mark, around and inside breaks, and so on). Use them in plays, notes and the UI, and check its open questions.
+**Words:** [`glossary.md`](glossary.md) defines the ultimate terms we use (open side, break side, mark, around and inside breaks, and so on). Use them in plays, notes and the UI.
 
 ## Next steps, in order
 
@@ -42,32 +42,25 @@ How it works (`src/model/defenders.ts`; the rules are in its header comment):
 - The example plays no longer script defenders, except the fronting D7 in "clear, then the next cut".
 - `validatePlay` now also flags players who **run through each other** partway through a step (`run-through`, closer than 1.8 yd). The hand-placed defenders in the old example plays did this; the automatic ones don't.
 
-### 1. Show the force: open and break sides (spec A-2/A-3), and flip the field
+### Done: show the force (spec A-2/A-3), and flip it
 
-**Why:** the stack plays, especially the break-side cut, only make sense when viewers can see which side is open.
+The coach's design (decision #10), built in `src/model/force.ts` and `Field.tsx`:
+- **Only the mark has arms:** straight out to each side, 180° apart, at right angles to the way the mark faces, each one player radius past the body.
+- **The break side is shaded:** a half circle (10 yd) around the thrower on the mark's side, split from the open side by a dashed line through the thrower, parallel to the mark's arms. So moving the mark by hand (straight up, flat mark) turns the shading with it.
+- **The mark** is the defender guarding the player with the disc. The force fades in as they arrive (from 4.5 yd to 3.2 yd away) and disappears while the disc is in the air.
+- **The label** reads "Force home (flick)" or "Force away (backhand)", under "Attacking →".
+- **Show force** (on by default) sits next to "Show runs while playing", and Present mode follows it.
+- **`Play.open`** ('bottom' = force home, the default) is used by automatic marks. **Flip force** mirrors the whole play top to bottom (positions, bends, facing) and is undoable.
+- Next ideas, if the coach wants to experiment: a narrower angle than 180°, an arrow for the force, or hatching instead of shading.
 
-**The coach's design (November 2026):**
-- The force is shown as a **shaded angle**.
-- **Only the mark** gets **arms**: straight out to each side, 180° apart (a line through the mark, at right angles to the way the mark faces), each arm as long as the player's radius (`PLAYER_RADIUS`).
-- Open question in [`glossary.md`](glossary.md#questions-for-you): does the shading cover the open side (a wedge from the thrower that lines up with the mark's arms) or the break side the mark takes away? Ask before building.
-
-**Design**
-- Add `Play.open?: 'bottom' | 'top'`, defaulting to `'bottom'` (force home), and pass it to the formation functions. Automatic defenders mark with `markSpot` in `src/model/defenders.ts` (`guardMove`), so pass it there too. Show the force in the coach's words, e.g. "Force home (flick)"; flipping makes it "Force away (backhand)" for a right-handed thrower.
-- `Field.tsx` draws the shaded angle and the mark's arms (above). The mark is whoever guards the disc holder; arms show while they stand within a few yards of the thrower, including during playback. A "Show force" toggle sits next to "Show runs while playing" and is on by default.
-- A **Flip force** button mirrors the play top to bottom: y → 40 − y, bends mirrored, facing angle → −angle. That gives each play for both forces.
-
-**Tests:**
-- Unit: flipping twice gives the original play; flipping keeps `validatePlay` passing; marks end up on the new break side.
-- Browser: none needed, unless the toggle gets a journey of its own.
-
-### 2. An end-zone example play
+### 1. An end-zone example play
 
 Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check.
 
-### 3. Remaining question for the coach
+### 2. Remaining question for the coach
 - Do the spacing defaults match your whiteboard? Vertical: 12 yd to the stack, 5 yd apart. Horizontal: cutters 15 yd deep. (Force is decided: force home, right-handed flick.)
 
-### 4. Then
+### 3. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
 - **Go public:**
   - Open a pull request from this branch into `main`.

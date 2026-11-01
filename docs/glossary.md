@@ -47,23 +47,23 @@ also words on the Play Animator's screen or in its code.
 The force is the defense's plan for the thrower. The mark makes it happen, and every other defender plays off it.
 
 - **Mark / marker (app).** The defender guarding the thrower. (Some teams call the mark in a zone the **rabbit** or **chase**.) In the app, an automatic defender becomes the mark when their player catches the disc.
-- **Force (app).** Where the mark pushes the thrower to throw. The mark stands on one side of the thrower to take that side away, which leaves the other side open. The force is named after what's left open.
-- **Open side (app).** The side the thrower is pushed toward, where throws are easy. Downfield defenders take away cuts on this side.
-- **Break side (app).** The side the mark takes away. Some teams call it the **closed side**.
+- **Force (app).** Where the mark forces the throw to go. The mark stands on one side of the thrower to take that side away, which leaves the other side open (decision #9).
+- **Force side / open side (app).** The side the thrower is allowed to throw to, where throws are easy. For a right-handed thrower forced to flick, it's their forehand side. Downfield defenders take away cuts on this side. **This is the coach's meaning of "force side"; some sources use the phrase for the opposite side, so in the app and docs we write "open side".**
+- **Break side (app).** The side the mark takes away, where you don't want the disc thrown: the backhand side for a righty forced to flick. Some teams say **closed side**. The app shades it (decision #10).
 - **Break / break throw.** A completed throw to the break side, past the mark. The main ways to do it:
   - **Around break.** Around the outside of the mark, on the break side, usually by stepping out wide with the pivot. For our default (right-handed thrower forced to flick) that's a backhand bent around the outside of the mark. The app's "break-side cut from the front" play uses one.
   - **Inside break.** Through the gap between the mark and the open side, then curving back to the break side, usually with an **inside-out** curve.
   - **Over the top.** A hammer or scoober over the mark.
-- **Force forehand / force flick.** The mark makes the thrower throw forehands. For a right-handed thrower that means the mark stands on the thrower's left (backhand) side. **Force backhand** is the mirror image.
-- **Force home / force away (app).** The mark pushes the thrower toward the home (or away) sideline, whichever hand the thrower uses. Teams call this so the whole defense agrees on a side without checking every thrower's hand.
+- **Force forehand / force flick.** The mark makes the thrower throw forehands. For a right-handed thrower that means the mark stands on the thrower's left (backhand) side. **Force backhand** is the mirror image. Forehand and flick are the same throw. Teams talk as if every thrower is right-handed, and a flick force is the most common.
+- **Force home / force away (app).** The mark pushes the thrower toward the home (or away) sideline, whichever hand the thrower uses. Teams call this because it's consistent: forehand and backhand flip for a left-hander, home and away don't. On the line, a team that wants a flick force works out which sideline that is for a righty, and calls it home or away.
   - **Our default (decision #8):** force home, with a right-handed thrower facing downfield. Home is the bottom of the screen, so the thrower is forced to flick, and the mark stands on the top (backhand) side.
-- **Left-handed throwers.** Everything about forehand and backhand flips. A force home on a left-hander means they throw backhands. That's one reason teams call home/away rather than forehand/backhand. **[check]**: does your team switch the mark for lefties, or stay home/away?
+- **Left-handed throwers.** Everything about forehand and backhand flips. The force stays home or away, so a force home that makes a righty flick makes a lefty throw backhands (decision #9).
 - **Force middle.** The mark pushes the thrower toward the middle of the field, away from the nearer sideline, usually when the disc is near a sideline.
 - **Force sideline.** The mark pushes the thrower toward the nearer sideline, to trap them.
 - **Straight up.** No force: the mark stands directly in front of the thrower and takes away the throw straight downfield.
 - **Flat mark.** The mark stands square, side-on to the downfield direction, to take away throws into the middle and push the disc wide. The **half-flat mark** is a step toward the open side from there.
 - **Marking stance.** Feet a bit wider than the shoulders, knees bent, weight on the balls of the feet, hips low, chest open to the thrower, **arms out wide with open hands**. The mark moves their feet to stay in front of the throw, rather than just reaching.
-  - The app will draw this: only the mark shows arms, straight out to each side (180° apart), each as long as the player's circle is wide. See [plan.md](plan.md).
+  - The app draws this: only the mark shows arms, straight out to each side (180° apart), each one player radius long, with the break side shaded behind them (decision #10).
 - **Stall count / stalling.** The mark counts out loud ("Stalling one, two, …"). If the thrower still has the disc when the mark says "ten", that's a **stall** (a turnover). Outdoor USA Ultimate games count to 10; some small-sided formats count less. The app doesn't model it yet.
 - **Disc space.** The mark must stay at least one disc diameter from the thrower's body. Closer is a marking violation.
 - **Marking violations.** Breaking any of these marking rules lets the thrower call it, and play carries on while the mark fixes it:
@@ -113,7 +113,7 @@ The descriptions are for a right-handed thrower.
 ## Offense: cuts and movement
 
 - **Cut (app: a run).** A sudden run to get open for a throw.
-- **Under cut / in cut (app).** A cut back toward the thrower. Coming under on the open side is the most common completed pass in the game.
+- **Under cut / in cut / cut in (app).** A cut back toward the thrower. All three mean the same thing. Coming under on the open side is the most common completed pass in the game.
 - **Deep cut / going deep.** A cut away from the thrower, toward the end zone, for a huck.
 - **Out cut.** A cut toward a sideline.
 - **Break-side cut.** A cut into the break-side lane. The thrower has to break the mark to hit it.
@@ -187,7 +187,7 @@ The descriptions are for a right-handed thrower.
 
 ## Where sources disagree
 
-- **"Force side".** Some sources mean the side the thrower is pushed toward (the open side); others mean the side the defense takes away. **We don't use "force side".** We say **open side** and **break side**.
+- **"Force side".** Some sources mean the side the thrower is pushed toward (the open side); others mean the side the defense takes away. **The coach means the open side**, where the disc is allowed to go. To be unambiguous, the app and docs say **open side** and **break side**.
 - **Field size.** Current USA Ultimate pages say 70 × 40 yd with 20 yd end zones; an older USA Ultimate guide says 25 yd end zones. We use 20.
 - **"Home".** Usually your team's bags, but some teams name a landmark. In the app, home is simply the bottom sideline.
 - **Dump vs reset.** Often the same throw. Some teams use "dump" for the throw and "reset" for the idea of restarting the count.
@@ -195,12 +195,17 @@ The descriptions are for a right-handed thrower.
 
 ## Questions for you
 
-1. **The force drawing:** you said "a shaded angle", with arms on the mark only, spread to 180°, each the length of the player's circle (written up in [plan.md](plan.md)). What should the shading cover?
-   - (a) **The open side:** a wedge from the thrower, one edge running along the mark's arms, so it shows where the throw can go.
-   - (b) **The break side:** the angle behind the mark's arms, showing what the mark takes away.
-2. **Left-handed throwers:** with force home, does your mark just stay home (so a lefty is forced backhand), or does your team ever switch to force forehand for them?
-3. **Words for the videos:** when narrating, do you say "flick" or "forehand"? "Under cut" or "in cut"? "Vert" or "vertical stack"? The app's notes will use your choice.
-4. **Anything missing?** Terms your team uses that aren't here (for example names for set plays, or calls).
+Answered (November 2026; see decisions #9–#11 in [00-open-questions.md](00-open-questions.md)):
+- ~~What should the force shading cover?~~ The break side. Start with 180°.
+- ~~Left-handed throwers?~~ The force stays home or away.
+- ~~Words for narration?~~ "Cut in" and "under cut", "flick" and "forehand", "vert" and "vertical stack", "ho" and "horizontal stack" are interchangeable.
+
+Still open:
+- **Anything missing?** Terms your team uses that aren't here, such as names for set plays or calls.
+
+## How others draw the force
+
+Coaching material explains the force as two halves of the field split by an imaginary line through the thrower: the break side, which the mark takes away, and the open side. Diagrams draw the thrower, that line, and shading or arrows on one side. No source found gives a standard way to draw it, and playbook tools such as DiagramTheGame offer arrows and cones but no force marker. So the app's design is the coach's own (decision #10).
 
 ## Sources
 
@@ -221,6 +226,8 @@ All read as search results, not in full (see the note at the top).
 - [Handler Cutting (Ultimate Rob)](https://ultimaterob.com/2014/03/27/handler-cutting/)
 - [Cutting Moves: How to Get Open (Disckatus)](https://www.disckatus.com/en/blog/21_cutting_movements)
 - [Frisbee seminar: understanding the force (University of Michigan)](https://websites.umich.edu/~tjwei/frisbee/force.html)
+- [Tips for the New Player (Townsville Ultimate)](https://tsv-ultimate.com/tips-for-the-new-player)
+- [Ultimate Play Maker & Playbook Designer (DiagramTheGame)](https://diagramthegame.com/ultimate)
 - [Cup Defense](https://ultimatefrisbeehq.com/pages/cup-defense) and [Ultimate Frisbee Throws](https://ultimatefrisbeehq.com/pages/ultimate-frisbee-throws) (Ultimate Frisbee HQ)
 - [Basic zone positions (PDF)](https://d36m266ykvepgv.cloudfront.net/uploads/media/whiejO39TC/o/zone-descriptions.pdf)
 - [Ultimate Frisbee Terms and Definitions (UAP)](https://www.theuap.com/ultimate-frisbee-terms)

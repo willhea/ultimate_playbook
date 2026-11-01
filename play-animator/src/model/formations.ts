@@ -13,10 +13,10 @@
  *   so facing downfield (to the right) they flick from their right side, toward the
  *   bottom: the mark forces flicks, and the open side is the home sideline.
  */
-import type { Vec } from './types';
+import type { OpenSide, Vec } from './types';
 import { FIELD } from './field';
 
-export type OpenSide = 'bottom' | 'top';
+export type { OpenSide };
 
 export interface FormationOptions {
   /** Where the disc (and O1) is. */

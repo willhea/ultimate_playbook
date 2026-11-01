@@ -11,6 +11,9 @@ interface Props {
   activeIndex: number;
   showRoutes: boolean;
   onShowRoutes: (on: boolean) => void;
+  showForce: boolean;
+  onShowForce: (on: boolean) => void;
+  onFlipForce: () => void;
   closeUp: boolean;
   onCloseUp: (on: boolean) => void;
   onAddStep: () => void;
@@ -18,7 +21,7 @@ interface Props {
 
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2];
 
-export function Timeline({ play, playback, activeIndex, showRoutes, onShowRoutes, closeUp, onCloseUp, onAddStep }: Props) {
+export function Timeline({ play, playback, activeIndex, showRoutes, onShowRoutes, showForce, onShowForce, onFlipForce, closeUp, onCloseUp, onAddStep }: Props) {
   const times = frameTimes(play);
   const total = totalDuration(play);
 
@@ -114,6 +117,18 @@ export function Timeline({ play, playback, activeIndex, showRoutes, onShowRoutes
           <input id="routes" type="checkbox" checked={showRoutes} onChange={(e) => onShowRoutes(e.target.checked)} />
           <span>Show runs while playing</span>
         </label>
+        <label className="inline-control">
+          <input id="force" type="checkbox" checked={showForce} onChange={(e) => onShowForce(e.target.checked)} />
+          <span>Show force</span>
+        </label>
+        <button
+          type="button"
+          className="btn btn-quiet"
+          onClick={onFlipForce}
+          title="Mirror the play top to bottom: force home becomes force away, and back"
+        >
+          Flip force
+        </button>
       </div>
     </footer>
   );

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import type { Play } from './model/types';
 import { evaluate, staticFacing } from './model/engine';
-import { addStep, setFacing } from './model/edit';
+import { addStep, flipForce, setFacing } from './model/edit';
 import { createPlay } from './model/defaults';
 import { examplePlays } from './plays';
 import { scriptPlay } from './plays/script';
@@ -31,6 +31,7 @@ export function App() {
   const playback = usePlayback(play);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showRoutes, setShowRoutes] = useState(true);
+  const [showForce, setShowForce] = useState(true);
   const [closeUp, setCloseUp] = useState(true);
   const [presenting, setPresenting] = useState(false);
   const [dialog, setDialog] = useState<DialogName>(null);
@@ -177,6 +178,7 @@ export function App() {
             editIndex={editIndex}
             selectedId={selectedId}
             showRoutes={showRoutes}
+            showForce={showForce}
             viewBox={viewBox}
             time={playback.time}
             onSelect={setSelectedId}
@@ -210,12 +212,15 @@ export function App() {
         activeIndex={activeIndex}
         showRoutes={showRoutes}
         onShowRoutes={setShowRoutes}
+        showForce={showForce}
+        onShowForce={setShowForce}
+        onFlipForce={() => edit(flipForce(play))}
         closeUp={closeUp}
         onCloseUp={setCloseUp}
         onAddStep={addStepHere}
       />
 
-      {presenting && <Presenter play={play} view={view} viewBox={viewBox} showRoutes={showRoutes} playing={playback.playing} onExit={exitPresenting} />}
+      {presenting && <Presenter play={play} view={view} viewBox={viewBox} showRoutes={showRoutes} showForce={showForce} playing={playback.playing} onExit={exitPresenting} />}
 
       {dialog === 'plays' && (
         <PlaysDialog
@@ -266,6 +271,7 @@ function Presenter({
   view,
   viewBox,
   showRoutes,
+  showForce,
   playing,
   onExit,
 }: {
@@ -273,6 +279,7 @@ function Presenter({
   view: ReturnType<typeof evaluate>;
   viewBox: ViewBox;
   showRoutes: boolean;
+  showForce: boolean;
   playing: boolean;
   onExit: () => void;
 }) {
@@ -296,7 +303,7 @@ function Presenter({
 
   return (
     <div className="presenter" ref={ref} onPointerMove={() => setHintVisible(true)}>
-      <Field play={play} view={view} viewBox={viewBox} editIndex={null} selectedId={null} showRoutes={showRoutes} className="field-present" />
+      <Field play={play} view={view} viewBox={viewBox} editIndex={null} selectedId={null} showRoutes={showRoutes} showForce={showForce} className="field-present" />
       <div className={`presenter-hint ${hintVisible && !playing ? 'is-visible' : ''}`}>
         <span>
           <kbd>Space</kbd> play / pause · <kbd>→</kbd> next step · <kbd>←</kbd> back · <kbd>Esc</kbd> exit

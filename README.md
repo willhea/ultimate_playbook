@@ -7,8 +7,8 @@ Tools and a video series for teaching ultimate frisbee visually.
 > [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
 > **[ASSUMPTION]** is a guess to confirm or change.
 >
-> **Next up:** see [`docs/plan.md`](docs/plan.md). In order: show the force (open/break side)
-> and an end-zone example play. Defenders now follow their player automatically.
+> **Next up:** see [`docs/plan.md`](docs/plan.md): an end-zone example play, then a video pilot.
+> Done recently: defenders follow their player, and the force is shown on the mark.
 
 ## The three workstreams
 
