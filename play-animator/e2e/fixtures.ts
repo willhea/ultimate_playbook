@@ -69,39 +69,36 @@ export class AppPage {
     await expect(this.field).toBeVisible();
   }
 
-  async playerState(id: string): Promise<PlayerState> {
-    const el = this.player(id);
-    const [x, y, facing] = await Promise.all(['data-x', 'data-y', 'data-facing'].map((a) => el.getAttribute(a)));
-    return { x: Number(x), y: Number(y), facing: Number(facing) };
-  }
-
   /**
-   * Time, every player and the disc, read in one go from a single rendered frame.
-   * (Reading attributes one by one can straddle a re-render while the animation runs.)
+   * The playhead time, and where every player and the disc are actually drawn, read
+   * from the SVG's own transforms in a single pass over one rendered frame. Reading
+   * what's drawn (not a separate test attribute) means a drawing bug can't hide.
    */
   async snapshot(): Promise<{ time: number; players: Record<string, PlayerState>; disc: { x: number; y: number; inFlight: boolean } }> {
     return this.field.evaluate((svg) => {
-      const num = (el: Element, a: string) => Number(el.getAttribute(a));
+      const matrix = (el: Element | null) => (el as SVGGraphicsElement | null)?.transform.baseVal.consolidate()?.matrix;
+      const at = (el: Element | null) => ({ x: matrix(el)?.e ?? 0, y: matrix(el)?.f ?? 0 });
       const players: Record<string, { x: number; y: number; facing: number }> = {};
       for (const el of svg.querySelectorAll('[data-testid^="player-"]')) {
-        players[el.getAttribute('data-testid')!.slice(7)] = { x: num(el, 'data-x'), y: num(el, 'data-y'), facing: num(el, 'data-facing') };
+        const m = matrix(el.querySelector(':scope > g')); // the facing wedge's rotation
+        const facing = m ? ((Math.atan2(m.b, m.a) * 180) / Math.PI + 360) % 360 : 0;
+        players[el.getAttribute('data-testid')!.slice('player-'.length)] = { ...at(el), facing };
       }
-      const disc = svg.querySelector('[data-testid="disc"]')!;
+      const disc = svg.querySelector('[data-testid="disc"]');
       return {
-        time: num(svg, 'data-time'),
+        time: Number(svg.getAttribute('data-time')),
         players,
-        disc: { x: num(disc, 'data-x'), y: num(disc, 'data-y'), inFlight: disc.getAttribute('data-in-flight') === 'true' },
+        disc: { ...at(disc), inFlight: disc?.classList.contains('in-flight') ?? false },
       };
     });
   }
 
+  async playerState(id: string): Promise<PlayerState> {
+    return (await this.snapshot()).players[id];
+  }
+
   async discState() {
-    const el = this.disc;
-    return {
-      x: Number(await el.getAttribute('data-x')),
-      y: Number(await el.getAttribute('data-y')),
-      inFlight: (await el.getAttribute('data-in-flight')) === 'true',
-    };
+    return (await this.snapshot()).disc;
   }
 
   /** Index of the step being edited, or null while between steps. */

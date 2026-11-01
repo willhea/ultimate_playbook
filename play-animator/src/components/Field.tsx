@@ -240,10 +240,6 @@ export function Field({
               className={`player player-${p.team} ${selected ? 'is-selected' : ''}`}
               transform={`translate(${pv.pos.x} ${pv.pos.y})`}
               data-testid={`player-${p.id}`}
-              data-x={round(pv.pos.x, 2)}
-              data-y={round(pv.pos.y, 2)}
-              data-facing={round(pv.facing, 1)}
-              data-selected={selected || undefined}
               onPointerDown={(e) => {
                 onSelect?.(p.id);
                 const pos = frame.positions[p.id];
@@ -268,9 +264,6 @@ export function Field({
         className={`disc ${view.disc.inFlight ? 'in-flight' : ''}`}
         transform={`translate(${(discDrag?.pos ?? view.disc.pos).x} ${(discDrag?.pos ?? view.disc.pos).y})`}
         data-testid="disc"
-        data-x={round(view.disc.pos.x, 2)}
-        data-y={round(view.disc.pos.y, 2)}
-        data-in-flight={view.disc.inFlight}
         onPointerDown={(e) => {
           begin(e, { kind: 'disc', base: play });
           if (editing) setDiscDrag({ pos: view.disc.pos, target: null });

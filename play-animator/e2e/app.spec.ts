@@ -32,10 +32,13 @@ test('no serious accessibility problems in the editor or a dialog', async ({ app
   expect(await serious()).toEqual([]);
 });
 
-test('a narrow window never scrolls sideways', async ({ app, page }) => {
-  await page.setViewportSize({ width: 820, height: 1100 });
+test('laptop and narrow windows never scroll sideways', async ({ app, page }) => {
   await app.open({ plays: [createDemoPlay()] });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  for (const size of [{ width: 1280, height: 720 }, { width: 820, height: 1100 }]) {
+    await page.setViewportSize(size);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow, `${size.width} px wide`).toBeLessThanOrEqual(0);
+  }
 });
 
 test('the one-file build works when a host page wraps it (the shareable link)', async ({ app, page }) => {

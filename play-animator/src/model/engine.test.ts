@@ -45,7 +45,7 @@ describe('animation', () => {
       }),
       { numRuns: 40 },
     );
-  });
+  }, 30_000); // about 1 s normally; mutation testing runs it much slower
 
   it('keeps the disc in the thrower’s hand until the release, then lands it with the receiver', () => {
     const f = demo.frames[2];

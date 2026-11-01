@@ -38,6 +38,8 @@ test('undo and redo a drag from the keyboard and the toolbar', async ({ app, pag
   expect(await app.playerState('O6')).toMatchObject({ x: start.x, y: start.y });
   await app.button('Redo').click();
   expect((await app.playerState('O6')).y).toBeCloseTo(6, 0);
+  await app.button('Undo').click();
+  expect(await app.playerState('O6')).toMatchObject({ x: start.x, y: start.y });
 });
 
 test('set facing by hand and change who a defender guards', async ({ app, page }) => {
