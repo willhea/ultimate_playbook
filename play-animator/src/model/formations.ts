@@ -7,7 +7,11 @@
  * - The mark (D1) forces the throw to the open side, so the mark stands on the
  *   break side of the thrower. Downfield defenders take away the under cut on
  *   the open side.
- * - "bottom" means the open side is toward y = 40 (the bottom of the screen).
+ * - "bottom" means the open side is toward y = 40, the bottom of the screen, which is
+ *   the home sideline.
+ * - The default is the coach's: **force home**. For demos the thrower is right-handed,
+ *   so facing downfield (to the right) they flick from their right side, toward the
+ *   bottom: the mark forces flicks, and the open side is the home sideline.
  */
 import type { Vec } from './types';
 import { FIELD } from './field';

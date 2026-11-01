@@ -353,16 +353,28 @@ function FieldMarkings({ view }: { view: ViewBox }) {
       <text x={labelX} y={labelY} className="attack-label" style={{ fontSize: labelSize }}>
         ATTACKING →
       </text>
-      {/* In a close-up a sideline can be out of view; say where it is so viewers keep their bearings. */}
-      {view.y > 0.5 && (
+      {/* Name the sidelines. In a close-up a sideline can be out of view; then say where it is. */}
+      {view.y > 0.5 ? (
         <text x={view.x + view.w / 2} y={view.y + labelSize * 1.6} className="sideline-label" style={{ fontSize: labelSize }}>
-          ↑ SIDELINE {Math.round(view.y)} YD
+          ↑ AWAY SIDELINE {Math.round(view.y)} YD
         </text>
+      ) : (
+        view.y < -labelSize && (
+          <text x={view.x + view.w / 2} y={-labelSize * 0.6} className="sideline-label" style={{ fontSize: labelSize }}>
+            AWAY SIDELINE
+          </text>
+        )
       )}
-      {view.y + view.h < W - 0.5 && (
+      {view.y + view.h < W - 0.5 ? (
         <text x={view.x + view.w / 2} y={view.y + view.h - labelSize * 0.8} className="sideline-label" style={{ fontSize: labelSize }}>
-          ↓ SIDELINE {Math.round(W - (view.y + view.h))} YD
+          ↓ HOME SIDELINE {Math.round(W - (view.y + view.h))} YD
         </text>
+      ) : (
+        view.y + view.h > W + labelSize * 1.4 && (
+          <text x={view.x + view.w / 2} y={W + labelSize * 1.3} className="sideline-label" style={{ fontSize: labelSize }}>
+            HOME SIDELINE
+          </text>
+        )
       )}
       {view.x <= 0 && view.y <= -1 && (
         <text x={0} y={-1.3} className="scale-label">

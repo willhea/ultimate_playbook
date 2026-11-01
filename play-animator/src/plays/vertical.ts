@@ -14,13 +14,13 @@ export const underThenDeep: PlayScript = {
   setup: {
     positions: setup,
     notes:
-      'A vertical stack: O1 has the disc, O2 is the dump behind, and five cutters line up down the middle. The mark forces throws to the open side, the bottom of the screen. Cuts start from the back of the stack.',
+      'A vertical stack: O1 has the disc, O2 is the dump behind, and five cutters line up down the middle. The mark forces home: our right-handed thrower is forced to flick toward the home sideline, the bottom of the screen. Cuts start from the back of the stack.',
   },
   steps: [
     {
       name: 'O7 cuts under from the back',
       notes:
-        'The back of the stack has the most room. O7 builds speed down the open-side lane and comes under toward the disc.',
+        'The back of the stack has the most room. O7 builds speed down the open-side lane, toward the home sideline, and comes under for the flick.',
       duration: 3.4,
       runs: {
         O7: { to: { x: 50, y: 30 }, bend: { x: 2, y: 4 } },
@@ -89,7 +89,7 @@ export const breakSideFromFront: PlayScript = {
     {
       name: 'O3 cuts to the break side',
       notes:
-        'The front of the stack cuts to the break side, away from where the mark is forcing. O1 has to throw around the mark to reach it.',
+        'The front of the stack cuts to the break side, toward the away sideline. O1 has to break the mark: a backhand bent around the mark.',
       duration: 2.4,
       runs: {
         O3: { to: { x: 47, y: 11 }, bend: { x: 1, y: -1 } },
@@ -97,7 +97,7 @@ export const breakSideFromFront: PlayScript = {
       },
       throwTo: 'O3',
       release: 0.55,
-      // Bend the throw away from the mark, like an inside-out break.
+      // Bend the backhand away from the mark so it goes around it.
       throwBend: { x: 4, y: 3 },
     },
   ],

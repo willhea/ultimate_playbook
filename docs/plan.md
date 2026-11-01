@@ -19,7 +19,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`. It hasn't been merged to `main` yet.
 
 ### Coaching decisions to respect
-- USA Ultimate field. Offense attacks left to right. **By default the open side is the bottom of the screen** (y → 40).
+- USA Ultimate field. Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
 
@@ -58,7 +58,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 **Why:** the stack plays, especially the break-side cut, only make sense when viewers can see which side is open.
 
 **Design**
-- Add `Play.open?: 'bottom' | 'top'`, defaulting to `'bottom'`, and pass it to the formation functions.
+- Add `Play.open?: 'bottom' | 'top'`, defaulting to `'bottom'` (force home), and pass it to the formation functions. Show the force in the coach's words, e.g. "Force home (flick)"; flipping makes it "Force away (backhand)" for a right-handed thrower.
 - `Field.tsx` draws a light shading on the open side downfield of the disc, and a short arrow from the mark showing the force. A "Show force" toggle sits next to "Show runs while playing" and is on by default.
 - A **Flip force** button mirrors the play top to bottom: y → 40 − y, bends mirrored, facing angle → −angle. That gives each play for both forces.
 
@@ -70,9 +70,8 @@ continue in a fresh session with no other context. Update it when a step lands.
 
 Your rule says end-zone cuts come from the front of the stack. Add "Vertical stack: end zone, front cuts first", with the disc around the brick and the stack in the end zone. Extend the cut-from-the-back test so end-zone plays are exempt; the simplest way is a title or tag check.
 
-### 4. Remaining questions for the coach
-- Which force do you usually teach (forehand/flick or backhand)? That sets the default open side.
-- Do the spacing defaults match your whiteboard? Vertical: 12 yd to the stack, 5 yd apart. Horizontal: cutters 15 yd deep.
+### 4. Remaining question for the coach
+- Do the spacing defaults match your whiteboard? Vertical: 12 yd to the stack, 5 yd apart. Horizontal: cutters 15 yd deep. (Force is decided: force home, right-handed flick.)
 
 ### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.

@@ -117,7 +117,7 @@ adding next. They're listed in priority order, as a suggestion:
 ## Questions for you
 
 - ~~Where do vertical-stack cuts start?~~ Answered: from the back, except end-zone sets and break-side cuts.
-- Which force do you usually teach (forehand/flick or backhand), and should the open side default to the top or bottom of the screen?
+- ~~Which force?~~ Answered: force home; for demos, a right-handed thrower forced to flick, so the open side is the home sideline at the bottom of the screen.
 - Do you set downfield defenders on the under/open side as the app does, or another way (for example, on the deep side for a team that hucks)?
 - Are the spacing defaults (vertical: 12 yd to the stack, 5 yd apart; horizontal: 15 yd deep) what you'd draw on a whiteboard?
 

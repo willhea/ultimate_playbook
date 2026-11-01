@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { horizontalStack, verticalStack, type OpenSide } from './formations';
 import { createPlay } from './defaults';
 import { validatePlay } from './validate';
+import { handOffset } from './engine';
 
 const asPlay = (positions: Record<string, { x: number; y: number }>) => {
   const play = createPlay();
@@ -47,4 +48,10 @@ it('new plays can start from either stack', () => {
   const cutters = (formation: 'vertical' | 'horizontal') => ids(4, 5, 6, 7).map((id) => createPlay('x', formation).frames[0].positions[id]);
   expect(new Set(cutters('horizontal').map((p) => p.x)).size).toBe(1); // level across the field
   expect(new Set(cutters('vertical').map((p) => p.y)).size).toBe(1); // in a line down the middle
+});
+
+it('defaults to force home: a right-handed flick toward the home sideline at the bottom', () => {
+  const pos = verticalStack();
+  expect(pos.D1.y).toBeLessThan(pos.O1.y); // the mark takes away the backhand side (the top)
+  expect(handOffset(0).y).toBeGreaterThan(0); // facing downfield, the disc is in the right hand (the bottom side)
 });
