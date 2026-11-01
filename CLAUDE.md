@@ -17,4 +17,7 @@ next (with designs), the coach's decisions, and the gotchas we've hit.
   browser tests cover one user journey each; no screenshot comparisons. See the testing
   section of `play-animator/README.md`.
 - Every built-in play must pass `validatePlay()` (`src/model/validate.ts`).
-- Work on the branch named in the session instructions. Commit and push when a step lands.
+- **`main` is protected; every change goes through a pull request.** Work on the branch named in
+  the session instructions, commit and push when a step lands, and open a pull request into `main`
+  (fill in `.github/pull_request_template.md`). CI must pass; the coach merges. Never push to `main`.
+- After a pull request merges, start the next piece of work from the latest `main`.

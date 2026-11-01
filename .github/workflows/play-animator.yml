@@ -1,14 +1,11 @@
 name: Play Animator
 
+# Every pull request runs the checks (even docs-only ones, so required checks on
+# `main` never wait forever), and so does every change that lands on `main`.
 on:
   push:
-    paths:
-      - 'play-animator/**'
-      - '.github/workflows/play-animator.yml'
+    branches: [main]
   pull_request:
-    paths:
-      - 'play-animator/**'
-      - '.github/workflows/play-animator.yml'
   workflow_dispatch:
 
 concurrency:
@@ -63,3 +60,26 @@ jobs:
             play-animator/playwright-report
             play-animator/test-results
           retention-days: 14
+
+  build:
+    name: Build the app
+    # Each change that lands on main, once the tests pass, produces a downloadable copy of
+    # the app: one self-contained HTML file that opens in any browser.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [checks, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: play-animator/package-lock.json
+      - run: npm ci
+      - run: npm run build:single
+      - uses: actions/upload-artifact@v5
+        with:
+          name: play-animator-${{ github.sha }}
+          path: play-animator/dist-single/index.html
+          retention-days: 90

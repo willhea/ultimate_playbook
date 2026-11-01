@@ -16,7 +16,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - **Tests:** 82 unit tests (about 2 s) and 19 browser tests (about 16 s). CI runs both on every push.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
-- **Branch:** all work is on `claude/wonderful-ptolemy-gluy7w`, which is also the repository's default branch (there is no `main` yet).
+- **Branches:** `main` holds the released code (v0.7) and is protected; work happens on `claude/wonderful-ptolemy-gluy7w` and reaches `main` through pull requests.
 
 ### Coaching decisions to respect
 - USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
@@ -66,9 +66,19 @@ The coach expects to build plays mostly by describing them to an AI like Claude,
 - **Automatic behavior is the multiplier.** The more the app fills in by itself (defense, how cuts look, timing), the less an AI or a person has to spell out, and the more real every play looks. That is the next step.
 - **An AI needs to check its own work,** because the coach reviews from a phone: `validatePlay` plus pictures of each step (as `npm run screenshots` does for the examples).
 
-### 1. Lock in the code (waiting on the coach)
+### 1. Version control and CI (November 2026)
 
-There is no `main` branch: this working branch is the repository's default. Options: create `main` from the current code and make it the default (then new work goes through pull requests), and/or tag this version (v0.7).
+The coach asked for tighter version control: `main` is protected and every change goes through a pull request.
+- **`main`** was created from the v0.7 code. This session's branch keeps working and opens pull requests into it.
+- **CI** (`.github/workflows/play-animator.yml`) runs lint, types, unit and browser tests on every pull request (no path filters, so required checks never hang) and on every push to `main`. On `main` it then builds the app and attaches a downloadable `play-animator-<commit>` file, kept for 90 days.
+- **Dependabot** (`.github/dependabot.yml`) opens grouped weekly updates into `main`. It skips `@playwright/test` (pinned) and TypeScript 7.
+- **Pull request template** (`.github/pull_request_template.md`): what changes for the coach, how it was checked, and decisions.
+- **Owner steps (only the repository owner can do these, in GitHub's settings on the website):**
+  1. Settings → General → Default branch: switch to `main`.
+  2. Settings → Rules → Rulesets → New branch ruleset for `main`: restrict deletions, require a pull request before merging (0 approvals, since the coach is the only reviewer and can't approve their own pull requests), require status checks "Lint, types and unit tests" and "Browser tests", and block force pushes.
+  3. Releases → Draft a new release → new tag `v0.7` on `main`. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
+  4. Close Dependabot pull request #1 (it targets the old default branch); the new config reopens updates against `main`.
+- **Deploying (CD) waits on hosting:** the repository is private, and GitHub Pages for a private repository needs a paid plan (or making the repository public). Until then, the shareable prototype is the claude.ai link, published from a session.
 
 ### 2. Cutting: refine how offense and defense move (with the coach)
 
@@ -93,7 +103,7 @@ Your rule says end-zone cuts come from the front of the stack. Add "Vertical sta
 
 ### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
-- **Go public:** host on GitHub Pages (the owner turns Pages on in the repository settings, then a workflow publishes `npm run build`), and deal with Dependabot pull request #1 (a Vite bump, 8.3.2 → 8.3.5).
+- **Go public:** host somewhere public once sharing and budget are decided (GitHub Pages needs a public repository or a paid plan); then add a deploy job to CI.
 - **Later:** iPad and touch, a stall count, the 3D pilot, and branching plays (decision #14).
 - **Still open with the coach:** sharing (links or team logins), hosting budget, and a name.
 
