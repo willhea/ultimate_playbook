@@ -269,7 +269,7 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
      frame, portrait or landscape, on the computer;
    - a short authoring guide for Claude (`docs/play-authoring.md`): coordinates, the
      script format, the coach's rules, what the app does automatically.
-3. **Vertical stack setup and quick fixes:** the new dump spot, O3 off to the break side and
+3. ~~**Vertical stack setup and quick fixes:**~~ (built, November 2026) the new dump spot, O3 off to the break side and
    the angled stack, about 2 yd of grass between defenders and their players (decisions
    #28, #29); defenders stay on the open side until the catch and there's no mark after a
    score (#27); the close-up sideline labels lose their yardage (#32). **Relative
@@ -291,7 +291,8 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
 
 - Reaction delay and ground lost on a plant: pick on the comparison page.
 - "Released on the plant" as the default throw timing: confirm after seeing it.
-- How near the break sideline the stack's angle flips (about 10–12 yd?).
+- How near the break sideline the stack's angle flips (the app uses 12 yd for now).
+- Where the dump's defender stands (between the handlers for now, or shading upline?).
 - In portrait on a phone the field fills only a strip of the screen: turn it so the offense
   attacks up the screen?
 - Steps stay the way plays are built (coaching beats, with smooth motion through them)?

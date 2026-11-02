@@ -6,8 +6,66 @@
 import type { Play, StackSpacing, Vec } from '../model/types';
 import { createPlay } from '../model/defaults';
 import { addStep, movePlayer, setCurve, setFacing, setHolder, setThrowCurve, updateFrame } from '../model/edit';
+import { openSign } from '../model/formations';
 
-export type Run = Vec | { to: Vec; bend: Vec };
+/**
+ * A spot given the way a coach says it (decision #30): yards to the open or break
+ * side of a player, and ahead (downfield) or back. "from" is a player, or "disc" for
+ * whoever has the disc at the start of the step. In a step, it's where that player
+ * ends the step; a player placed from themselves moves from where they started it
+ * ("O7 takes 7 yd ahead and 7 to the open side"). Example: the dump,
+ * `{ from: 'O1', break: 10, back: 2 }`.
+ */
+export interface Relative {
+  from: string;
+  open?: number;
+  break?: number;
+  ahead?: number;
+  back?: number;
+}
+
+/** A spot on the field: yards, or relative to a player. */
+export type Spot = Vec | Relative;
+
+export type Run = Spot | { to: Spot; bend: Vec };
+
+export const isRelative = (s: Spot): s is Relative => 'from' in s;
+
+/** Where a relative spot is, given where its player is, for a play with this open side. */
+export function resolveRelative(rel: Relative, at: Vec, open: Play['open']): Vec {
+  const across = ((rel.open ?? 0) - (rel.break ?? 0)) * openSign(open);
+  return { x: at.x + (rel.ahead ?? 0) - (rel.back ?? 0), y: at.y + across };
+}
+
+/**
+ * Work out every spot in `spots`, in an order where each relative spot's player is
+ * already placed. `where(id)` says where a player is now and `start(id)` where they
+ * began; `place` puts one somewhere. Throws if spots refer to each other in a circle.
+ */
+function placeAll(
+  spots: Record<string, Spot>,
+  holder: string,
+  open: Play['open'],
+  where: (id: string) => Vec | undefined,
+  start: (id: string) => Vec | undefined,
+  place: (id: string, to: Vec) => void,
+) {
+  const waiting = new Map(Object.entries(spots));
+  const target = (s: Relative) => (s.from === 'disc' ? holder : s.from);
+  while (waiting.size) {
+    const ready = [...waiting].find(([id, s]) => !isRelative(s) || target(s) === id || !waiting.has(target(s)));
+    if (!ready) throw new Error(`These positions refer to each other in a circle: ${[...waiting.keys()].join(', ')}.`);
+    const [id, s] = ready;
+    waiting.delete(id);
+    if (!isRelative(s)) {
+      place(id, s);
+      continue;
+    }
+    const at = target(s) === id ? start(id) : where(target(s));
+    if (!at) throw new Error(`${id} is placed relative to ${target(s)}, who isn't in the play.`);
+    place(id, resolveRelative(s, at, open));
+  }
+}
 
 export interface StepScript {
   name: string;
@@ -29,12 +87,26 @@ export interface StepScript {
 
 export interface PlayScript {
   title: string;
-  setup: { positions: Record<string, Vec>; notes: string; name?: string; holder?: string; stack?: StackSpacing };
+  setup: { positions: Record<string, Spot>; notes: string; name?: string; holder?: string; stack?: StackSpacing };
   steps: StepScript[];
 }
 
 export function scriptPlay(script: PlayScript): Play {
   let play = createPlay(script.title);
+  // The setup: an offensive player who moves brings their defender along, as in the
+  // editor, unless the script places that defender too.
+  const positions = { ...play.frames[0].positions };
+  const holder = script.setup.holder ?? 'O1';
+  const given = script.setup.positions;
+  const defaults = play.frames[0].positions;
+  placeAll(given, holder, play.open, (id) => positions[id], (id) => defaults[id], (id, to) => {
+    const from = positions[id];
+    positions[id] = to;
+    for (const d of play.players) {
+      if (d.guards !== id || given[d.id] || !from || !positions[d.id]) continue;
+      positions[d.id] = { x: positions[d.id].x + to.x - from.x, y: positions[d.id].y + to.y - from.y };
+    }
+  });
   play = {
     ...play,
     stack: script.setup.stack,
@@ -43,8 +115,8 @@ export function scriptPlay(script: PlayScript): Play {
         ...play.frames[0],
         name: script.setup.name ?? 'Setup',
         notes: script.setup.notes,
-        positions: { ...play.frames[0].positions, ...script.setup.positions },
-        discHolder: script.setup.holder ?? 'O1',
+        positions,
+        discHolder: holder,
       },
     ],
   };
@@ -52,11 +124,16 @@ export function scriptPlay(script: PlayScript): Play {
     const i = k + 1;
     play = addStep(play, k);
     play = updateFrame(play, i, { name: s.name, notes: s.notes, duration: s.duration, release: s.release ?? 0.4 });
-    for (const [id, run] of Object.entries(s.runs ?? {})) {
-      const to = 'to' in run ? run.to : run;
+    const runs = s.runs ?? {};
+    const spots = Object.fromEntries(Object.entries(runs).map(([id, run]) => [id, 'to' in run ? run.to : run]));
+    const before = play.frames[i - 1].positions;
+    placeAll(spots, play.frames[i - 1].discHolder, play.open, (id) => play.frames[i].positions[id], (id) => before[id], (id, to) => {
+      const run = runs[id];
       play = movePlayer(play, i, id, to);
       if ('bend' in run) play = setCurve(play, i, id, run.bend);
-    }
+      // No bend means a straight run, even for a defender who had an automatic curve.
+      else if (play.frames[i].curves[id]) play = setCurve(play, i, id, null);
+    });
     if (s.throwTo) {
       play = setHolder(play, i, s.throwTo);
       if (s.throwBend) play = setThrowCurve(play, i, s.throwBend);

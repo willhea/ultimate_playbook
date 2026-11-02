@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
 import { addPlayer, addStep, movePlayer, removePlayer, setGuards, setHolder, setManual } from './edit';
-import { guardSpot, markSpot } from './formations';
+import { GUARD_GAP, guardSpot, markSpot } from './formations';
 import { dist } from './geometry';
 import { evaluate, frameTimes } from './engine';
 import { PLAYER_RADIUS } from './field';
@@ -38,7 +38,7 @@ describe('automatic defenders', () => {
       const view = evaluate(play, (times[1] * k) / 20);
       const gap = dist(view.players.D7.pos, view.players.O7.pos);
       expect(gap, `${k}/20 of the way`).toBeGreaterThan(2);
-      expect(gap, `${k}/20 of the way`).toBeLessThan(4.5);
+      expect(gap, `${k}/20 of the way`).toBeLessThan(GUARD_GAP + 0.5);
     }
   });
 
@@ -50,9 +50,21 @@ describe('automatic defenders', () => {
     expect(gap(1)).toEqual(gap(0));
   });
 
-  it('step up to mark a player who catches the disc', () => {
-    const play = setHolder(oneStep(), 1, 'O3');
-    expect(play.frames[1].positions.D3).toEqual(markSpot(play.frames[1].positions.O3));
+  it('stay with their player while the disc is in the air, then step up to mark in the next step (decision #27)', () => {
+    let play = movePlayer(oneStep(), 1, 'O7', { x: 50, y: 30 });
+    play = setHolder(play, 1, 'O7');
+    const { D7, O7 } = play.frames[1].positions;
+    expect(dist(D7, O7)).toBeCloseTo(TRAIL, 5); // still chasing on the catch, not crossing over to mark
+    expect(D7.y).toBeGreaterThan(markSpot(O7).y); // on the open side of where the mark will stand
+    play = addStep(play, 1);
+    expect(play.frames[2].positions.D7).toEqual(markSpot(O7));
+  });
+
+  it('nobody marks after a score: a catch in the end zone ends the play', () => {
+    let play = movePlayer(oneStep(), 1, 'O7', { x: 95, y: 20 });
+    play = addStep(setHolder(play, 1, 'O7'), 1);
+    const caught = play.frames[1].positions;
+    expect(play.frames[2].positions.D7).toEqual(caught.D7);
   });
 
   it('stay where they are dragged in a step, until set back to automatic', () => {
@@ -72,9 +84,9 @@ describe('automatic defenders', () => {
 
   it('includes a defender added back to the play: they mark or follow straight away', () => {
     // Found by the edit fuzzer: a re-added defender stood on the sideline until the next edit.
-    let play = setHolder(oneStep(), 1, 'O2');
+    let play = addStep(setHolder(oneStep(), 1, 'O2'), 1);
     play = addPlayer(removePlayer(play, 'D2'), 'D');
-    expect(play.frames[1].positions.D2).toEqual(markSpot(play.frames[1].positions.O2));
+    expect(play.frames[2].positions.D2).toEqual(markSpot(play.frames[2].positions.O2));
   });
 
   it('never run through the player they guard', () => {

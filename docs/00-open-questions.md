@@ -62,7 +62,8 @@ The coach watched the vertical-stack plays and set direction. Details and the fe
 
 - **Reaction delay and ground lost on a plant** (decision #26): chosen on a comparison page once the new motion exists.
 - **Release "on the plant" as the default** (decision #36): the coach wants to see it first.
-- **How near the break sideline the stack's angle flips** (decision #28).
+- **How near the break sideline the stack's angle flips** (decision #28). The app uses 12 yd as a first guess.
+- **Where the dump's defender stands:** the app puts D2 between the two handlers, about 2 yd of grass from O2. Should they shade upline instead?
 - **Fronting:** merged into the stance "front" (fully between the cutter and the disc). The coach can rename it.
 
 8. **Sharing:** *Mostly settled by #17–#19:* share links for any play, plus a public playbook in the repository. Team logins only if those turn out not to be enough.

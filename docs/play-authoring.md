@@ -49,35 +49,58 @@ All positions are in **yards**, as `{ "x": …, "y": … }`.
   "title": "Vertical stack: back cuts in",
   "setup": {
     "notes": "What to say over the starting positions.",
-    "positions": { "O2": { "x": 33, "y": 10 } },
+    "positions": {},
     "holder": "O1"
   },
   "steps": [
     {
-      "name": "O7 cuts in from the back",
+      "name": "O7 sets up",
+      "notes": "What to say over this step.",
+      "duration": 1.6,
+      "runs": {
+        "O7": { "from": "O7", "ahead": 7, "open": 7 },
+        "D7": { "from": "O7", "ahead": 4, "open": 3.5 }
+      }
+    },
+    {
+      "name": "O7 plants and cuts in",
       "notes": "What to say over this step.",
       "duration": 3.4,
-      "runs": {
-        "O7": { "to": { "x": 50, "y": 30 }, "bend": { "x": 6, "y": 8 } },
-        "O6": { "x": 70, "y": 12 }
-      },
+      "runs": { "O7": { "from": "disc", "ahead": 15, "open": 8 } },
       "throwTo": "O7",
-      "release": 0.65,
-      "throwBend": { "x": -2, "y": 5 }
+      "release": 0.45,
+      "throwBend": { "x": 1.5, "y": 1.5 }
     }
   ]
 }
 ```
 
 - **Players** are `O1`–`O7` (offense, blue) and `D1`–`D7` (defense, orange). D*n* guards O*n*.
-- **`setup.positions`** only needs the players that differ from the default vertical stack:
-  O1 (the thrower) at (35, 20), O2 (the dump) at (30, 13), and O3–O7 down the middle at
-  x = 47, 52, 57, 62, 67. Moving an offensive player in the setup brings their defender along.
-  `holder` is who has the disc (default O1).
+- **A spot** is either field yards, `{ "x": 50, "y": 28 }`, or **relative to a player**, the
+  way the coach thinks (decision #30): `{ "from": "O1", "break": 10, "back": 2 }` is 10 yd to
+  the break side of O1 and 2 yd behind. Use `open` or `break`, and `ahead` (downfield) or
+  `back`. They flip with the force. `"from": "disc"` means whoever has the disc at the start
+  of the step. **Prefer relative spots:** they say what the coach means, and survive a change
+  to the setup.
+  - In a step, a spot is relative to where that player **ends** the step, so
+    `"D7": { "from": "O7", … }` follows O7's new spot. A player placed from **themselves**
+    moves from where they started the step: `"O7": { "from": "O7", "ahead": 7, "open": 7 }`
+    is a 10 yd set-up, diagonally into the open side.
+- **`setup.positions`** only needs the players that differ from the default vertical stack
+  (decision #28), with O1 at (35, 20):
+  - O2, the dump: 10 yd to the break side and 2 yd behind O1, at (33, 10);
+  - O3–O7 at x = 47, 52, 57, 62, 67: O3 5 yd to the break side of O1 (y = 15), and each cutter
+    behind 0.4 yd further over (y = 14.6, 14.2, 13.8, 13.4);
+  - the defenders on the open side of their player, about 2 yd of grass between them; the mark
+    on the break side of O1.
+
+  Moving an offensive player in the setup brings their defender along, unless the script
+  places that defender too. `holder` is who has the disc (default O1).
 - **A step** is one coaching beat. Everyone moves from where they were to where the step
   says, over `duration` seconds. Players not in `runs` stay where they are.
-- **`runs`**: where a player ends the step, either a spot or a spot with a `bend`: an offset
-  from the middle of the straight path, which curves the run.
+- **`runs`**: where a player ends the step, either a spot or `{ "to": spot, "bend": { "x", "y" } }`.
+  The bend is an offset from the middle of the straight path, which curves the run. No bend
+  means a straight run.
 - **`throwTo`**: who catches the disc in this step. **`release`**: when the disc leaves the
   thrower's hand, as a fraction of the step (default 0.4). **`throwBend`** curves the throw
   the same way `bend` curves a run.
@@ -87,14 +110,17 @@ All positions are in **yards**, as `{ "x": …, "y": … }`.
 ## What the app does by itself
 
 So a script describes the offense, and any deliberate defense, and nothing else:
-- **Defenders** mark their player when that player catches the disc, trail a step behind a
-  player who runs, and otherwise keep their spacing. Moving a defender in `runs` places them
-  by hand for that step only.
+- **Defenders** trail a step behind a player who runs, and otherwise keep their spacing.
+  While the disc is in the air to their player they stay with them; they **mark in the step
+  after the catch** (decision #27), so a play whose last step is a catch ends without a new
+  mark. Nobody marks after a score. Moving a defender in `runs` places them by hand for that
+  step only.
+- **The force** shows on the mark, and only for a thrower who had the disc when the step
+  began.
 - **The setup's defenders** line up on the open side: even with their player near the disc,
   deep further downfield (decision #12).
 - **Facing:** runners face where they run, defenders face their player, the offense faces
   the disc.
-- **The force** is drawn on the mark.
 
 ## The coach's rules (from the decisions)
 
@@ -102,17 +128,17 @@ So a script describes the offense, and any deliberate defense, and nothing else:
   cuts come from the front (decision #7; a test enforces it for the built-in plays).
 - **A cutter separates before cutting:** from the back of the stack, a set-up of about 10 yd,
   diagonally away from the stack into the open side, then the cut (#31). Never run through
-  the stack: that's a pick.
+  the stack: that's a pick. The defender respects the deep threat and backs off on the
+  set-up: place them by hand, deep and on the open side of the cutter (see the example).
 - **Cuts are straight legs with hard changes of direction**, not smooth arcs. Until the app
-  has plant points, write a set-up and a cut as **two steps**, with little or no bend (#24).
+  has plant points, write a set-up and a cut as **two steps**, with no bend (#24).
 - **Throws lead the receiver to space,** on the side away from their defender, at a good
   angle. Most throws bend slightly (#25).
 - **Timing throws** (a break-side cut from the front, the dump and swing) go up as the cut
-  starts or before, and the receiver runs onto the disc: use an early `release` (#26).
-- **The dump** stands about 10 yd to the break side and 2 yd behind the thrower (#28).
-- **Positions are relative** in the coach's head: "10 yd break side, 2 yd behind O1" (#30).
-  Until the script has relative positions, work the numbers out from the thrower's spot,
-  and say them in relative terms when you talk to the coach.
+  starts or before, and the receiver runs onto the disc: use an early `release`, about 0.2
+  (#26).
+- **Talk to the coach in relative terms** too: "O2 is 10 yd break side, 2 yd behind O1",
+  not coordinates (#30).
 
-Some of these the app doesn't do yet (the new stack setup, plant points, reaction timing).
+Some of these the app doesn't do yet (plant points, reaction timing, lead passes).
 The order they'll arrive in is in [`strategy.md`](strategy.md#recommended-order-updated-after-the-strategy-session).

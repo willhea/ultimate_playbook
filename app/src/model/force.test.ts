@@ -19,11 +19,18 @@ describe('the force', () => {
     expect(forceLabel(play.open)).toBe('Force home (flick)');
   });
 
-  it('disappears while the disc is in the air, and comes back on the receiver once their defender marks', () => {
-    const step = play.frames[1];
-    const inFlight = times[0] + step.duration * (releaseAt(step) + 0.1);
+  it('disappears while the disc is in the air, and comes back on the receiver in the next step, as their defender marks', () => {
+    // Step 2 is O7's catch; step 3 is O7's throw.
+    const step = play.frames[2];
+    expect(step.discHolder).toBe('O7');
+    const inFlight = times[1] + step.duration * (releaseAt(step) + 0.1);
     expect(forceView(play, evaluate(play, inFlight))).toBeNull();
-    expect(forceView(play, evaluate(play, times[1]))).toMatchObject({ thrower: 'O7', mark: 'D7', strength: 1 });
+    // On the catch, D7 is still chasing O7: no force yet (decision #27).
+    expect(forceView(play, evaluate(play, times[2]))).toBeNull();
+    // In the next step D7 sets the mark, and the force shows until O7 throws.
+    const next = play.frames[3];
+    const beforeThrow = times[2] + next.duration * releaseAt(next) * 0.9;
+    expect(forceView(play, evaluate(play, beforeThrow))).toMatchObject({ thrower: 'O7', mark: 'D7', strength: 1 });
   });
 
   it('stays on the thrower until the release, and fades in as a new mark arrives', () => {
