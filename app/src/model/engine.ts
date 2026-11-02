@@ -9,19 +9,17 @@ import {
   angleDiff,
   angleLerp,
   directionBlend,
-  angleOfVec,
   angleTo,
   clamp,
   controlPoint,
   dist,
   easeInOut,
-  easeInOutDeriv,
   normalizeAngle,
   polar,
   quad,
-  quadDeriv,
   smoothstep,
 } from './geometry';
+import { join, leg, legDirection, momentAt, profile, type Moment } from './motion';
 
 /** The disc is carried slightly in front of and to the right of the holder. */
 const HAND_REACH = 0.95;
@@ -99,12 +97,13 @@ function playerById(play: Play, id: string): Player | undefined {
   return play.players.find((p) => p.id === id);
 }
 
-/** Position of a player `u` of the way through the step into frame i. */
+/**
+ * Position of a player `u` of the way (in time) through the step into frame i.
+ * Players carry their speed from one step into the next and plant where they change
+ * direction (see motion.ts).
+ */
 export function pathPos(play: Play, i: number, id: string, u: number): Vec {
-  const p0 = play.frames[i - 1].positions[id];
-  const p1 = play.frames[i].positions[id];
-  const c = controlPoint(p0, p1, play.frames[i].curves[id]);
-  return quad(p0, c, p1, easeInOut(u));
+  return momentAt(play, i, id, u).pos;
 }
 
 function isThrowStep(play: Play, i: number): boolean {
@@ -149,9 +148,38 @@ export function autoFacing(play: Play, k: number, id: string): number {
   return angleTo(pos, staticDisc(play, k));
 }
 
-export function staticFacing(play: Play, k: number, id: string): number {
+/** The facing at frame k for a player standing there: set by hand, or automatic. */
+function standingFacing(play: Play, k: number, id: string): number {
   const override = play.frames[k].facing[id];
   return override !== undefined ? override : autoFacing(play, k, id);
+}
+
+/** Whether a player turns to face where they run during step i. */
+function facesRun(play: Play, i: number, id: string): boolean {
+  const prev = play.frames[i - 1];
+  const cur = play.frames[i];
+  const player = playerById(play, id);
+  if (!player || cur.facing[id] !== undefined) return false;
+  // A mark shuffling with the thrower keeps facing them rather than turning to run.
+  if (player.team === 'D' && player.guards !== null && player.guards === prev.discHolder && player.guards === cur.discHolder) return false;
+  return dist(prev.positions[id], cur.positions[id]) >= MIN_RUN;
+}
+
+/**
+ * How far a player passing through frame k faces where they're running, rather than
+ * their standing facing: 0 for someone who stops there or plants hard, up to 1 for
+ * someone running straight on.
+ */
+function runWeightAt(play: Play, k: number, id: string): number {
+  if (k <= 0 || k >= play.frames.length - 1 || play.frames[k].facing[id] !== undefined) return 0;
+  if (!facesRun(play, k, id) || !facesRun(play, k + 1, id)) return 0;
+  return join(play, k, id).flow;
+}
+
+export function staticFacing(play: Play, k: number, id: string): number {
+  const standing = standingFacing(play, k, id);
+  const w = runWeightAt(play, k, id);
+  return w > 0 ? normalizeAngle(standing + angleDiff(standing, join(play, k, id).dir) * w) : standing;
 }
 
 function staticDisc(play: Play, k: number): Vec {
@@ -181,8 +209,12 @@ export function evaluate(play: Play, time: number): PlayView {
   const r = releaseAt(cur);
   const e = easeInOut(u);
 
+  const moments: Record<string, Moment> = {};
   const positions: Record<string, Vec> = {};
-  for (const p of play.players) positions[p.id] = pathPos(play, i, p.id, u);
+  for (const p of play.players) {
+    moments[p.id] = momentAt(play, i, p.id, u);
+    positions[p.id] = moments[p.id].pos;
+  }
 
   const facing: Record<string, number> = {};
 
@@ -199,26 +231,39 @@ export function evaluate(play: Play, time: number): PlayView {
       // One end set by hand, the other automatic (and possibly moving).
       base = directionBlend(fromOverride ?? live, toOverride ?? live, e);
     }
-    // A mark shuffling with the thrower keeps facing them rather than turning to run.
-    const shuffling =
-      player.team === 'D' && player.guards !== null && player.guards === thrower && player.guards === receiver;
-    if (toOverride !== undefined || shuffling) return base;
+    if (!facesRun(play, i, id)) return base;
 
-    const p0 = prev.positions[id];
-    const p1 = cur.positions[id];
-    if (dist(p0, p1) < MIN_RUN) return base;
-    const c = controlPoint(p0, p1, cur.curves[id]);
-    const run = angleOfVec(quadDeriv(p0, c, p1, e), base);
-    const w = clamp(easeInOutDeriv(u), 0, 1);
+    // Turn toward the running direction as the player gets going, and back toward the
+    // standing facing as they stop or plant. Someone running on through the end of a
+    // step keeps facing (mostly) where they run, turning through the halfway direction
+    // between the two legs.
+    const l = leg(play, i, id);
+    const { ta, td, duration: T } = profile(play, i, id);
+    const { t, param } = moments[id];
+    const w0 = runWeightAt(play, i - 1, id);
+    const w1 = runWeightAt(play, i, id);
+    const runAtStart = w0 > 0 ? join(play, i - 1, id).dir : legDirection(l, 0);
+    const runAtEnd = w1 > 0 ? join(play, i, id).dir : legDirection(l, 1);
+    let run = legDirection(l, param);
+    let w = 1;
+    if (t < ta) {
+      const f = t / ta;
+      w = w0 + (1 - w0) * f;
+      run = angleLerp(runAtStart, run, f);
+    } else if (t > T - td) {
+      const f = (T - t) / td;
+      w = w1 + (1 - w1) * f;
+      run = angleLerp(runAtEnd, run, f);
+    }
     if (w >= 1) return run;
     // Turning into (or out of) the run can mean a turn of nearly 180°. Blend from
     // the standing facing at that end of the step, and pick the turn direction once
     // from where the run starts (or ends), so the player never flips between turning
     // left and right partway through.
-    const starting = u < 0.5;
-    const anchor = starting ? staticFacing(play, i - 1, id) : staticFacing(play, i, id);
-    const runAtEnd = angleOfVec(quadDeriv(p0, c, p1, starting ? 0 : 1), anchor);
-    return normalizeAngle(anchor + closestTurn(angleDiff(anchor, run), angleDiff(anchor, runAtEnd)) * w);
+    const starting = t < ta;
+    const anchor = starting ? standingFacing(play, i - 1, id) : standingFacing(play, i, id);
+    const ref = starting ? runAtStart : runAtEnd;
+    return normalizeAngle(anchor + closestTurn(angleDiff(anchor, run), angleDiff(anchor, ref)) * w);
   };
 
   // 1. Whoever has the disc at the start of the step, since the disc's position depends on them.

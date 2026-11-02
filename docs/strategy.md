@@ -274,10 +274,15 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
    #28, #29); defenders stay on the open side until the catch and there's no mark after a
    score (#27); the close-up sideline labels lose their yardage (#32). **Relative
    positions** in the script (#30), since the dump spot and stack are already relative.
-4. **Motion and throws** (priority 4): cuts as legs with plant points (#24), no stopping
-   between steps, defenders reacting a beat late, lead passes to space, throw type, shape
-   and pace (#25). Includes the **comparison page** for reaction delay and ground lost on
-   a plant (#26), and a look at "released on the plant".
+4. **Motion and throws** (priority 4), in three pull requests:
+   1. ~~**No stopping between steps, and plants**~~ (built, November 2026): players carry
+      their speed from one step into the next, and plant where a run changes direction
+      (#24). A set-up and a cut are two steps; the plant is where they meet.
+   2. **Defenders react a beat late** and lose ground on a plant (#26), with the
+      **comparison page**: the same cut side by side, three reaction delays × two amounts
+      of ground lost, at a hidden address on the live site.
+   3. **Throws:** lead passes to space, throw type, shape and pace (#25), and a look at
+      "released on the plant".
 5. **Checks** (#37): a throw too close to a defender or on the defender's side, a cut
    through the stack (a pick), two cutters in one lane.
 6. **Rebuild the four vertical plays** through the loop, with the coach, in the new
@@ -295,4 +300,5 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
 - In portrait on a phone the field fills only a strip of the screen: turn it so the offense
   attacks up the screen?
 - Steps stay the way plays are built (coaching beats, with smooth motion through them)?
-  Recommended: yes; confirm with the motion work.
+  Recommended: yes. Built that way: a set-up and a cut are two steps, and the player
+  plants where they meet. Confirm after watching it.

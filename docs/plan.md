@@ -5,15 +5,20 @@ continue in a fresh session with no other context. Update it when a step lands.
 
 ## Start here (next session)
 
-1. **The strategy session is done** (November 2026, decisions #23–#37). Read
+1. **The strategy session is done** (November 2026, decisions #23–#38). Read
    [`strategy.md`](strategy.md) for the results: the coach's feedback on the vertical-stack
    plays, the first coaching vocabulary, and the order of work. **Focus: the vertical stack
    only, for now.**
 2. **Built:** the authoring loop (strategy.md step 2: `npm run play`, Phone preview,
    [`play-authoring.md`](play-authoring.md)) and the vertical stack setup and quick fixes
-   (step 3: the new setup, marks after the catch, relative positions). **Next: motion and
-   throws** (step 4): plant points, no stopping between steps, defenders reacting a beat
-   late, lead passes, throw types, and the comparison page for the timing values.
+   (step 3: the new setup, marks after the catch, relative positions). **Now: motion and
+   throws** (step 4), in three pull requests:
+   1. ~~no stopping between steps, and plants where a run changes direction~~ (built);
+   2. **next:** defenders reacting a beat late and losing ground on a plant, with a
+      comparison page (the same cut side by side, three delays × two amounts of ground
+      lost) so the coach can pick the values;
+   3. throws: lead passes, release "on the plant", and the throw words (flick, backhand,
+      overhead; straight, slight, big, IO, OI; hard, normal, floaty, huck).
 3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main`
    publishes it, then checks it's being served.
 
@@ -27,7 +32,7 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Keeping and sharing it: undo/redo, autosave, import/export, share links that carry the whole play, and a public playbook of the seven built-in plays (four vertical stack, three horizontal stack).
   - Live at https://willhea.github.io/ultimate_playbook/, published on every merge into `main`.
 - **Private preview link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (only the owner can open it; for sharing, use the live app). Publishing steps are under "Working notes" below.
-- **Tests:** 137 unit tests (about 3 s, including two fuzzers) and 23 browser tests (about 25 s). CI runs both on every pull request and on `main`.
+- **Tests:** 146 unit tests (about 3 s, including two fuzzers) and 23 browser tests (about 25 s). CI runs both on every pull request and on `main`.
   - Mutation testing: Stryker catches 74% of planted bugs across the logic (78% on the newest code); see the audit in section 1.
   - Testing rules are in the app README.
 - **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
@@ -119,7 +124,7 @@ Decisions #17–#19: the plays are public (recreational league), anyone can make
 
 ### 3. Next: the order from the strategy session
 
-The strategy session (decisions #23–#37) replaced the old candidate lists for cutting and
+The strategy session (decisions #23–#38) replaced the old candidate lists for cutting and
 AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended-order-updated-after-the-strategy-session):
 1. ~~**The authoring loop.**~~ Built (November 2026):
    - **`npm run play -- <script.json>`** (`scripts/play.mjs`, which runs
@@ -168,9 +173,35 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
    - Known, for step 4: a defender trailing a very short run (just over 1 yd) can swing
      through their player; the editor keeps an automatic defender's curve when they're
      dragged by hand.
-3. **Motion and throws:** cuts with plant points, no stopping between steps, defenders
-   reacting a beat late, lead passes, throw type, shape and pace, and a comparison page for
-   the timing values.
+3. **Motion and throws**, in three parts:
+   1. ~~**No stopping between steps, and plants.**~~ Built (November 2026), in
+      `src/model/motion.ts`, used by `pathPos` and the facing in `engine.ts`:
+      - Each player's path in a step is a leg. Its speed ramps up, holds steady, and ramps
+        to the speed it leaves the step with (`profile`, a trapezoid). From standing it
+        takes `START_RAMP` (0.6 s) to get going, and as long to stop.
+      - Where two legs meet (`join`): a player who stands still on either side stops or
+        starts there; running straight on, they keep their steady speed (the join speed
+        settles on the legs' steady speeds over a few rounds); turning, they **plant**:
+        the speed through the join is scaled by ((1 + cos turn) / 2)², so 20° keeps about
+        94%, 90° about 25%, 135° about 2%. The plant takes `PLANT_RAMP` (0.3 s) each way.
+        The join speed is capped at 1.5× either leg's average, so every leg still ends on
+        time.
+      - Facing follows: running on through a step, a player keeps facing where they run
+        (through the halfway direction between the legs); on a hard plant they turn
+        toward their standing facing (the disc, for a cutter) for a moment, as before. A
+        facing set by hand at a step still holds there.
+      - Fraction of a leg covered = fraction along the curve's parameter (not arc length),
+        because the automatic defenders' paths are built point for point against their
+        player's. A first try with arc length put a bent runner and their straight-running
+        defender out of step (D1 brushed O1 in "dump and swing").
+      - Plants happen at the ends of steps; a set-up and a cut stay two steps (coaching
+        beats). Several legs inside one step would need a new field on `Frame`; not needed
+        while steps flow into each other.
+      - Seen in the numbers: the clear in "clear, then the next cut" peaks at 9.4 yd/s (D7
+        10): the step is short for the distance. For the rebuild (step 5 below).
+   2. **Next: defenders react a beat late** and lose ground on a plant, with the
+      comparison page for the values (#26).
+   3. **Throws:** lead passes, release "on the plant" (#36), throw type, shape and pace (#25).
 4. **Checks:** bad throw angles, cuts through the stack.
 5. **Rebuild the four vertical plays** with the coach, then the end-zone play (front cuts
    first; the cut-from-the-back test then needs an end-zone exemption, by title or tag).

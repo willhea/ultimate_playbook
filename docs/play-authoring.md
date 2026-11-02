@@ -123,8 +123,14 @@ So a script describes the offense, and any deliberate defense, and nothing else:
   the dump, shaded toward the thrower, taking away the upline cut and the around swing.
 - **Defenders run straight**, like cutters, unless a straight line would take them through
   their player; then they go round.
-- **Facing:** runners face where they run, defenders face their player, the offense faces
-  the disc.
+- **Motion** (#24): players carry their speed from one step into the next. Running straight
+  on, they don't slow down; where the run changes direction they **plant** (a quick
+  slow-down, harder the sharper the turn, then drive out); they stop only when the next
+  step leaves them standing. Getting going from standing takes about 0.6 s. A step's
+  `duration` covers the whole leg, so a short step for a long run means a fast run: a 10 yd
+  set-up in 1.6 s peaks at about 8 yd/s.
+- **Facing:** runners face where they run (on a hard plant a cutter glances back at the
+  disc), defenders face their player, the offense faces the disc.
 
 ## The coach's rules (from the decisions)
 
@@ -135,8 +141,8 @@ So a script describes the offense, and any deliberate defense, and nothing else:
   Too far downfield and it doesn't clear the stack or open up angles. Never run through the
   stack: that's a pick. The defender stays deep and on the open side of the cutter: place
   them by hand (see the example).
-- **Cuts are straight legs with hard changes of direction**, not smooth arcs. Until the app
-  has plant points, write a set-up and a cut as **two steps**, with no bend (#24).
+- **Cuts are straight legs with hard changes of direction**, not smooth arcs. Write a
+  set-up and a cut as **two steps**, with no bend: the app plants where they meet (#24).
 - **Throws lead the receiver to space,** on the side away from their defender, at a good
   angle. Most throws bend slightly (#25).
 - **Timing throws** (a break-side cut from the front, the dump and swing) go up as the cut
@@ -149,5 +155,5 @@ So a script describes the offense, and any deliberate defense, and nothing else:
 - **Talk to the coach in relative terms** too: "O2 is 10 yd break side, 2 yd behind O1",
   not coordinates (#30).
 
-Some of these the app doesn't do yet (plant points, reaction timing, lead passes).
+Some of these the app doesn't do yet (reaction timing, lead passes).
 The order they'll arrive in is in [`strategy.md`](strategy.md#recommended-order-updated-after-the-strategy-session).
