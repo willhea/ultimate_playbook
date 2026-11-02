@@ -19,7 +19,15 @@ proposals; the coach decides, and decisions go into
   where the receiver ends that step. That's why multi-step plays look robotic, whatever
   the defense does. It sits underneath priorities 4, 5 and 6.
 
-## A direction worth choosing: "plays in coaching language"
+## The direction (decision #21): plays in coaching language, built with AI
+
+**Chosen by the coach.** How they'll work: describe a play in their own coaching words,
+Claude builds it, they watch it on a page, refine it in plain language in the chat (Claude
+makes the changes), then publish it. Hand controls stay for people who like to be
+hands-on. In the coach's words: it doesn't make sense to build things like this by hand
+anymore.
+
+### How it was proposed
 
 Other playbook tools (UltiPlays, Playspedia and general play-diagram apps) are drawing
 tools: you place dots and draw arrows. Ultimate Playbook already does something different:
@@ -65,7 +73,13 @@ Rule of thumb: add a word only when a real play needs it.
 The play script (the text format the example plays are already written in) is the
 contract. Every AI path builds on it. In order of cost:
 
-1. **Neither (start here).** Publish an AI guide on the site: the format, the coaching
+**Updated after decision #21:** the coach's main loop is a conversation with Claude working
+in this repository, so path 2 comes first, with one addition: **draft previews as share
+links**. A share link carries the whole play, so Claude can send a link to the live app for
+any draft; the coach watches it on their phone, asks for changes, and only finished plays
+go into a pull request for the playbook. Path 1 follows, for other coaches and other AIs.
+
+1. **Neither.** Publish an AI guide on the site: the format, the coaching
    words, the field coordinates and your rules. You paste it into ChatGPT, Claude or Grok,
    describe a play, and paste the result into the app's Import, which explains anything
    wrong in plain language. Then Share. It works with every AI, costs nothing, and needs
@@ -133,26 +147,35 @@ force:
 
 **Decide:** the default stances and when a defender switches sides.
 
-## Recommended order
+## Recommended order (updated after decision #21)
 
 1. **Strategy session (next session, mostly talking).** Watch the plays on a phone and list
-   what looks wrong. Agree the direction above, the first vocabulary, the defense
-   defaults, the offense checks, and the AI path. Run the originality check (priority 3).
-2. **Smooth motion and throw types** (priority 4). This is the foundation: offense and
+   what looks wrong. Agree the first vocabulary, the defense defaults and the offense checks.
+   Run the originality check (priority 3).
+2. **The authoring loop, with today's format** (small, so every later step is built and
+   tuned the way the coach will actually work):
+   - a command that checks a play script, saves a picture of each step, and prints a
+     share link to the live app (the draft preview);
+   - a short authoring guide for Claude (`docs/play-authoring.md`): coordinates, the
+     script format, the coach's rules, what the app does automatically;
+   - prove it on the end-zone play: the coach describes it, Claude drafts it, the coach
+     refines it from a link, then it's merged into the playbook.
+3. **Smooth motion and throw types** (priority 4). This is the foundation: offense and
    defense behavior depend on timing and on where the disc is mid-flight.
-3. **Defense stances** (priority 6), then **offense checks and defaults** (priority 5).
-   They use the new timing; each lands as its own pull request with pictures.
-4. **The AI guide and script import** (priority 2, path 1), written in the vocabulary once
-   it has settled. Then the CLI for the repository playbook (path 2).
-5. **Rebuild the example plays in the new vocabulary,** add the end-zone play, and run a
-   video pilot.
+4. **Defense stances** (priority 6), then **offense checks and defaults** (priority 5).
+   They use the new timing; each lands as its own pull request with pictures and links.
+5. **Coaching words in the script.** As behaviors land, the script gains the vocabulary
+   (stance, throw type, cut style) so plays are written and refined in coaching terms.
+6. **The public AI guide and script import** (priority 2, path 1) for other coaches and
+   other AIs, once the vocabulary has settled.
+7. **Rebuild the example plays in the new vocabulary,** and run a video pilot.
 
 Each step should be small enough to watch on a phone and merge on its own.
 
 ## Questions to bring to the strategy session
 
 1. What looks most wrong today when you watch the stack plays?
-2. Do you agree with "plays in coaching language" as the direction?
+2. ~~Do you agree with "plays in coaching language" as the direction?~~ Yes (decision #21).
 3. Which coaching words do you use for defender positioning and throw types?
 4. Who builds plays: just you, or your teammates and other coaches too (the AI guide
    should be written for them)?

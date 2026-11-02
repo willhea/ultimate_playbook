@@ -24,6 +24,7 @@
 | 18 | How will the team watch? | **Mostly on phones.** | A phone-friendly watch view comes before more editing features; share links open it. |
 | 19 | Hosting | **GitHub Pages for now, at no cost. The coach owns `willhea.com` and could point it at the app later.** | CI publishes every merge to `main`. |
 | 20 | Name | **Ultimate Playbook.** The coach renamed the repository `ultimate_playbook`; the app, docs, folders and browser storage follow (no one had used the app yet). | The app lives in `app/`; CI is `.github/workflows/ci.yml`. |
+| 21 | Direction | **Plays in coaching language, built with AI.** The coach describes a play in the words they use for ultimate, an AI (Claude) builds it, the coach watches the result on a page, refinements happen in plain language in the chat and the AI makes the changes, then the play is published. Hand controls stay for people who like to be hands-on. "It doesn't make sense to build things like this by hand anymore." | The authoring loop (describe → draft share link → refine → pull request into the playbook) comes first. Plays store coaching words with defaults the app works out ("rules with knobs"). See [`strategy.md`](strategy.md). |
 
 ## Proposed defaults (say if you disagree)
 
