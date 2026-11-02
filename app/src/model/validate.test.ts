@@ -39,7 +39,7 @@ describe('validatePlay', () => {
     const toBack = setHolder(addStep(createPlay(), 0), 1, 'O7'); // the back of the stack, ~32 yd
     expect(codes(updateFrame(toBack, 1, { duration: 0.5, release: 0.5 }))).toContain('throw-too-fast');
     expect(codes(updateFrame(toBack, 1, { duration: 2.5, release: 0.3 }))).toEqual([]);
-    const toFront = setHolder(addStep(createPlay(), 0), 1, 'O3'); // the front of the stack, ~12 yd
+    const toFront = setHolder(addStep(createPlay(), 0), 1, 'O3'); // the front of the stack, ~15 yd
     expect(codes(updateFrame(toFront, 1, { duration: 6, release: 0 }))).toContain('throw-too-slow');
   });
 

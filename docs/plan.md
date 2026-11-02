@@ -33,7 +33,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
 
 ### Coaching decisions to respect
-- USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
+- USA Ultimate field, with the stack spacing the coach confirmed (15 yd and 5 yd vertical, decision #38; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
 - **Downfield defenders line up on the open side:** deep far downfield (forcing the cut under), even near the disc.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
@@ -163,7 +163,8 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
    - **The four vertical plays** were adjusted to the new setup and rules, not yet rebuilt:
      back-of-stack cuts now have a set-up step, mostly across into the open side (with the
      defender staying deep and open side, placed by hand), before the cut, and the break-side and dump-and-swing throws go up as the cut
-     starts. The horizontal "swing, then cut" lost O2's 1-yd shuffle, so D2 marks cleanly.
+     starts. The vertical stack is now 15 yd deep (#38), so the break-side play's inside-out
+     flick to O3's flat cut is on. The horizontal "swing, then cut" lost O2's 1-yd shuffle, so D2 marks cleanly.
    - Known, for step 4: a defender trailing a very short run (just over 1 yd) can swing
      through their player; the editor keeps an automatic defender's curve when they're
      dragged by hand.

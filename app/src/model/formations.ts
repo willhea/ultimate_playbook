@@ -86,7 +86,8 @@ const onField = (y: number) => Math.min(FIELD.width - SIDELINE_ROOM, Math.max(SI
 
 /** The spacing new plays start with. The coach confirmed these match the whiteboard. */
 export const DEFAULT_STACK: { vertical: StackSpacing; horizontal: StackSpacing } = {
-  vertical: { kind: 'vertical', depth: 12, spacing: 5 },
+  // Vertical: 15 yd deep, so the inside-out break to a flat cut from the front is on (decision #38).
+  vertical: { kind: 'vertical', depth: 15, spacing: 5 },
   horizontal: { kind: 'horizontal', depth: 15 },
 };
 
@@ -114,7 +115,7 @@ export function verticalStack(opts: VerticalOptions = {}): Record<string, Vec> {
   const disc = opts.disc ?? { x: 35, y: FIELD.width / 2 };
   const open = opts.open ?? 'bottom';
   const s = openSign(open);
-  const depth = opts.depth ?? 12;
+  const depth = opts.depth ?? DEFAULT_STACK.vertical.depth;
   const spacing = opts.spacing ?? 5;
 
   // Distance from the disc to the break sideline: y = 0 when the open side is the bottom.

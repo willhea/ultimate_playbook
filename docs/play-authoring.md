@@ -89,7 +89,8 @@ All positions are in **yards**, as `{ "x": …, "y": … }`.
 - **`setup.positions`** only needs the players that differ from the default vertical stack
   (decision #28), with O1 at (35, 20):
   - O2, the dump: 10 yd to the break side and 2 yd behind O1, at (33, 10);
-  - O3–O7 at x = 47, 52, 57, 62, 67: O3 5 yd to the break side of O1 (y = 15), and each cutter
+  - O3–O7 at x = 50, 55, 60, 65, 70 (the stack is 15 yd deep, decision #38): O3 5 yd to the
+    break side of O1 (y = 15), and each cutter
     behind 0.4 yd further over (y = 14.6, 14.2, 13.8, 13.4);
   - the defenders on the open side of their player, about 2 yd of grass between them; D2
     downfield of O2, shaded toward O1 (guarding the upline); the mark on the break side of O1.
@@ -141,6 +142,10 @@ So a script describes the offense, and any deliberate defense, and nothing else:
 - **Timing throws** (a break-side cut from the front, the dump and swing) go up as the cut
   starts or before, and the receiver runs onto the disc: use an early `release`, about 0.2
   (#26).
+- **The break-side cut from the front** is flat across, and the throw is an inside-out flick
+  past the mark's low hand: it leaves toward the break side and flattens into the cutter's path
+  (a bend toward the break side and downfield, like `{ "x": 4, "y": -6.4 }` for an 8 yd cut).
+  A backhand would have to go around the mark. Don't draw step-outs (#38).
 - **Talk to the coach in relative terms** too: "O2 is 10 yd break side, 2 yd behind O1",
   not coordinates (#30).
 

@@ -86,7 +86,7 @@ The descriptions are for a right-handed thrower.
 - **Hammer.** An overhead throw with a forehand grip. It flips and flies upside down, over the mark.
 - **Scoober.** A short overhead throw with a backhand grip, released across the body. Used to break the mark or get over a zone.
 - **Blade.** Thrown tilted steeply, so it drops sharply.
-- **Inside-out (IO).** A throw that starts curving toward the thrower's body side, then curves back out. It's tilted so it bends around the mark from the inside.
+- **Inside-out (IO).** A throw that starts curving toward the thrower's body side, then curves back out. It's tilted so it bends around the mark from the inside. The coach's example (decision #38): to a flat break-side cut from the front of a vertical stack, an IO flick goes past the mark's low hand toward the break side, then bends back into the cutter's path. It usually takes a step-out with the pivot, which the app doesn't draw.
 - **Outside-in (OI).** Starts away from the body and curves back in, like a tilted "around" throw.
 - **Huck.** A long throw downfield, usually to a deep cut.
 - **Dump.** A short throw backward or sideways to a handler, usually to reset a high stall count.

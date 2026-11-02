@@ -4,7 +4,7 @@ import type { PlayScript } from './script';
 
 const stack = DEFAULT_STACK.vertical;
 const setup = stackPositions(stack, { x: 40, y: 20 });
-// Stack (decision #28): O3 (52,15), O4 (57,14.6), O5 (62,14.2), O6 (67,13.8), O7 (72,13.4): the front
+// Stack (decisions #28, #38): O3 (55,15), O4 (60,14.6), O5 (65,14.2), O6 (70,13.8), O7 (75,13.4): the front
 // 5 yd to the break side of O1 (40,20), angling slightly further. The dump O2 is at (38,10).
 // Open side is the bottom (y → 40).
 //
@@ -112,21 +112,21 @@ export const breakSideFromFront: PlayScript = {
     positions: setup,
     stack,
     notes:
-      'The exception to cutting from the back: a break-side cut comes from the front of the stack, which is closest to the break-side space.',
+      'The exception to cutting from the back: a break-side cut comes from the front of the stack, which is closest to the break-side space. It punishes D3 for cheating into the open side. The stack stands 15 yards deep so this throw is on.',
   },
   steps: [
     {
-      name: 'O3 cuts to the break side',
+      name: 'O3 cuts flat to the break side',
       notes:
-        'O1 throws as O3 starts the cut: a backhand bent around the mark, into the space on the break side. O3 runs onto it. It works on timing, not on beating D3.',
-      duration: 1.8,
+        'O3 makes a flat cut across to the break side. O1 throws as the cut starts: an inside-out flick past the mark’s low hand, the hard part, that bends back into O3’s path. It only works if that angle is open, and it has to be on for the stack to work. A backhand would have to go around the mark.',
+      duration: 1.3,
       runs: {
-        O3: { x: 47, y: 6 },
+        O3: { from: 'O3', break: 8 },
       },
       throwTo: 'O3',
-      release: 0.15,
-      // Bend the backhand away from the mark so it goes around it.
-      throwBend: { x: 4, y: 2 },
+      release: 0.1,
+      // Inside-out: the disc leaves toward the break side, then flattens into O3's path.
+      throwBend: { x: 4, y: -6.4 },
     },
   ],
 };

@@ -66,7 +66,7 @@ describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open
     const pos = verticalStack({ open });
     const ahead = (n: number) => pos[`D${n}`].x - pos[`O${n}`].x; // how far deep of their player
     for (const n of [3, 4, 5, 6, 7]) expect(Math.sign(pos[`D${n}`].y - pos[`O${n}`].y)).toBe(-breakSide);
-    expect(Math.abs(ahead(3))).toBeLessThan(1); // the front of the stack: about even
+    expect(Math.abs(ahead(3))).toBeLessThan(2); // the front of the stack: about even (15 yd out, a little deep)
     expect(ahead(7)).toBeGreaterThan(1.5); // the back of the stack: deep
     for (const n of [4, 5, 6, 7]) expect(ahead(n)).toBeGreaterThanOrEqual(ahead(n - 1));
   });
