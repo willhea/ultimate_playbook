@@ -15,7 +15,7 @@
  * engine and the file format don't need to know about any of this.
  */
 import type { Frame, OpenSide, Play, Vec } from './types';
-import { add, controlPoint, dist, mid, scale, sub } from './geometry';
+import { add, controlPoint, dist, mid, quad, scale, sub } from './geometry';
 import { GUARD_GAP, markSpot } from './formations';
 import { GOAL_LINES, PLAYER_RADIUS } from './field';
 
@@ -77,8 +77,11 @@ export function guardMove(
     to = add(o1, sub(d0, o0));
   }
 
-  // Path: follow the runner's path, with the spacing between them turning smoothly
-  // from the old spacing to the new one.
+  // Straight when that's safe: defenders cut in straight lines too (decision #24).
+  if (straightIsClear(o0, oc, o1, d0, to)) return { to, bend: null };
+
+  // Otherwise follow the runner's path, with the spacing between them turning smoothly
+  // from the old spacing to the new one, so the defender goes round their player.
   const g0 = sub(d0, o0);
   const g1 = sub(to, o1);
   const r0 = len(g0);
@@ -102,6 +105,16 @@ export function guardMove(
   }
   const bend = sub(add(oc, gc), mid(d0, to));
   return { to, bend: len(bend) < SAME ? null : bend };
+}
+
+/** True if a defender running straight from `d0` to `d1` stays clear of their player all the way. */
+function straightIsClear(o0: Vec, oc: Vec, o1: Vec, d0: Vec, d1: Vec): boolean {
+  for (let k = 1; k < 24; k++) {
+    const t = k / 24;
+    const d = { x: d0.x + (d1.x - d0.x) * t, y: d0.y + (d1.y - d0.y) * t };
+    if (dist(d, quad(o0, oc, o1, t)) < 2 * PLAYER_RADIUS) return false;
+  }
+  return true;
 }
 
 /** Recompute every automatic defender in every step after the setup. */

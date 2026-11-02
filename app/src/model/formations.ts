@@ -126,10 +126,13 @@ export function verticalStack(opts: VerticalOptions = {}): Record<string, Vec> {
     O2: { x: disc.x - DUMP.back, y: onField(disc.y - DUMP.break * s) },
   };
   pos.D1 = markSpot(disc, open);
-  // The dump's defender stands between the two handlers.
+  // The dump's defender takes away the upline cut and the around swing: downfield of
+  // the dump, shaded toward the thrower, halfway between the two directions.
   const toThrower = { x: disc.x - pos.O2.x, y: disc.y - pos.O2.y };
   const apart = Math.hypot(toThrower.x, toThrower.y) || 1;
-  pos.D2 = { x: pos.O2.x + (toThrower.x / apart) * GUARD_GAP, y: pos.O2.y + (toThrower.y / apart) * GUARD_GAP };
+  const shade = { x: toThrower.x / apart + 1, y: toThrower.y / apart }; // toward the thrower, plus downfield
+  const shadeLen = Math.hypot(shade.x, shade.y) || 1;
+  pos.D2 = { x: pos.O2.x + (shade.x / shadeLen) * GUARD_GAP, y: pos.O2.y + (shade.y / shadeLen) * GUARD_GAP };
   for (let n = 3; n <= 7; n++) {
     const across = STACK_OFFSET + (n - 3) * STACK_SLANT;
     const cutter = { x: disc.x + depth + (n - 3) * spacing, y: onField(disc.y + across * stackSide) };

@@ -33,12 +33,13 @@ describe.each<OpenSide>(['bottom', 'top'])('with the open side at the %s', (open
     expect(validatePlay(asPlay(pos))).toEqual([]);
   });
 
-  it('vertical stack: the dump stands well over on the break side, a little behind the thrower (decision #28)', () => {
+  it('vertical stack: the dump stands well over on the break side, a little behind the thrower, guarded upline (decision #28)', () => {
     const pos = verticalStack({ open });
     expect((pos.O2.y - pos.O1.y) * breakSide).toBeCloseTo(DUMP.break, 6);
     expect(pos.O1.x - pos.O2.x).toBeCloseTo(DUMP.back, 6);
-    // Their defender stands between the two handlers.
+    // Their defender takes away the upline and the around swing: downfield of them, shaded toward the thrower.
     expect(dist(pos.D2, pos.O2)).toBeCloseTo(GUARD_GAP, 6);
+    expect(pos.D2.x).toBeGreaterThan(pos.O2.x + 2);
     expect(dist(pos.D2, pos.O1)).toBeLessThan(dist(pos.O2, pos.O1));
   });
 

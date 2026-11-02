@@ -8,9 +8,9 @@ const setup = stackPositions(stack, { x: 40, y: 20 });
 // 5 yd to the break side of O1 (40,20), angling slightly further. The dump O2 is at (38,10).
 // Open side is the bottom (y → 40).
 //
-// A cutter separates before cutting (decision #31): a set-up of about 10 yd away from the
-// stack, a hard plant, then the cut, in straight legs (#24). Their defender respects the
-// deep threat and backs off on the set-up (placed by hand until the app does it).
+// A cutter separates before cutting (decision #31): a set-up of about 10 yd, mostly across
+// into the open side to get clear of the stack, a hard plant, then the cut, in straight legs
+// (#24). Their defender stays on the open side, deep (placed by hand until the app does it).
 
 // Coaching rule (see docs/research/stacks.md): cuts come from the back of the stack,
 // where the cutter has the most room to build speed. The exceptions are end-zone sets
@@ -28,12 +28,12 @@ export const underThenDeep: PlayScript = {
     {
       name: 'O7 sets up',
       notes:
-        'O7 takes about 10 yards, diagonally away from the stack into the open side. That opens the whole field for a deep cut or an in cut, and makes D7 choose. D7 respects the deep threat and backs off.',
+        'O7 takes about 10 yards out into the open side, away from the stack, to get clear of it. That opens the whole field for a deep cut or an in cut, and makes D7 choose. D7 stays on the open side and respects the deep threat.',
       duration: 1.6,
       runs: {
-        O7: { x: 79, y: 20 },
-        // Placed by hand: D7 gives ground on the deep, open side.
-        D7: { x: 83, y: 23.5 },
+        O7: { from: 'O7', open: 9, ahead: 4 },
+        // Placed by hand: D7 stays deep and on the open side of O7.
+        D7: { from: 'O7', open: 3.5, ahead: 3.5 },
       },
     },
     {
@@ -52,7 +52,7 @@ export const underThenDeep: PlayScript = {
       notes: 'The next cutter from the back attacks the space behind the defense, and O7 puts up the huck.',
       duration: 3.8,
       runs: {
-        O6: { to: { x: 93, y: 22 }, bend: { x: 0, y: 2 } },
+        O6: { x: 93, y: 22 },
       },
       throwTo: 'O6',
       release: 0.45,
@@ -83,13 +83,13 @@ export const clearAndReCut: PlayScript = {
     {
       name: 'O7 clears, O6 sets up',
       notes:
-        'O7 clears across to the break side, out of the open-side lane. O6 is now the back of the stack, and sets up deep to push D6 back.',
+        'O7 clears across to the break side, out of the open-side lane. O6 is now the back of the stack, and takes about 10 yards out into the open side to get clear of it.',
       duration: 2.4,
       runs: {
         O7: { x: 86, y: 6 },
-        O6: { x: 76, y: 15 },
-        // Placed by hand: D6 backs off on the deep, open side.
-        D6: { x: 79.5, y: 18.5 },
+        O6: { from: 'O6', open: 9, ahead: 4 },
+        // Placed by hand: D6 stays deep and on the open side of O6.
+        D6: { from: 'O6', open: 3.5, ahead: 3.5 },
       },
     },
     {

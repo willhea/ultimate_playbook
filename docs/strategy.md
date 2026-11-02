@@ -292,7 +292,6 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
 - Reaction delay and ground lost on a plant: pick on the comparison page.
 - "Released on the plant" as the default throw timing: confirm after seeing it.
 - How near the break sideline the stack's angle flips (the app uses 12 yd for now).
-- Where the dump's defender stands (between the handlers for now, or shading upline?).
 - In portrait on a phone the field fills only a strip of the screen: turn it so the offense
   attacks up the screen?
 - Steps stay the way plays are built (coaching beats, with smooth motion through them)?

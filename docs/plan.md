@@ -138,7 +138,8 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
    - Seen in the preview, to fix later: held sideways, the step's notes are cut off.
 2. ~~**Vertical stack setup and quick fixes.**~~ Built (November 2026):
    - **The setup** (`verticalStack` in `formations.ts`, decision #28): the dump 10 yd to the
-     break side and 2 yd behind the thrower (`DUMP`), with D2 between the handlers; O3 5 yd
+     break side and 2 yd behind the thrower (`DUMP`), with D2 guarding the upline (downfield
+     of O2, shaded toward the thrower); O3 5 yd
      to the break side of the thrower (`STACK_OFFSET`), each cutter behind 0.4 yd further
      (`STACK_SLANT`). With the disc within 12 yd of the break sideline
      (`BREAK_SIDELINE_ZONE`, a first guess) the stack goes to the open side instead.
@@ -146,6 +147,8 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
      their player, and a trailing defender ends `TRAIL` (just clear of the circles) behind.
      The horizontal stack keeps its old, tighter spacing (`HORIZONTAL_GUARD_GAP`) until it's
      revisited (#23).
+   - **Defenders run straight** when a straight line keeps them clear of their player
+     (`straightIsClear` in `defenders.ts`), and only swing round when it wouldn't.
    - **Marks** (#27, `caughtJustBefore` in `defenders.ts`): a defender stays with their player
      while the disc is in the air and marks in the step after the catch; nobody marks after
      a catch in the end zone being attacked. The force (`force.ts`) shows only for a thrower
@@ -158,8 +161,8 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
      the editor. A run without a bend is straight, even for a defender placed by hand.
    - **Sideline labels** in the close-up view: arrows, no yardage (#32).
    - **The four vertical plays** were adjusted to the new setup and rules, not yet rebuilt:
-     back-of-stack cuts now have a set-up step (with the defender backing off, placed by
-     hand) before the cut, and the break-side and dump-and-swing throws go up as the cut
+     back-of-stack cuts now have a set-up step, mostly across into the open side (with the
+     defender staying deep and open side, placed by hand), before the cut, and the break-side and dump-and-swing throws go up as the cut
      starts. The horizontal "swing, then cut" lost O2's 1-yd shuffle, so D2 marks cleanly.
    - Known, for step 4: a defender trailing a very short run (just over 1 yd) can swing
      through their player; the editor keeps an automatic defender's curve when they're

@@ -58,8 +58,8 @@ All positions are in **yards**, as `{ "x": …, "y": … }`.
       "notes": "What to say over this step.",
       "duration": 1.6,
       "runs": {
-        "O7": { "from": "O7", "ahead": 7, "open": 7 },
-        "D7": { "from": "O7", "ahead": 4, "open": 3.5 }
+        "O7": { "from": "O7", "open": 9, "ahead": 4 },
+        "D7": { "from": "O7", "open": 3.5, "ahead": 3.5 }
       }
     },
     {
@@ -84,15 +84,15 @@ All positions are in **yards**, as `{ "x": …, "y": … }`.
   to the setup.
   - In a step, a spot is relative to where that player **ends** the step, so
     `"D7": { "from": "O7", … }` follows O7's new spot. A player placed from **themselves**
-    moves from where they started the step: `"O7": { "from": "O7", "ahead": 7, "open": 7 }`
-    is a 10 yd set-up, diagonally into the open side.
+    moves from where they started the step: `"O7": { "from": "O7", "open": 9, "ahead": 4 }`
+    is a 10 yd set-up, mostly across into the open side.
 - **`setup.positions`** only needs the players that differ from the default vertical stack
   (decision #28), with O1 at (35, 20):
   - O2, the dump: 10 yd to the break side and 2 yd behind O1, at (33, 10);
   - O3–O7 at x = 47, 52, 57, 62, 67: O3 5 yd to the break side of O1 (y = 15), and each cutter
     behind 0.4 yd further over (y = 14.6, 14.2, 13.8, 13.4);
-  - the defenders on the open side of their player, about 2 yd of grass between them; the mark
-    on the break side of O1.
+  - the defenders on the open side of their player, about 2 yd of grass between them; D2
+    downfield of O2, shaded toward O1 (guarding the upline); the mark on the break side of O1.
 
   Moving an offensive player in the setup brings their defender along, unless the script
   places that defender too. `holder` is who has the disc (default O1).
@@ -118,7 +118,10 @@ So a script describes the offense, and any deliberate defense, and nothing else:
 - **The force** shows on the mark, and only for a thrower who had the disc when the step
   began.
 - **The setup's defenders** line up on the open side: even with their player near the disc,
-  deep further downfield (decision #12).
+  deep further downfield (decision #12). The dump's defender guards the upline: downfield of
+  the dump, shaded toward the thrower, taking away the upline cut and the around swing.
+- **Defenders run straight**, like cutters, unless a straight line would take them through
+  their player; then they go round.
 - **Facing:** runners face where they run, defenders face their player, the offense faces
   the disc.
 
@@ -127,9 +130,10 @@ So a script describes the offense, and any deliberate defense, and nothing else:
 - **Vertical stack: cuts come from the back of the stack.** End-zone sets and break-side
   cuts come from the front (decision #7; a test enforces it for the built-in plays).
 - **A cutter separates before cutting:** from the back of the stack, a set-up of about 10 yd,
-  diagonally away from the stack into the open side, then the cut (#31). Never run through
-  the stack: that's a pick. The defender respects the deep threat and backs off on the
-  set-up: place them by hand, deep and on the open side of the cutter (see the example).
+  **mostly across**, out into the open-side space and away from the stack, then the cut (#31).
+  Too far downfield and it doesn't clear the stack or open up angles. Never run through the
+  stack: that's a pick. The defender stays deep and on the open side of the cutter: place
+  them by hand (see the example).
 - **Cuts are straight legs with hard changes of direction**, not smooth arcs. Until the app
   has plant points, write a set-up and a cut as **two steps**, with no bend (#24).
 - **Throws lead the receiver to space,** on the side away from their defender, at a good
