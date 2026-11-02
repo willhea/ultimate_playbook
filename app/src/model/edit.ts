@@ -173,7 +173,10 @@ export function canAddPlayer(play: Play, team: Team): boolean {
   return teamPlayers(play, team).length < TEAM_SIZE;
 }
 
-/** Add the next-numbered player to a team, placed on the sideline. */
+/**
+ * Add the next-numbered player to a team. Offense starts on the sideline; a defender
+ * whose number matches an offensive player guards them and starts beside them.
+ */
 export function addPlayer(play: Play, team: Team): Play {
   if (!canAddPlayer(play, team)) return play;
   const taken = new Set(teamPlayers(play, team).map((p) => p.number));
@@ -184,11 +187,13 @@ export function addPlayer(play: Play, team: Team): Play {
   const guards = team === 'D' && play.players.some((p) => p.id === offenseId) ? offenseId : null;
   const player: Player = { id, team, number: n, guards };
   const spot: Vec = { x: 24 + n * 4 + (team === 'D' ? 1.5 : 0), y: team === 'O' ? -1.5 : 41.5 };
-  return {
+  const next: Play = {
     ...play,
     players: [...play.players, player],
     frames: play.frames.map((f) => ({ ...f, positions: { ...f.positions, [id]: spot } })),
   };
+  // Guarding someone places them beside their player and lets them follow from there.
+  return guards ? setGuards(next, id, guards) : next;
 }
 
 /** True if the player ever has the disc, in which case they can't be removed. */

@@ -3,7 +3,7 @@ import { underThenDeep } from '../plays/vertical';
 import { scriptPlay } from '../plays/script';
 import { buildExamplePlays } from '../plays';
 import { evaluate, frameTimes, releaseAt } from './engine';
-import { flipForce } from './edit';
+import { flipForce, movePlayer } from './edit';
 import { placeDefenders } from './defenders';
 import { forceLabel, forceView } from './force';
 import { validatePlay } from './validate';
@@ -24,6 +24,24 @@ describe('the force', () => {
     const inFlight = times[0] + step.duration * (releaseAt(step) + 0.1);
     expect(forceView(play, evaluate(play, inFlight))).toBeNull();
     expect(forceView(play, evaluate(play, times[1]))).toMatchObject({ thrower: 'O7', mark: 'D7', strength: 1 });
+  });
+
+  it('stays on the thrower until the release, and fades in as a new mark arrives', () => {
+    const step = play.frames[1];
+    const beforeRelease = forceView(play, evaluate(play, times[0] + step.duration * releaseAt(step) * 0.5));
+    expect(beforeRelease).toMatchObject({ thrower: 'O1', mark: 'D1', strength: 1 });
+    const b = beforeRelease!.breakSide;
+    expect(Math.hypot(b.x, b.y)).toBeCloseTo(1, 6); // a direction, toward the mark
+    // Move the mark away step by step: the force fades, then disappears.
+    const o1 = play.frames[0].positions.O1;
+    const markAt = (gap: number) => {
+      const moved = movePlayer(play, 0, 'D1', { x: o1.x, y: o1.y - gap });
+      return forceView(moved, evaluate(moved, 0));
+    };
+    const fading = markAt(3.8);
+    expect(fading?.strength).toBeGreaterThan(0);
+    expect(fading?.strength).toBeLessThan(1);
+    expect(markAt(5)).toBeNull();
   });
 
   it('flips between force home and force away by mirroring the play', () => {

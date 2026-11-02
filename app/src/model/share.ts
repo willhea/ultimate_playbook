@@ -6,7 +6,7 @@
  *   https://…/ultimate_playbook/#playbook=<slug>
  */
 import type { Play } from './types';
-import { isPlay, upgrade } from './storage';
+import { readPlay } from './sanitize';
 import { newId } from './edit';
 
 /** Links longer than this aren't plays; the limit also caps the work done on a bad link. */
@@ -62,8 +62,9 @@ export async function decodePlay(code: string): Promise<Play> {
   } catch {
     throw new Error(broken);
   }
-  if (!isPlay(parsed)) throw new Error(broken);
-  return { ...upgrade(parsed), id: newId('play') };
+  const play = readPlay(parsed);
+  if (!play) throw new Error(broken);
+  return { ...play, id: newId('play') };
 }
 
 /** A short, readable name for a playbook play, used in its link. */

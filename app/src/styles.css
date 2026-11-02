@@ -1182,6 +1182,12 @@ input[type='range'] {
   font: 700 20px/1.15 var(--font-display);
   text-align: center;
   overflow-wrap: anywhere;
+  /* A long title never pushes the field off a phone screen: two lines at most. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .watch-notice {
@@ -1333,4 +1339,15 @@ input[type='range'] {
   .watch-stage .field-watch {
     width: min(100cqw, 100cqh * 116 / 47);
   }
+}
+
+/* Shown only if drawing the app fails (components/Recover.tsx). */
+.recover {
+  max-width: 32rem;
+  margin: 15vh auto 0;
+  padding: 0 16px;
+}
+
+.recover h1 {
+  font: 700 24px/1.2 var(--font-display);
 }

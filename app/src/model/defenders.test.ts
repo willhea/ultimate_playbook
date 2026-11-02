@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
-import { addStep, movePlayer, setGuards, setHolder, setManual } from './edit';
+import { addPlayer, addStep, movePlayer, removePlayer, setGuards, setHolder, setManual } from './edit';
 import { guardSpot, markSpot } from './formations';
 import { dist } from './geometry';
 import { evaluate, frameTimes } from './engine';
@@ -19,6 +19,27 @@ describe('automatic defenders', () => {
     expect(dist(step.positions.D7, step.positions.O7)).toBeCloseTo(TRAIL, 5);
     expect(step.positions.D7.x).toBeGreaterThan(50); // behind O7, who ran back toward the disc
     expect(step.positions.D6).toEqual(setup.positions.D6);
+  });
+
+  it('trail on the side of the run they started on', () => {
+    // O5 runs straight downfield; D5 starts on the open (home, bottom) side, so trails on that side.
+    const o5 = createPlay().frames[0].positions.O5;
+    const play = movePlayer(oneStep(), 1, 'O5', { x: o5.x + 15, y: o5.y });
+    const { D5, O5 } = play.frames[1].positions;
+    expect(D5.y).toBeGreaterThan(O5.y + 1);
+    expect(D5.x).toBeLessThan(O5.x - 1);
+  });
+
+  it('stay close to their player all the way through a cut, swinging round behind them', () => {
+    // O7 cuts under from the back; D7 starts on the deep, open side and ends trailing.
+    const play = movePlayer(oneStep(), 1, 'O7', { x: 50, y: 30 });
+    const times = frameTimes(play);
+    for (let k = 1; k < 20; k++) {
+      const view = evaluate(play, (times[1] * k) / 20);
+      const gap = dist(view.players.D7.pos, view.players.O7.pos);
+      expect(gap, `${k}/20 of the way`).toBeGreaterThan(2);
+      expect(gap, `${k}/20 of the way`).toBeLessThan(4.5);
+    }
   });
 
   it('come along when their player is moved in the setup', () => {
@@ -47,6 +68,13 @@ describe('automatic defenders', () => {
     expect(play.frames[0].positions.D3).toEqual(guardSpot(play.frames[0].positions.O7, play.frames[0].positions.O1));
     play = movePlayer(play, 1, 'O7', { x: 90, y: 30 });
     expect(dist(play.frames[1].positions.D3, play.frames[1].positions.O7)).toBeCloseTo(TRAIL, 5);
+  });
+
+  it('includes a defender added back to the play: they mark or follow straight away', () => {
+    // Found by the edit fuzzer: a re-added defender stood on the sideline until the next edit.
+    let play = setHolder(oneStep(), 1, 'O2');
+    play = addPlayer(removePlayer(play, 'D2'), 'D');
+    expect(play.frames[1].positions.D2).toEqual(markSpot(play.frames[1].positions.O2));
   });
 
   it('never run through the player they guard', () => {
@@ -80,6 +108,10 @@ describe('automatic defenders', () => {
     expect(play.version).toBe(2);
     expect(play.frames.map((f) => f.positions)).toEqual(old.frames.map((f: { positions: unknown }) => f.positions));
     expect(play.frames[1].manual).toEqual({ D7: true }); // D6 was where automatic would put them anyway
+    // D6 in the right spot but on a different curve still counts as placed by hand.
+    const curved = JSON.parse(JSON.stringify(old));
+    curved.frames[1].curves.D6 = { x: 3, y: 3 };
+    expect(importPlay(JSON.stringify(curved)).frames[1].manual).toEqual({ D7: true, D6: true });
     expect(movePlayer(play, 1, 'O7', { x: 60, y: 35 }).frames[1].positions.D7).toEqual({ x: 47, y: 31 });
   });
 });
