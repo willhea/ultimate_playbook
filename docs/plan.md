@@ -9,11 +9,11 @@ continue in a fresh session with no other context. Update it when a step lands.
    [`strategy.md`](strategy.md) for the results: the coach's feedback on the vertical-stack
    plays, the first coaching vocabulary, and the order of work. **Focus: the vertical stack
    only, for now.**
-2. **The authoring loop is built** (strategy.md, step 2): `npm run play -- <script.json>`
-   checks a draft, saves a picture of each step and prints a draft link; the watch view has
-   **Phone preview** on computers; [`play-authoring.md`](play-authoring.md) is the guide for
-   Claude. **Next:** the vertical stack setup and quick fixes (step 3), then motion and
-   throws (step 4).
+2. **Built:** the authoring loop (strategy.md step 2: `npm run play`, Phone preview,
+   [`play-authoring.md`](play-authoring.md)) and the vertical stack setup and quick fixes
+   (step 3: the new setup, marks after the catch, relative positions). **Next: motion and
+   throws** (step 4): plant points, no stopping between steps, defenders reacting a beat
+   late, lead passes, throw types, and the comparison page for the timing values.
 3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main`
    publishes it, then checks it's being served.
 
@@ -27,13 +27,13 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Keeping and sharing it: undo/redo, autosave, import/export, share links that carry the whole play, and a public playbook of the seven built-in plays (four vertical stack, three horizontal stack).
   - Live at https://willhea.github.io/ultimate_playbook/, published on every merge into `main`.
 - **Private preview link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (only the owner can open it; for sharing, use the live app). Publishing steps are under "Working notes" below.
-- **Tests:** 124 unit tests (about 3 s, including two fuzzers) and 23 browser tests (about 25 s). CI runs both on every pull request and on `main`.
+- **Tests:** 137 unit tests (about 3 s, including two fuzzers) and 23 browser tests (about 25 s). CI runs both on every pull request and on `main`.
   - Mutation testing: Stryker catches 74% of planted bugs across the logic (78% on the newest code); see the audit in section 1.
   - Testing rules are in the app README.
 - **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
 
 ### Coaching decisions to respect
-- USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
+- USA Ultimate field, with the stack spacing the coach confirmed (15 yd and 5 yd vertical, decision #38; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
 - Players are numbered circles 1–7 on each team, with a facing wedge. Offense is blue, defense orange. Defender *n* guards offense *n*.
 - **Downfield defenders line up on the open side:** deep far downfield (forcing the cut under), even near the disc.
 - **Vertical stack: cuts come from the back of the stack. The exceptions are end-zone sets and break-side cuts, which come from the front.** A test in `src/plays/plays.test.ts` enforces this for the vertical examples.
@@ -136,7 +136,38 @@ AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended
    - **[`play-authoring.md`](play-authoring.md):** the loop, the field coordinates, the
      script, what the app does automatically, and the coach's rules.
    - Seen in the preview, to fix later: held sideways, the step's notes are cut off.
-2. **Vertical stack setup and quick fixes,** and relative positions in the script.
+2. ~~**Vertical stack setup and quick fixes.**~~ Built (November 2026):
+   - **The setup** (`verticalStack` in `formations.ts`, decision #28): the dump 10 yd to the
+     break side and 2 yd behind the thrower (`DUMP`), with D2 guarding the upline (downfield
+     of O2, shaded toward the thrower); O3 5 yd
+     to the break side of the thrower (`STACK_OFFSET`), each cutter behind 0.4 yd further
+     (`STACK_SLANT`). With the disc within 12 yd of the break sideline
+     (`BREAK_SIDELINE_ZONE`, a first guess) the stack goes to the open side instead.
+   - **Spacing** (#29): downfield defenders start `GUARD_GAP` (about 2 yd of grass) from
+     their player, and a trailing defender ends `TRAIL` (just clear of the circles) behind.
+     The horizontal stack keeps its old, tighter spacing (`HORIZONTAL_GUARD_GAP`) until it's
+     revisited (#23).
+   - **Defenders run straight** when a straight line keeps them clear of their player
+     (`straightIsClear` in `defenders.ts`), and only swing round when it wouldn't.
+   - **Marks** (#27, `caughtJustBefore` in `defenders.ts`): a defender stays with their player
+     while the disc is in the air and marks in the step after the catch; nobody marks after
+     a catch in the end zone being attacked. The force (`force.ts`) shows only for a thrower
+     who had the disc when the step began. `addStep` now re-places defenders, so a step added
+     after a catch brings the mark in (found by the edit fuzzer).
+   - **Relative positions** in scripts (#30, `Relative` in `src/plays/script.ts`):
+     `{ "from": "O1", "break": 10, "back": 2 }`, with `open`/`break`, `ahead`/`back`,
+     `"from": "disc"`, and a player placed from themselves moving from where they start.
+     In a script's setup, an offensive player who moves brings their defender along, as in
+     the editor. A run without a bend is straight, even for a defender placed by hand.
+   - **Sideline labels** in the close-up view: arrows, no yardage (#32).
+   - **The four vertical plays** were adjusted to the new setup and rules, not yet rebuilt:
+     back-of-stack cuts now have a set-up step, mostly across into the open side (with the
+     defender staying deep and open side, placed by hand), before the cut, and the break-side and dump-and-swing throws go up as the cut
+     starts. The vertical stack is now 15 yd deep (#38), so the break-side play's inside-out
+     flick to O3's flat cut is on. The horizontal "swing, then cut" lost O2's 1-yd shuffle, so D2 marks cleanly.
+   - Known, for step 4: a defender trailing a very short run (just over 1 yd) can swing
+     through their player; the editor keeps an automatic defender's curve when they're
+     dragged by hand.
 3. **Motion and throws:** cuts with plant points, no stopping between steps, defenders
    reacting a beat late, lead passes, throw type, shape and pace, and a comparison page for
    the timing values.

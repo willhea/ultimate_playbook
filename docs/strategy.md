@@ -48,7 +48,7 @@ at once:
 ## Strategy session (November 2026)
 
 The coach watched the vertical-stack plays, answered the questions below and agreed the
-first vocabulary. Decisions #23–#37 in [`00-open-questions.md`](00-open-questions.md)
+first vocabulary. Decisions #23–#38 in [`00-open-questions.md`](00-open-questions.md)
 record it. **Focus: the vertical stack only, for now.**
 
 ### What looks wrong, in the coach's words
@@ -110,7 +110,7 @@ out; a play overrides it per play, step or player, and dragging by hand still wi
 |---|------|---------|---------|
 | 1 | **Force** home / away | Which sideline is the open side | Home (decision #8) |
 | 2 | **Relative position** | "N yd open side / break side, M yd ahead / behind *a player or the disc*" | The basis for the rest |
-| 3 | **Vert stack** | The starting shape | 12 yd deep, 5 yd apart; O3 5 yd to the break side of the thrower; each cutter 0.4 yd further toward the break side. Angles the other way when the disc is near the break sideline |
+| 3 | **Vert stack** | The starting shape | 15 yd deep (#38), 5 yd apart; O3 5 yd to the break side of the thrower; each cutter 0.4 yd further toward the break side. Angles the other way when the disc is near the break sideline |
 | 4 | **Dump spot** | Where the dump stands | 10 yd to the break side, 2 yd behind the thrower |
 | 5 | **Stance** auto / even / front / deep | Where a defender plays their player | **Auto:** open side, about 2 yd of grass, even near the disc, deep by about 24 yd downfield; marks only after the catch. **Front:** fully between the cutter and the disc |
 | 6 | **Beaten by N yd** | Ground a defender loses on the plant | Chosen on the comparison page |
@@ -269,7 +269,7 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
      frame, portrait or landscape, on the computer;
    - a short authoring guide for Claude (`docs/play-authoring.md`): coordinates, the
      script format, the coach's rules, what the app does automatically.
-3. **Vertical stack setup and quick fixes:** the new dump spot, O3 off to the break side and
+3. ~~**Vertical stack setup and quick fixes:**~~ (built, November 2026) the new dump spot, O3 off to the break side and
    the angled stack, about 2 yd of grass between defenders and their players (decisions
    #28, #29); defenders stay on the open side until the catch and there's no mark after a
    score (#27); the close-up sideline labels lose their yardage (#32). **Relative
@@ -291,7 +291,7 @@ Vertical stack only. Each step is small enough to review in one sitting and merg
 
 - Reaction delay and ground lost on a plant: pick on the comparison page.
 - "Released on the plant" as the default throw timing: confirm after seeing it.
-- How near the break sideline the stack's angle flips (about 10–12 yd?).
+- How near the break sideline the stack's angle flips (the app uses 12 yd for now).
 - In portrait on a phone the field fills only a strip of the screen: turn it so the offense
   attacks up the screen?
 - Steps stay the way plays are built (coaching beats, with smooth motion through them)?

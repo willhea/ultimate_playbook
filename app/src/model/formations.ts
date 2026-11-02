@@ -16,7 +16,7 @@
  *   bottom: the mark forces flicks, and the open side is the home sideline.
  */
 import type { OpenSide, StackSpacing, Vec } from './types';
-import { FIELD } from './field';
+import { FIELD, PLAYER_RADIUS } from './field';
 import { smoothstep } from './geometry';
 
 export type { OpenSide, StackSpacing };
@@ -47,21 +47,47 @@ export function markSpot(thrower: Vec, open: OpenSide = 'bottom'): Vec {
   return { x: thrower.x + 1.2, y: thrower.y - 2.4 * openSign(open) };
 }
 
-/** How far a downfield defender starts from their player. */
-export const GUARD_GAP = 2.7;
+/**
+ * How far a downfield defender starts from their player, centre to centre: about
+ * 2 yd of grass between the two circles (decision #29).
+ */
+export const GUARD_GAP = 2 * PLAYER_RADIUS + 2;
+/** The horizontal stack keeps its first, tighter spacing until it's revisited (decision #23). */
+export const HORIZONTAL_GUARD_GAP = 2.7;
+
+/** The spacing a stack's defenders start at. */
+export const guardGap = (kind: StackSpacing['kind']): number => (kind === 'horizontal' ? HORIZONTAL_GUARD_GAP : GUARD_GAP);
 
 /**
  * Where a downfield defender lines up: on the open side of their player. Level
  * with them near the disc, turning to 45° deep by about 24 yd downfield.
  */
-export function guardSpot(cutter: Vec, disc: Vec, open: OpenSide = 'bottom'): Vec {
+export function guardSpot(cutter: Vec, disc: Vec, open: OpenSide = 'bottom', gap: number = GUARD_GAP): Vec {
   const deep = (Math.PI / 4) * smoothstep(8, 24, cutter.x - disc.x);
-  return { x: cutter.x + GUARD_GAP * Math.sin(deep), y: cutter.y + GUARD_GAP * Math.cos(deep) * openSign(open) };
+  return { x: cutter.x + gap * Math.sin(deep), y: cutter.y + gap * Math.cos(deep) * openSign(open) };
 }
+
+/** Where the dump stands, from the thrower: yards to the break side, and behind (decision #28). */
+export const DUMP = { break: 10, back: 2 };
+/** The front of a vertical stack stands this far to the break side of the thrower (decision #28). */
+export const STACK_OFFSET = 5;
+/** Each cutter behind the front stands this much further over, so the stack angles away from the open side (decision #28). */
+export const STACK_SLANT = 0.4;
+/**
+ * With the disc this close to the break sideline, the stack angles the other way, into
+ * the open side, to keep the main cutting lane open (decision #28). The distance is a
+ * first guess for the coach to confirm.
+ */
+export const BREAK_SIDELINE_ZONE = 12;
+/** How close to a sideline a formation puts anyone. */
+const SIDELINE_ROOM = 2;
+
+const onField = (y: number) => Math.min(FIELD.width - SIDELINE_ROOM, Math.max(SIDELINE_ROOM, y));
 
 /** The spacing new plays start with. The coach confirmed these match the whiteboard. */
 export const DEFAULT_STACK: { vertical: StackSpacing; horizontal: StackSpacing } = {
-  vertical: { kind: 'vertical', depth: 12, spacing: 5 },
+  // Vertical: 15 yd deep, so the inside-out break to a flat cut from the front is on (decision #38).
+  vertical: { kind: 'vertical', depth: 15, spacing: 5 },
   horizontal: { kind: 'horizontal', depth: 15 },
 };
 
@@ -79,25 +105,38 @@ export function stackPositions(stack: StackSpacing, disc?: Vec, open?: OpenSide)
 }
 
 /**
- * Vertical stack: O1 with the disc, O2 as the dump behind on the break side,
- * O3–O7 in a line down the middle of the field (O3 at the front).
+ * Vertical stack: O1 with the disc, O2 as the dump behind on the break side, and
+ * O3–O7 in a line downfield (O3 at the front). The front of the stack stands to the
+ * break side of the thrower and the line angles slightly further that way, which
+ * opens the open side for cuts and throws (decision #28). Near the break sideline
+ * it angles into the open side instead.
  */
 export function verticalStack(opts: VerticalOptions = {}): Record<string, Vec> {
   const disc = opts.disc ?? { x: 35, y: FIELD.width / 2 };
   const open = opts.open ?? 'bottom';
   const s = openSign(open);
-  const depth = opts.depth ?? 12;
+  const depth = opts.depth ?? DEFAULT_STACK.vertical.depth;
   const spacing = opts.spacing ?? 5;
+
+  // Distance from the disc to the break sideline: y = 0 when the open side is the bottom.
+  const toBreakSideline = s > 0 ? disc.y : FIELD.width - disc.y;
+  const stackSide = toBreakSideline < BREAK_SIDELINE_ZONE ? s : -s; // which way the stack moves across the field
 
   const pos: Record<string, Vec> = {
     O1: disc,
-    O2: { x: disc.x - 5, y: disc.y - 7 * s },
+    O2: { x: disc.x - DUMP.back, y: onField(disc.y - DUMP.break * s) },
   };
   pos.D1 = markSpot(disc, open);
-  // The dump's defender sits between the two handlers.
-  pos.D2 = { x: pos.O2.x + 1.8, y: pos.O2.y + 1.8 * s };
+  // The dump's defender takes away the upline cut and the around swing: downfield of
+  // the dump, shaded toward the thrower, halfway between the two directions.
+  const toThrower = { x: disc.x - pos.O2.x, y: disc.y - pos.O2.y };
+  const apart = Math.hypot(toThrower.x, toThrower.y) || 1;
+  const shade = { x: toThrower.x / apart + 1, y: toThrower.y / apart }; // toward the thrower, plus downfield
+  const shadeLen = Math.hypot(shade.x, shade.y) || 1;
+  pos.D2 = { x: pos.O2.x + (shade.x / shadeLen) * GUARD_GAP, y: pos.O2.y + (shade.y / shadeLen) * GUARD_GAP };
   for (let n = 3; n <= 7; n++) {
-    const cutter = { x: disc.x + depth + (n - 3) * spacing, y: FIELD.width / 2 };
+    const across = STACK_OFFSET + (n - 3) * STACK_SLANT;
+    const cutter = { x: disc.x + depth + (n - 3) * spacing, y: onField(disc.y + across * stackSide) };
     pos[`O${n}`] = cutter;
     pos[`D${n}`] = guardSpot(cutter, disc, open);
   }
@@ -130,7 +169,7 @@ export function horizontalStack(opts: HorizontalOptions = {}): Record<string, Ve
   lanes.forEach((y, k) => {
     const cutter = { x: disc.x + depth, y };
     pos[`O${k + 4}`] = cutter;
-    pos[`D${k + 4}`] = guardSpot(cutter, disc, open);
+    pos[`D${k + 4}`] = guardSpot(cutter, disc, open, HORIZONTAL_GUARD_GAP);
   });
   return pos;
 }

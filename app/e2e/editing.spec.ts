@@ -1,6 +1,7 @@
 // Building a play in the editor. The editing rules themselves are unit-tested
 // (src/model/edit.test.ts); these check that the editor wires them up.
 import { test, expect } from './fixtures';
+import { TRAIL } from '../src/model/defenders';
 import { createPlay } from '../src/model/defaults';
 import { createDemoPlay } from '../src/plays';
 
@@ -35,7 +36,7 @@ test('defenders follow the player they guard, unless placed by hand', async ({ a
   const run = { x: o5.x + 12, y: 32 };
   await app.dragPlayer('O5', run);
   const following = await app.playerState('D5');
-  expect(Math.hypot(following.x - run.x, following.y - run.y)).toBeCloseTo(2.7, 0); // a step behind
+  expect(Math.hypot(following.x - run.x, following.y - run.y)).toBeCloseTo(TRAIL, 0); // a step behind
 
   await app.dragPlayer('D5', { x: run.x - 6, y: 25 });
   expect(await app.playerState('D5')).toMatchObject({ x: expect.closeTo(run.x - 6, 0), y: expect.closeTo(25, 0) });
@@ -105,7 +106,8 @@ test('set facing by hand and change who a defender guards', async ({ app, page }
 });
 
 test('rename, reorder and delete steps', async ({ app, page }) => {
-  await app.open({ plays: [createDemoPlay()] });
+  const play = createDemoPlay();
+  await app.open({ plays: [play] });
   await app.stepChip(1).click();
   const name = page.getByLabel('Step name');
   await name.fill('First cut');
@@ -117,7 +119,8 @@ test('rename, reorder and delete steps', async ({ app, page }) => {
   await expect(app.stepChip(2)).toContainText('First cutn');
   await app.button('Delete step').click();
   await app.button('Confirm delete').click();
-  await expect(page.locator('.steps .step-chip')).toHaveCount(3); // setup, one step, "Add step"
+  // The setup, the steps left after deleting one, and "Add step".
+  await expect(page.locator('.steps .step-chip')).toHaveCount(play.frames.length);
 });
 
 test('the player with the disc cannot be removed', async ({ app, page }) => {

@@ -2,7 +2,9 @@
  * Automatic defenders (spec E-8). A defender who guards someone follows them from
  * step to step, so building a play only takes moving the offense:
  *
- * - When their player catches the disc, the defender steps up to **mark** them.
+ * - While the disc is in the air to their player, the defender stays on their side
+ *   of them (decision #27). In the step **after** the catch they step up to **mark**,
+ *   unless the catch was a score: then the play is over.
  * - When their player runs, the defender **trails** a step behind, along the run.
  * - Otherwise the defender **keeps the same spacing** they had at the end of the last step.
  *
@@ -13,15 +15,16 @@
  * engine and the file format don't need to know about any of this.
  */
 import type { Frame, OpenSide, Play, Vec } from './types';
-import { add, controlPoint, dist, mid, scale, sub } from './geometry';
-import { markSpot } from './formations';
+import { add, controlPoint, dist, mid, quad, scale, sub } from './geometry';
+import { GUARD_GAP, markSpot } from './formations';
+import { GOAL_LINES, PLAYER_RADIUS } from './field';
 
 /** A player who moves more than this in a step is running. */
 const RUN = 1;
-/** How far behind a running player their defender ends up. */
-export const TRAIL = 2.7;
+/** How far behind a running player their defender ends up: a step behind, with the circles just clear of each other. */
+export const TRAIL = 2 * PLAYER_RADIUS + 0.5;
 /** Spacing up to this is close guarding: the defender swings around their player rather than passing through them. */
-const CLOSE = 4;
+const CLOSE = GUARD_GAP + 1;
 const SAME = 0.05;
 
 const len = (v: Vec) => Math.hypot(v.x, v.y);
@@ -30,14 +33,28 @@ export function isManual(frame: Frame, id: string): boolean {
   return frame.manual?.[id] === true;
 }
 
-/** Where an automatic defender ends a step, and the bend of their path, given where everyone was before it. */
+/**
+ * True when `id` caught the disc in the step before step `i`, so their defender
+ * steps up to mark them in step `i`. A catch in the end zone being attacked is a
+ * score, and nobody marks after it.
+ */
+export function caughtJustBefore(frames: Frame[], i: number, id: string): boolean {
+  if (i < 2) return false; // the setup's mark is placed by hand
+  const caught = frames[i - 1].discHolder === id && frames[i - 2].discHolder !== id;
+  const at = frames[i - 1].positions[id];
+  return caught && !!at && at.x < GOAL_LINES[1];
+}
+
+/** Where an automatic defender ends step `i`, and the bend of their path, given where everyone was before it. */
 export function guardMove(
-  prev: Frame,
-  f: Frame,
+  frames: Frame[],
+  i: number,
   defender: string,
   guarded: string,
   open: OpenSide = 'bottom',
 ): { to: Vec; bend: Vec | null } | null {
+  const prev = frames[i - 1];
+  const f = frames[i];
   const o0 = prev.positions[guarded];
   const o1 = f.positions[guarded];
   const d0 = prev.positions[defender];
@@ -45,7 +62,7 @@ export function guardMove(
 
   const oc = controlPoint(o0, o1, f.curves[guarded]);
   let to: Vec;
-  if (f.discHolder === guarded && prev.discHolder !== guarded) {
+  if (caughtJustBefore(frames, i, guarded)) {
     to = markSpot(o1, open);
   } else if (dist(o0, o1) > RUN) {
     // A step behind, angled toward the side of the run the defender started on,
@@ -60,8 +77,11 @@ export function guardMove(
     to = add(o1, sub(d0, o0));
   }
 
-  // Path: follow the runner's path, with the spacing between them turning smoothly
-  // from the old spacing to the new one.
+  // Straight when that's safe: defenders cut in straight lines too (decision #24).
+  if (straightIsClear(o0, oc, o1, d0, to)) return { to, bend: null };
+
+  // Otherwise follow the runner's path, with the spacing between them turning smoothly
+  // from the old spacing to the new one, so the defender goes round their player.
   const g0 = sub(d0, o0);
   const g1 = sub(to, o1);
   const r0 = len(g0);
@@ -87,23 +107,32 @@ export function guardMove(
   return { to, bend: len(bend) < SAME ? null : bend };
 }
 
+/** True if a defender running straight from `d0` to `d1` stays clear of their player all the way. */
+function straightIsClear(o0: Vec, oc: Vec, o1: Vec, d0: Vec, d1: Vec): boolean {
+  for (let k = 1; k < 24; k++) {
+    const t = k / 24;
+    const d = { x: d0.x + (d1.x - d0.x) * t, y: d0.y + (d1.y - d0.y) * t };
+    if (dist(d, quad(o0, oc, o1, t)) < 2 * PLAYER_RADIUS) return false;
+  }
+  return true;
+}
+
 /** Recompute every automatic defender in every step after the setup. */
 export function placeDefenders(play: Play): Play {
   const guarding = play.players.filter((p) => p.team === 'D' && p.guards);
   if (guarding.length === 0) return play;
   const frames = [...play.frames];
   for (let i = 1; i < frames.length; i++) {
-    let f = frames[i];
     for (const d of guarding) {
+      const f = frames[i];
       if (isManual(f, d.id)) continue;
-      const move = guardMove(frames[i - 1], f, d.id, d.guards!, play.open);
+      const move = guardMove(frames, i, d.id, d.guards!, play.open);
       if (!move) continue;
       const curves = { ...f.curves };
       if (move.bend) curves[d.id] = move.bend;
       else delete curves[d.id];
-      f = { ...f, positions: { ...f.positions, [d.id]: move.to }, curves };
+      frames[i] = { ...f, positions: { ...f.positions, [d.id]: move.to }, curves };
     }
-    frames[i] = f;
   }
   return { ...play, frames };
 }
@@ -119,7 +148,7 @@ export function upgradeDefenders(play: Play): Play {
     if (i === 0) return f;
     const manual: Record<string, true> = { ...f.manual };
     for (const d of guarding) {
-      const move = guardMove(play.frames[i - 1], f, d.id, d.guards!, play.open);
+      const move = guardMove(play.frames, i, d.id, d.guards!, play.open);
       const bend = f.curves[d.id];
       const same =
         move &&

@@ -86,7 +86,7 @@ The descriptions are for a right-handed thrower.
 - **Hammer.** An overhead throw with a forehand grip. It flips and flies upside down, over the mark.
 - **Scoober.** A short overhead throw with a backhand grip, released across the body. Used to break the mark or get over a zone.
 - **Blade.** Thrown tilted steeply, so it drops sharply.
-- **Inside-out (IO).** A throw that starts curving toward the thrower's body side, then curves back out. It's tilted so it bends around the mark from the inside.
+- **Inside-out (IO).** A throw that starts curving toward the thrower's body side, then curves back out. It's tilted so it bends around the mark from the inside. The coach's example (decision #38): to a flat break-side cut from the front of a vertical stack, an IO flick goes past the mark's low hand toward the break side, then bends back into the cutter's path. It usually takes a step-out with the pivot, which the app doesn't draw.
 - **Outside-in (OI).** Starts away from the body and curves back in, like a tilted "around" throw.
 - **Huck.** A long throw downfield, usually to a deep cut.
 - **Dump.** A short throw backward or sideways to a handler, usually to reset a high stall count.
@@ -115,7 +115,7 @@ The descriptions are for a right-handed thrower.
 
 - **Cut (app: a run).** A sudden run to get open for a throw. Cuts are straight legs with hard changes of direction (plant points), like a triangle; a curve is an adjustment to the disc in the air, not the plan (decision #24).
 - **Plant / plant point.** Where a cutter plants a foot and changes direction hard, to shake their defender.
-- **Set-up (leg).** The first part of a cut that moves the defender before the plant. From the back of the vertical stack: about 10 yd diagonally away from the stack into the open side (decision #31).
+- **Set-up (leg).** The first part of a cut that moves the defender before the plant. From the back of the vertical stack: about 10 yd, mostly across into the open side, away from the stack (decision #31).
 - **Under cut / in cut / cut in (app).** A cut back toward the thrower. All three mean the same thing; the play vocabulary says **in** (decision #36). Coming under on the open side is the most common completed pass in the game.
 - **Deep cut / going deep.** A cut away from the thrower, toward the end zone, for a huck.
 - **Out cut.** A cut toward a sideline.

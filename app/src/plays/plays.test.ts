@@ -46,6 +46,18 @@ describe('example plays', () => {
   }
 });
 
+it('scriptPlay makes a defender placed by hand without a bend run straight', () => {
+  // Moving O7 first gives D7 an automatic, curved chase; placing D7 by hand replaces it.
+  const play = scriptPlay({
+    title: 'T',
+    setup: { positions: {}, notes: '' },
+    steps: [{ name: 's', notes: '', duration: 2, runs: { O7: { x: 50, y: 30 }, D7: { x: 60, y: 30 } } }],
+  });
+  expect(play.frames[1].positions.D7).toEqual({ x: 60, y: 30 });
+  expect(play.frames[1].curves.D7).toBeUndefined();
+  expect(play.frames[1].manual).toEqual({ D7: true });
+});
+
 it('scriptPlay applies each step’s runs, bends, throw and facing', () => {
   const setup = createPlay().frames[0].positions;
   const play = scriptPlay({

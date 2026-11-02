@@ -3,7 +3,7 @@ import type { Frame, Play, Player, StackSpacing, Team, Vec } from './types';
 import { add, dist, sub } from './geometry';
 import { FIELD } from './field';
 import { isManual, placeDefenders } from './defenders';
-import { guardSpot, markSpot, stackPositions, STACK_CUTTERS } from './formations';
+import { guardGap, guardSpot, markSpot, stackPositions, STACK_CUTTERS } from './formations';
 
 const SAME_SPOT = 0.01;
 
@@ -139,7 +139,8 @@ export function addStep(play: Play, i: number): Play {
     release: 0.4,
   };
   const frames = [...play.frames.slice(0, i + 1), step, ...play.frames.slice(i + 1)];
-  return withFrames(play, frames);
+  // A step added after a catch is when that player's defender steps up to mark.
+  return placeDefenders(withFrames(play, frames));
 }
 
 export function deleteStep(play: Play, i: number): Play {
@@ -266,7 +267,7 @@ export function setStack(play: Play, stack: StackSpacing): Play {
     if (!spots[id] || !setup.positions[id]) continue;
     next = movePlayer(next, 0, id, spots[id]);
     for (const d of play.players) {
-      if (d.guards === id) next = movePlayer(next, 0, d.id, guardSpot(spots[id], disc, play.open));
+      if (d.guards === id) next = movePlayer(next, 0, d.id, guardSpot(spots[id], disc, play.open, guardGap(stack.kind)));
     }
   }
   return { ...next, stack };

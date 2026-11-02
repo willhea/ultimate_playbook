@@ -71,17 +71,14 @@ export const swingThenCut: PlayScript = {
   steps: [
     {
       name: 'Swing to O2',
-      notes: 'O1 swings the disc to the top handler. D2 steps up to mark.',
+      notes: 'O1 swings the disc to the top handler.',
       duration: 1.6,
-      runs: {
-        O2: { x: 38, y: 9 },
-      },
       throwTo: 'O2',
       release: 0.35,
     },
     {
       name: 'O5 cuts under toward the new angle',
-      notes: 'With the disc on the top side, O5 cuts under into the space in front of O2.',
+      notes: 'D2 steps up to mark O2. With the disc on the top side, O5 cuts under into the space in front of O2.',
       duration: 2,
       runs: {
         O5: { to: { x: 46, y: 15 }, bend: { x: 2, y: -1 } },

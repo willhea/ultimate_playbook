@@ -33,6 +33,9 @@ export function holderAt(play: Play, view: PlayView): string | null {
 export function forceView(play: Play, view: PlayView): ForceView | null {
   const thrower = holderAt(play, view);
   if (!thrower || !view.players[thrower]) return null;
+  // A player who caught the disc in this step isn't marked yet: the mark sets up in the next step (decision #27).
+  const startHolder = play.frames[Math.max(0, view.index - 1)].discHolder;
+  if (view.index > 0 && thrower !== startHolder) return null;
   const t = view.players[thrower].pos;
   let best: { id: string; d: number } | null = null;
   for (const p of play.players) {

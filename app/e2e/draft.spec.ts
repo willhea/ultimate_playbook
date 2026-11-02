@@ -20,7 +20,13 @@ test('check a draft play', { tag: '@draft' }, async ({ app, page }) => {
     save({ ok: false, errors: parsed.errors });
     return;
   }
-  const check = checkDraft(parsed.script);
+  let check: ReturnType<typeof checkDraft>;
+  try {
+    check = checkDraft(parsed.script);
+  } catch (e) {
+    save({ ok: false, errors: [(e as Error).message] });
+    return;
+  }
   const code = await encodePlay(check.play);
   // The link has to survive the same checks any shared link goes through.
   await decodePlay(code);

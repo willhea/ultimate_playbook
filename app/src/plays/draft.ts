@@ -19,6 +19,23 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const isVec = (v: unknown): v is Vec => isObject(v) && isNumber(v.x) && isNumber(v.y);
 
+const SPOT_HELP = 'a spot is { "x", "y" } in yards, or relative to a player, like { "from": "O1", "break": 10, "back": 2 }';
+const RELATIVE_KEYS = new Set(['from', 'open', 'break', 'ahead', 'back']);
+
+/** What's wrong with a spot, in words, or null if nothing is. */
+function spotProblem(v: unknown): string | null {
+  if (isVec(v)) return null;
+  if (!isObject(v) || !('from' in v)) return SPOT_HELP;
+  if (typeof v.from !== 'string' || !(PLAYER_IDS.has(v.from) || v.from === 'disc'))
+    return `"from" is a player (O1–O7, D1–D7) or "disc", not ${JSON.stringify(v.from)}`;
+  const extra = Object.keys(v).filter((k) => !RELATIVE_KEYS.has(k));
+  if (extra.length) return `a relative spot uses "open" or "break", and "ahead" or "back", not ${extra.map((k) => `"${k}"`).join(', ')}`;
+  for (const k of ['open', 'break', 'ahead', 'back']) if (k in v && !isNumber(v[k])) return `"${k}" is a number of yards`;
+  if ('open' in v && 'break' in v) return 'a spot is to the open side or the break side, not both';
+  if ('ahead' in v && 'back' in v) return 'a spot is ahead or back, not both';
+  return null;
+}
+
 /**
  * Read a play script from JSON text. Explains every problem found, in words an
  * author can act on, rather than stopping at the first.
@@ -47,7 +64,8 @@ export function parseScript(text: string): ParsedScript {
     else
       for (const [id, pos] of Object.entries(setup.positions)) {
         player('Setup', id);
-        if (!isVec(pos)) errors.push(`Setup: ${id} needs a position with numbers "x" and "y".`);
+        const problem = spotProblem(pos);
+        if (problem) errors.push(`Setup: ${id}: ${problem}.`);
       }
     if (typeof setup.notes !== 'string') errors.push('The setup needs "notes" (they can be empty).');
     if (setup.holder !== undefined) {
@@ -73,8 +91,10 @@ export function parseScript(text: string): ParsedScript {
         else
           for (const [id, run] of Object.entries(step.runs)) {
             player(where, id);
-            const ok = isVec(run) || (isObject(run) && isVec(run.to) && isVec(run.bend));
-            if (!ok) errors.push(`${where}: ${id}'s run is { "x", "y" } or { "to": { "x", "y" }, "bend": { "x", "y" } }.`);
+            const bent = isObject(run) && 'to' in run;
+            const problem = bent ? spotProblem(run.to) : spotProblem(run);
+            if (problem) errors.push(`${where}: ${id} runs to a spot: ${problem}.`);
+            else if (bent && !isVec(run.bend)) errors.push(`${where}: ${id}'s "bend" is { "x", "y" }.`);
           }
       }
       if (step.throwTo !== undefined) {
@@ -112,7 +132,11 @@ export interface DraftCheck {
   ok: boolean;
 }
 
-/** Build the play from a checked script and run the same checks every built-in play passes. */
+/**
+ * Build the play from a checked script and run the same checks every built-in play
+ * passes. Throws, with the reason in words, if the play can't be built at all (for
+ * example, positions relative to each other in a circle).
+ */
 export function checkDraft(script: PlayScript): DraftCheck {
   const play = scriptPlay(script);
   const issues = validatePlay(play).sort((a, b) => (a.level === b.level ? a.frame - b.frame : a.level === 'error' ? -1 : 1));
