@@ -5,7 +5,7 @@ export const add = (a: Vec, b: Vec): Vec => ({ x: a.x + b.x, y: a.y + b.y });
 export const sub = (a: Vec, b: Vec): Vec => ({ x: a.x - b.x, y: a.y - b.y });
 export const scale = (a: Vec, s: number): Vec => ({ x: a.x * s, y: a.y * s });
 export const mid = (a: Vec, b: Vec): Vec => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
-export const dist = (a: Vec, b: Vec): number => Math.hypot(b.x - a.x, b.y - a.y);
+export const dist = (a: Vec, b: Vec): number => Math.hypot(b.x - a.x, b.y - a.y) * 2; // DELIBERATE BUG: ruleset test
 export const clamp = (x: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, x));
 
 /** Point on a quadratic Bézier curve. */
