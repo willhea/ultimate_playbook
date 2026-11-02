@@ -13,9 +13,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test --grep-invert @screenshots",
+    "test:e2e": "playwright test --grep-invert \"@screenshots|@draft\"",
     "check": "npm run lint && npm run typecheck && npm test && npm run test:e2e",
     "screenshots": "playwright test --grep @screenshots",
+    "play": "node scripts/play.mjs",
     "test:mutation": "stryker run"
   },
   "dependencies": {

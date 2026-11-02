@@ -38,6 +38,7 @@ Other commands:
 | `npm run test:e2e` | Browser tests (Playwright) against the production build (about 15 s). |
 | `npm run test:mutation` | Mutation testing with [Stryker](https://stryker-mutator.io), about 15 min. It makes hundreds of small changes to the logic and reports any that no unit test notices; see `reports/mutation/index.html`. Run it after big changes to the logic. Not part of CI. |
 | `npm run screenshots` | Saves pictures of every example play step, dark mode and a narrow window to `screenshots/` for looking over. It never fails. |
+| `npm run play -- <script.json>` | Checks a draft play written as a script (see [`docs/play-authoring.md`](../docs/play-authoring.md)): lists anything wrong, saves a picture of each step to `drafts/pictures/`, and prints a draft link to the live app. Exits with an error if the play has errors. `drafts/` is ignored by git. |
 | `npm run build` | Builds a static site into `dist/` that any static host (e.g. GitHub Pages) can serve. |
 | `npm run build:single` | Builds everything into one HTML file, `dist-single/ultimate-playbook.html`, for sharing as a single page. |
 
@@ -59,7 +60,7 @@ When adding a test:
 ## How the code is organized
 
 - `src/model/` has no UI code. It holds the data format (`types.ts`), the USAU field (`field.ts`), the animation engine (`engine.ts`), the editing operations (`edit.ts`), and saving/loading (`storage.ts`). Tests live in `model.test.ts`.
-- `src/model/formations.ts` builds the vertical and horizontal stack starting positions; `src/plays/` holds the example plays, written as scripts.
+- `src/model/formations.ts` builds the vertical and horizontal stack starting positions; `src/plays/` holds the example plays, written as scripts, and `draft.ts`, which reads and checks scripts written as JSON for `npm run play`.
 - `src/state/` holds the saved-plays library with undo/redo (`library.ts`) and the playback clock (`playbackClock.ts`, used by `usePlayback.ts`).
 - `src/components/` holds the React UI: the SVG field, side panel, timeline, and dialogs.
 

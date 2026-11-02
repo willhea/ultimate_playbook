@@ -16,6 +16,7 @@ import { Inspector } from './components/Inspector';
 import { Timeline } from './components/Timeline';
 import { ExportDialog, ImportDialog, PlaysDialog, ShareDialog, ShortcutsDialog, WatchPlaysDialog } from './components/Dialogs';
 import { Watch } from './components/Watch';
+import { insideFrame, PhonePreview } from './components/PhonePreview';
 import { Icon } from './components/Icon';
 
 type DialogName = 'plays' | 'export' | 'import' | 'shortcuts' | 'share' | 'watchPlays' | null;
@@ -55,6 +56,7 @@ export function App() {
   const [closeUp, setCloseUp] = useState(true);
   const [presenting, setPresenting] = useState(false);
   const [dialog, setDialog] = useState<DialogName>(null);
+  const [previewing, setPreviewing] = useState(false);
 
   const view = evaluate(shown, playback.time);
   // Frame the close-up from the play as it was before a drag, so the view doesn't move under the pointer.
@@ -233,7 +235,9 @@ export function App() {
           onShare={() => setDialog('share')}
           onCopy={copyGuest}
           onEdit={startEditing}
+          onPreview={isPhone() || insideFrame() ? undefined : () => setPreviewing(true)}
         />
+        {previewing && <PhonePreview play={shown} slug={guest?.slug} onClose={() => setPreviewing(false)} />}
         {dialog === 'watchPlays' && (
           <WatchPlaysDialog
             entries={playbook()}

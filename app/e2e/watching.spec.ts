@@ -12,6 +12,7 @@ test.describe('on a phone', () => {
     await app.openLink(`play=${await encodePlay(play)}`, { fakeClock: true });
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(play.title);
     await expect(page.getByText(play.frames[0].notes)).toBeVisible();
+    await expect(app.button('Phone preview')).toHaveCount(0); // already on a phone
 
     await app.button('Next step').click();
     await page.clock.runFor(4000);
@@ -51,4 +52,28 @@ test('share a play from the editor; the link opens it for anyone', async ({ app,
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Our end-of-game play');
   await app.button('Make my own copy').click();
   await expect(page.getByLabel('Ultimate Playbook')).toHaveValue('Our end-of-game play'); // on a computer, straight into the editor
+});
+
+test('preview a play on a phone, upright and sideways, from a computer (decision #22)', async ({ app, page }) => {
+  const play = { ...createDemoPlay(), title: 'Draft: dump and swing' };
+  await app.openLink(`play=${await encodePlay(play)}`);
+  await app.button('Phone preview').click();
+
+  const preview = page.getByRole('dialog', { name: 'Phone preview' });
+  const screen = preview.locator('iframe');
+  const phone = page.frameLocator('.phone-screen');
+  // The real app runs inside, laid out for a phone held upright.
+  await expect(phone.getByRole('heading', { level: 1 })).toHaveText('Draft: dump and swing');
+  await expect(phone.getByText('Turn your phone sideways for a bigger field.')).toBeVisible();
+  await expect(phone.getByRole('button', { name: 'Phone preview' })).toHaveCount(0);
+  await expect(screen).toHaveAttribute('width', '390');
+
+  await preview.getByRole('button', { name: 'Sideways' }).click();
+  await expect(screen).toHaveAttribute('width', '844');
+  await expect(phone.getByRole('heading', { level: 1 })).toHaveText('Draft: dump and swing');
+  await expect(phone.getByText('Turn your phone sideways for a bigger field.')).toBeHidden();
+
+  await page.keyboard.press('Escape');
+  await expect(preview).toBeHidden();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Draft: dump and swing');
 });

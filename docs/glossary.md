@@ -82,6 +82,7 @@ The descriptions are for a right-handed thrower.
 
 - **Backhand.** Thrown across the body, released with the back of the hand toward the target. It comes out on the thrower's left.
 - **Forehand / flick (app).** Thrown from the thrower's right side, palm up, like a sidearm throw. "Flick" and "forehand" mean the same thing.
+- **Overhead (app).** Any throw released over the head: the hammer and the scoober. The app draws them all the same way (decision #36).
 - **Hammer.** An overhead throw with a forehand grip. It flips and flies upside down, over the mark.
 - **Scoober.** A short overhead throw with a backhand grip, released across the body. Used to break the mark or get over a zone.
 - **Blade.** Thrown tilted steeply, so it drops sharply.
@@ -112,11 +113,13 @@ The descriptions are for a right-handed thrower.
 
 ## Offense: cuts and movement
 
-- **Cut (app: a run).** A sudden run to get open for a throw.
-- **Under cut / in cut / cut in (app).** A cut back toward the thrower. All three mean the same thing. Coming under on the open side is the most common completed pass in the game.
+- **Cut (app: a run).** A sudden run to get open for a throw. Cuts are straight legs with hard changes of direction (plant points), like a triangle; a curve is an adjustment to the disc in the air, not the plan (decision #24).
+- **Plant / plant point.** Where a cutter plants a foot and changes direction hard, to shake their defender.
+- **Set-up (leg).** The first part of a cut that moves the defender before the plant. From the back of the vertical stack: about 10 yd diagonally away from the stack into the open side (decision #31).
+- **Under cut / in cut / cut in (app).** A cut back toward the thrower. All three mean the same thing; the play vocabulary says **in** (decision #36). Coming under on the open side is the most common completed pass in the game.
 - **Deep cut / going deep.** A cut away from the thrower, toward the end zone, for a huck.
 - **Out cut.** A cut toward a sideline.
-- **Break-side cut.** A cut into the break-side lane. The thrower has to break the mark to hit it.
+- **Break-side cut.** A cut into the break-side lane. The thrower has to break the mark to hit it. The play vocabulary says **break**.
 - **Upline cut ("strike").** A handler's cut from beside or behind the thrower on the break side, running down the open side.
 - **Dish / dishy cut.** A dump cut behind the thrower that takes a short reset while already moving toward the break side.
 - **Clear (app).** Running out of a lane after a cut that didn't get the disc, so the next cutter has room.
@@ -135,7 +138,7 @@ The descriptions are for a right-handed thrower.
 - **Guarding (app).** Who a defender is assigned to.
 - **Under side / deep side.** Standing between your cutter and the disc (**under**, to stop the under cut) or behind them, toward the end zone (**deep**, to stop the huck).
 - **Shading.** Where a defender stands relative to their cutter: a little under, a little deep, a little to the open side. The coach's rule (decision #12): downfield defenders line up on the **open side**. Far downfield they play **deep**, forcing their player to cut under; closer to the disc they play **even** (level with their player). The app's formations do this.
-- **Fronting (app: "covered" cut).** Getting fully between the cutter and the disc to deny the under cut. The "clear, then the next cut" play shows D7 fronting O7.
+- **Fronting (app: "covered" cut).** Getting fully between the cutter and the disc to deny the in cut, giving up the deep space. The play vocabulary's stance is **front**; it also covers playing "under", which would be confused with the in cut (decision #36).
 - **Trailing (app).** Chasing a cutter from behind after they've got a step on you. The app's automatic defenders trail a runner a step behind.
 - **Reading the hips.** Watching a cutter's hips to tell which way they'll really go; the hips can't fake the way the head and shoulders can. Defenders also keep their own hips open so they can turn and run without crossing their feet. This is a topic for the 3D videos.
 - **Bail step.** A defender's first step sideways, running with the cutter without committing their hips one way.
@@ -202,6 +205,7 @@ Answered (November 2026; see decisions #9–#11 in [00-open-questions.md](00-ope
 
 Still open:
 - **Anything missing?** Terms your team uses that aren't here, such as names for set plays or calls.
+- Terminology isn't universal across teams. The play vocabulary in [`strategy.md`](strategy.md#the-first-vocabulary-vertical-stack) uses one word for each idea; this glossary lists the synonyms.
 
 ## How others draw the force
 
