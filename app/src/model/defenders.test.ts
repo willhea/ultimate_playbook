@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import { createPlay } from './defaults';
-import { addStep, movePlayer, setGuards, setHolder, setManual } from './edit';
+import { addPlayer, addStep, movePlayer, removePlayer, setGuards, setHolder, setManual } from './edit';
 import { guardSpot, markSpot } from './formations';
 import { dist } from './geometry';
 import { evaluate, frameTimes } from './engine';
@@ -47,6 +47,13 @@ describe('automatic defenders', () => {
     expect(play.frames[0].positions.D3).toEqual(guardSpot(play.frames[0].positions.O7, play.frames[0].positions.O1));
     play = movePlayer(play, 1, 'O7', { x: 90, y: 30 });
     expect(dist(play.frames[1].positions.D3, play.frames[1].positions.O7)).toBeCloseTo(TRAIL, 5);
+  });
+
+  it('includes a defender added back to the play: they mark or follow straight away', () => {
+    // Found by the edit fuzzer: a re-added defender stood on the sideline until the next edit.
+    let play = setHolder(oneStep(), 1, 'O2');
+    play = addPlayer(removePlayer(play, 'D2'), 'D');
+    expect(play.frames[1].positions.D2).toEqual(markSpot(play.frames[1].positions.O2));
   });
 
   it('never run through the player they guard', () => {

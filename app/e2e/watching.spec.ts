@@ -29,6 +29,15 @@ test.describe('on a phone', () => {
   });
 });
 
+test('a link that was cut off when copied is explained, and the app still works', async ({ app, page }) => {
+  const code = await encodePlay(createDemoPlay());
+  await app.openLink(`play=${code.slice(0, code.length / 2)}`);
+  await expect(page.getByRole('status')).toContainText('cut off');
+  await app.button('Plays').click();
+  await page.getByRole('button', { name: /Vertical stack: dump and swing/ }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vertical stack: dump and swing');
+});
+
 test('share a play from the editor; the link opens it for anyone', async ({ app, page }) => {
   const play = { ...createDemoPlay(), title: 'Our end-of-game play' };
   await app.open({ plays: [play] });

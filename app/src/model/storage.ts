@@ -1,7 +1,7 @@
 /** Saving plays in the browser, and reading/writing play files. */
 import type { Play } from './types';
 import { newId } from './edit';
-import { upgradeDefenders } from './defenders';
+import { readPlay } from './sanitize';
 
 const PLAYS_KEY = 'ultimate-playbook:plays';
 const CURRENT_KEY = 'ultimate-playbook:current';
@@ -11,7 +11,7 @@ export function loadPlays(): Play[] {
     const raw = localStorage.getItem(PLAYS_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isPlay).map(upgrade) : [];
+    return Array.isArray(parsed) ? parsed.map(readPlay).filter((p): p is Play => p !== null) : [];
   } catch {
     return [];
   }
@@ -41,30 +41,9 @@ export function saveCurrentId(id: string): void {
   }
 }
 
-function isVec(v: unknown): boolean {
-  return typeof v === 'object' && v !== null && typeof (v as { x: unknown }).x === 'number' && typeof (v as { y: unknown }).y === 'number';
-}
-
-/** Bring a play saved by an older version of the app up to date. */
-export function upgrade(play: Play): Play {
-  return (play.version as number) === 1 ? upgradeDefenders(play) : play;
-}
-
-/** Checks that something looks like a saved play (from this version or an older one), so a bad file can't break the app. */
-export function isPlay(value: unknown): value is Play {
-  if (typeof value !== 'object' || value === null) return false;
-  const p = value as Play;
-  if (![1, 2].includes(p.version) || typeof p.title !== 'string' || !Array.isArray(p.players) || !Array.isArray(p.frames)) return false;
-  if (p.frames.length === 0) return false;
-  const ids = p.players.map((pl) => pl.id);
-  return p.frames.every(
-    (f) =>
-      typeof f === 'object' &&
-      f !== null &&
-      ids.every((id) => isVec(f.positions?.[id])) &&
-      ids.includes(f.discHolder) &&
-      typeof f.duration === 'number',
-  );
+/** Checks that something is a whole play (from this version or an older one), so a bad file can't break the app. */
+export function isPlay(value: unknown): boolean {
+  return readPlay(value) !== null;
 }
 
 export function exportPlay(play: Play): string {
@@ -79,9 +58,10 @@ export function importPlay(text: string): Play {
   } catch {
     throw new Error("That isn't a play file. It should be the text you got from Export.");
   }
-  if (!isPlay(parsed)) throw new Error('That file is missing parts of a play (players, steps or the disc).');
+  const play = readPlay(parsed);
+  if (!play) throw new Error('That file is missing parts of a play (players, steps or the disc).');
   const now = Date.now();
-  return { ...upgrade(parsed), id: newId('play'), createdAt: now, updatedAt: now };
+  return { ...play, id: newId('play'), createdAt: now, updatedAt: now };
 }
 
 export function fileNameFor(play: Play): string {

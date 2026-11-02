@@ -8,9 +8,15 @@ on:
   pull_request:
   workflow_dispatch:
 
+# A newer push to a pull request replaces the run already going. On main every run
+# finishes, so a quick second merge can't cancel the first one partway through publishing.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Read-only by default; only the publish job is allowed to write to Pages.
+permissions:
+  contents: read
 
 defaults:
   run:
@@ -117,3 +123,21 @@ jobs:
           path: app/dist
       - id: deployment
         uses: actions/deploy-pages@v5
+      - name: Check the live site
+        # The publish can succeed and still serve a broken page; check what visitors get.
+        env:
+          URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if page=$(curl -fsS "$URL") && echo "$page" | grep -q '<title>Ultimate Playbook</title>'; then
+              script=$(echo "$page" | grep -o 'src="\./assets/[^"]*\.js"' | head -1 | sed 's/src="\.\///; s/"$//')
+              if [ -n "$script" ] && curl -fsS -o /dev/null "$URL$script"; then
+                echo "Live: $URL (and $script loads)"
+                exit 0
+              fi
+            fi
+            echo "Not live yet (attempt $attempt); waiting"
+            sleep 15
+          done
+          echo "::error::The site at $URL isn't serving the app"
+          exit 1

@@ -1334,3 +1334,14 @@ input[type='range'] {
     width: min(100cqw, 100cqh * 116 / 47);
   }
 }
+
+/* Shown only if drawing the app fails (components/Recover.tsx). */
+.recover {
+  max-width: 32rem;
+  margin: 15vh auto 0;
+  padding: 0 16px;
+}
+
+.recover h1 {
+  font: 700 24px/1.2 var(--font-display);
+}
