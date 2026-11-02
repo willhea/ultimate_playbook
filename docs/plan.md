@@ -5,8 +5,8 @@ continue in a fresh session with no other context. Update it when a step lands.
 
 ## Start here (next session)
 
-1. **Cutting refinements** (step 3 below) are next. Ask the coach which of the candidates matter most, or what looks wrong when they watch the stack plays on their phone.
-2. **Owner steps still open** (only the coach can do these, in GitHub's settings on the website): the first release tag, and deleting two stale Dependabot branches. Steps are in section 1. `main` is protected, and that's been tested.
+1. **Read [`strategy.md`](strategy.md) first.** The coach wants the next session to set direction: how player and disc behavior should work (rules with adjustable knobs), how AI fits in (CLI, MCP or neither), originality versus other playbook apps, smooth motion with throws in flight, and offense and defense behavior. It has options, recommendations, an order and questions for the coach. Mostly a conversation; decisions go into `00-open-questions.md`. (The cutting candidates in step 3 below are inputs to it.)
+2. **GitHub setup is finished:** `main` is protected (tested), v0.8 is released, and stale branches are gone.
 3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main` publishes it, then checks it's being served.
 
 ## Where we are (November 2026)
@@ -83,8 +83,8 @@ The coach asked for tighter version control: `main` is protected and every chang
   1. Settings → General → Default branch: switch to `main`.
   1. ~~Default branch: `main`.~~ Done.
   2. **Protect `main`** (done and tested, November 2026): Settings → Rules → Rulesets → New ruleset → New branch ruleset. Name it `main`, set Enforcement status to **Active**, Target branches → Add target → **Include default branch**. Turn on: **Restrict deletions**, **Require a pull request before merging** (required approvals 0: the coach is the only reviewer and GitHub won't let them approve their own pull requests), **Require status checks to pass** with "Lint, types and unit tests" and "Browser tests" added, and **Block force pushes**. Save. To confirm, the branch list should then show `main` as protected.
-  3. **A release tag:** Releases → Draft a new release → choose a tag such as `v0.8` → target `main` → Publish. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
-  4. **Delete two stale branches** left by closed Dependabot pull requests #4 and #5: the "Delete branch" button on each closed pull request.
+  3. ~~A release tag.~~ v0.8 published (Releases → Draft a new release → new tag on `main`; the cloud session can't push tags, so the coach makes them). Next releases: v0.9 and up, after a batch of changes.
+  4. ~~Delete two stale branches.~~ Done.
   5. ~~Close Dependabot #1, #5.~~ Done (and the grouped update #11 replaced #7–#9).
   6. ~~GitHub Pages source: GitHub Actions.~~ Done.
 - **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026), and everything followed the new name (decision #20): the app is "Ultimate Playbook" in `app/`, CI is `.github/workflows/ci.yml`, and browser storage keys start `ultimate-playbook:`. The cloud session's clone may still sit in a folder with the old name, and GitHub forwards the old repository name.
