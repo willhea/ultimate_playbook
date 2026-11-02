@@ -6,7 +6,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 ## Start here (next session)
 
 1. **Cutting refinements** (step 3 below) are next. Ask the coach which of the candidates matter most, or what looks wrong when they watch the stack plays on their phone.
-2. **Owner steps still open** (only the coach can do these, in GitHub's settings on the website): the ruleset protecting `main` (the audit below proved it isn't in place), the first release tag, and deleting two stale Dependabot branches. Steps are in section 1.
+2. **Owner steps still open** (only the coach can do these, in GitHub's settings on the website): the first release tag, and deleting two stale Dependabot branches. Steps are in section 1. `main` is protected, and that's been tested.
 3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main` publishes it, then checks it's being served.
 
 ## Where we are (November 2026)
@@ -22,7 +22,7 @@ continue in a fresh session with no other context. Update it when a step lands.
 - **Tests:** 93 unit tests (about 3 s, including two fuzzers) and 22 browser tests (about 20 s). CI runs both on every pull request and on `main`.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
-- **Branches:** `main` holds the released code; work happens on a `claude/…` branch and reaches `main` through pull requests. `main` is meant to be protected, but the ruleset isn't in place yet (see the audit in section 1).
+- **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
 
 ### Coaching decisions to respect
 - USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
@@ -82,14 +82,14 @@ The coach asked for tighter version control: `main` is protected and every chang
 - **Owner steps (only the repository owner can do these, in GitHub's settings on the website):**
   1. Settings → General → Default branch: switch to `main`.
   1. ~~Default branch: `main`.~~ Done.
-  2. **Protect `main` (not done; the audit proved a failing pull request could be merged):** Settings → Rules → Rulesets → New ruleset → New branch ruleset. Name it `main`, set Enforcement status to **Active**, Target branches → Add target → **Include default branch**. Turn on: **Restrict deletions**, **Require a pull request before merging** (required approvals 0: the coach is the only reviewer and GitHub won't let them approve their own pull requests), **Require status checks to pass** with "Lint, types and unit tests" and "Browser tests" added, and **Block force pushes**. Save. To confirm, the branch list should then show `main` as protected.
+  2. **Protect `main`** (done and tested, November 2026): Settings → Rules → Rulesets → New ruleset → New branch ruleset. Name it `main`, set Enforcement status to **Active**, Target branches → Add target → **Include default branch**. Turn on: **Restrict deletions**, **Require a pull request before merging** (required approvals 0: the coach is the only reviewer and GitHub won't let them approve their own pull requests), **Require status checks to pass** with "Lint, types and unit tests" and "Browser tests" added, and **Block force pushes**. Save. To confirm, the branch list should then show `main` as protected.
   3. **A release tag:** Releases → Draft a new release → choose a tag such as `v0.8` → target `main` → Publish. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
   4. **Delete two stale branches** left by closed Dependabot pull requests #4 and #5: the "Delete branch" button on each closed pull request.
   5. ~~Close Dependabot #1, #5.~~ Done (and the grouped update #11 replaced #7–#9).
   6. ~~GitHub Pages source: GitHub Actions.~~ Done.
 - **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026), and everything followed the new name (decision #20): the app is "Ultimate Playbook" in `app/`, CI is `.github/workflows/ci.yml`, and browser storage keys start `ultimate-playbook:`. The cloud session's clone may still sit in a folder with the old name, and GitHub forwards the old repository name.
 - **Audit: trying to break it (November 2026).** What held, what broke, and what changed:
-  - **The merge gate doesn't hold yet.** A deliberately broken pull request (#12) turned both test jobs red and skipped the build and publish, but GitHub still reported it as mergeable: the ruleset (owner step 2) isn't in place. Publishing was still safe, because it only happens after the tests pass on `main`.
+  - **The merge gate: broken, then fixed.** A deliberately broken pull request (#12) turned both test jobs red and skipped the build and publish, but GitHub still reported it as mergeable ("unstable"): no ruleset. A first ruleset protected `main` but didn't require the checks (a second deliberate bug was still mergeable). After the coach added the two checks, a third deliberate bug was **blocked**. Publishing was safe throughout, because it only happens after the tests pass on `main`.
   - **Crafted links could crash the app** for whoever opened them: steps missing their curves or facing, notes that aren't text, 10,000 steps, a step a trillion seconds long. Every play from outside (links, imports, saved data) now goes through `readPlay` in `src/model/sanitize.ts`, which rebuilds it field by field within limits, or refuses it. A short link that unpacks into megabytes is refused. Tests: `sanitize.test.ts` damages the example plays at random 600 times.
   - **A random-editing fuzzer** (`src/model/fuzz.test.ts`: random sequences of every editing operation, checked after each one) found a real bug: a defender removed and added back stood on the sideline instead of marking or following. Fixed in `addPlayer`.
   - **A recovery screen** (`src/components/Recover.tsx`) replaces a blank page if drawing ever fails, with a way into the playbook (which doesn't touch saved plays).
