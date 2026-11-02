@@ -79,3 +79,54 @@ describe('reading plays from outside the app', () => {
     await expect(decodePlay(code)).rejects.toThrow(/whole play/);
   });
 });
+
+describe('reading plays from outside the app: specific damage', () => {
+  const good = () => JSON.parse(JSON.stringify(createDemoPlay()));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const refused: [string, (p: any) => void][] = [
+    ['a player id that isn’t O1–O7 or D1–D7', (p) => (p.players[0].id = 'O9')],
+    ['a player id with extra text', (p) => (p.players[0].id = 'xO1')],
+    ['two players with the same id', (p) => (p.players[1] = { ...p.players[0] })],
+    ['a player on the wrong team for their id', (p) => (p.players[0].team = 'D')],
+    ['a player whose number doesn’t match their id', (p) => (p.players[0].number = 3)],
+    ['the disc held by a defender', (p) => (p.frames[1].discHolder = 'D1')],
+    ['a position far off the field', (p) => (p.frames[1].positions.O3 = { x: 5000, y: 10 })],
+    ['a position that isn’t a number', (p) => (p.frames[1].positions.O3 = { x: '40', y: 10 })],
+    ['a step with no length', (p) => (p.frames[1].duration = 0)],
+    ['no offense at all', (p) => (p.players = p.players.filter((x: { team: string }) => x.team === 'D'))],
+  ];
+  for (const [what, damage] of refused) {
+    it(`refuses ${what}`, () => {
+      const p = good();
+      damage(p);
+      expect(readPlay(p)).toBeNull();
+    });
+  }
+
+  it('repairs what can be repaired, and drops what can’t', () => {
+    const p = good();
+    p.title = 'T'.repeat(500);
+    p.frames[1].notes = 'n'.repeat(LIMITS.notes + 100);
+    p.frames[1].facing = { O3: 'left', O4: 90, O5: 5000 };
+    p.frames[1].curves = { O7: { x: 'a', y: 1 } };
+    p.frames[2].id = p.frames[1].id; // duplicate step ids
+    p.frames[1].release = 3;
+    p.players.find((x: { id: string }) => x.id === 'D3').guards = 'D4'; // a defender guarding a defender
+    p.open = 'sideways';
+    p.stack = { kind: 'vertical', depth: 12 }; // no spacing
+    const r = readPlay(p)!;
+    expect(r.title).toHaveLength(LIMITS.title);
+    expect(r.frames[1].notes).toHaveLength(LIMITS.notes);
+    expect(r.frames[1].facing).toEqual({ O4: 90 });
+    expect(r.frames[1].curves).toEqual({});
+    expect(r.frames[2].id).not.toBe(r.frames[1].id);
+    expect(r.frames[1].release).toBe(0.4);
+    expect(r.players.find((x) => x.id === 'D3')!.guards).toBeNull();
+    expect(r.open).toBeUndefined();
+    expect(r.stack).toBeUndefined();
+    const h = good();
+    h.stack = { kind: 'horizontal', depth: 15 };
+    h.open = 'top';
+    expect(readPlay(h)).toMatchObject({ stack: { kind: 'horizontal', depth: 15 }, open: 'top' });
+  });
+});

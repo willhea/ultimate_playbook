@@ -21,6 +21,15 @@ describe('automatic defenders', () => {
     expect(step.positions.D6).toEqual(setup.positions.D6);
   });
 
+  it('trail on the side of the run they started on', () => {
+    // O5 runs straight downfield; D5 starts on the open (home, bottom) side, so trails on that side.
+    const o5 = createPlay().frames[0].positions.O5;
+    const play = movePlayer(oneStep(), 1, 'O5', { x: o5.x + 15, y: o5.y });
+    const { D5, O5 } = play.frames[1].positions;
+    expect(D5.y).toBeGreaterThan(O5.y + 1);
+    expect(D5.x).toBeLessThan(O5.x - 1);
+  });
+
   it('come along when their player is moved in the setup', () => {
     const play = movePlayer(oneStep(), 0, 'O4', { x: 60, y: 10 });
     const gap = (f: number) => ({ x: play.frames[f].positions.D4.x - 60, y: play.frames[f].positions.D4.y - 10 });
