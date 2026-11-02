@@ -30,6 +30,18 @@ describe('automatic defenders', () => {
     expect(D5.x).toBeLessThan(O5.x - 1);
   });
 
+  it('stay close to their player all the way through a cut, swinging round behind them', () => {
+    // O7 cuts under from the back; D7 starts on the deep, open side and ends trailing.
+    const play = movePlayer(oneStep(), 1, 'O7', { x: 50, y: 30 });
+    const times = frameTimes(play);
+    for (let k = 1; k < 20; k++) {
+      const view = evaluate(play, (times[1] * k) / 20);
+      const gap = dist(view.players.D7.pos, view.players.O7.pos);
+      expect(gap, `${k}/20 of the way`).toBeGreaterThan(2);
+      expect(gap, `${k}/20 of the way`).toBeLessThan(4.5);
+    }
+  });
+
   it('come along when their player is moved in the setup', () => {
     const play = movePlayer(oneStep(), 0, 'O4', { x: 60, y: 10 });
     const gap = (f: number) => ({ x: play.frames[f].positions.D4.x - 60, y: play.frames[f].positions.D4.y - 10 });
@@ -96,6 +108,10 @@ describe('automatic defenders', () => {
     expect(play.version).toBe(2);
     expect(play.frames.map((f) => f.positions)).toEqual(old.frames.map((f: { positions: unknown }) => f.positions));
     expect(play.frames[1].manual).toEqual({ D7: true }); // D6 was where automatic would put them anyway
+    // D6 in the right spot but on a different curve still counts as placed by hand.
+    const curved = JSON.parse(JSON.stringify(old));
+    curved.frames[1].curves.D6 = { x: 3, y: 3 };
+    expect(importPlay(JSON.stringify(curved)).frames[1].manual).toEqual({ D7: true, D6: true });
     expect(movePlayer(play, 1, 'O7', { x: 60, y: 35 }).frames[1].positions.D7).toEqual({ x: 47, y: 31 });
   });
 });

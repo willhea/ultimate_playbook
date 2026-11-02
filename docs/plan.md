@@ -19,8 +19,8 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Keeping and sharing it: undo/redo, autosave, import/export, share links that carry the whole play, and a public playbook of the seven built-in plays (four vertical stack, three horizontal stack).
   - Live at https://willhea.github.io/ultimate_playbook/, published on every merge into `main`.
 - **Private preview link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (only the owner can open it; for sharing, use the live app). Publishing steps are under "Working notes" below.
-- **Tests:** 93 unit tests (about 3 s, including two fuzzers) and 22 browser tests (about 20 s). CI runs both on every pull request and on `main`.
-  - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
+- **Tests:** 107 unit tests (about 3 s, including two fuzzers) and 22 browser tests (about 20 s). CI runs both on every pull request and on `main`.
+  - Mutation testing: Stryker catches 74% of planted bugs across the logic (78% on the newest code); see the audit in section 1.
   - Testing rules are in the app README.
 - **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
 
@@ -95,6 +95,7 @@ The coach asked for tighter version control: `main` is protected and every chang
   - **A recovery screen** (`src/components/Recover.tsx`) replaces a blank page if drawing ever fails, with a way into the playbook (which doesn't touch saved plays).
   - **CI:** a later merge no longer cancels a run on `main` partway through publishing; the workflow's token is read-only except for publishing; and after publishing, a step checks the live site serves the page and its script (tested against a working and a broken copy).
   - **Phone interface:** hammering the controls, editing on a phone and sharing caused no errors or sideways scrolling. A 100-letter title took over half the watch screen; titles now stop at two lines.
+  - **Mutation testing** (planting thousands of small bugs to see which the tests miss): 74% caught across the model and state code. On the newer code (defenders, force, share links, `readPlay`), targeted tests raised it from 63% to 78%: `readPlay` about 93%, the force 74%. Most of what's left are equivalent changes (for example `>` versus `>=` at a boundary no input can hit); the defenders' path-curving internals are covered by a distance check during a cut rather than exact numbers.
   - **Held up:** five runs of the property tests with fresh random seeds found nothing new; the live app has no known vulnerabilities (`npm audit --omit=dev`); the workflow uses `pull_request` (not `pull_request_target`), so pull requests from forks get no write access.
   - **Accepted for now:** GitHub Actions are pinned to version tags rather than exact commits (normal for GitHub's own actions); a moderate advisory in ESLint's `minimatch` needs a major ESLint upgrade and only affects development.
 - **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
