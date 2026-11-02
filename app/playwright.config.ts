@@ -1,6 +1,11 @@
+import { existsSync } from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
 
 const CI = Boolean(process.env.CI);
+// Cloud sessions pre-install a Chromium that can be newer than the one Playwright 1.56.1
+// expects; use it directly when it's there. CI uses the Playwright container's own browser.
+const CLOUD_CHROMIUM = '/opt/pw-browsers/chromium';
+const launchOptions = !CI && existsSync(CLOUD_CHROMIUM) ? { executablePath: CLOUD_CHROMIUM } : {};
 const PORT = 4173;
 
 export default defineConfig({
@@ -19,7 +24,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, launchOptions },
     },
   ],
   // Tests run against the production build, served the way a static host would.

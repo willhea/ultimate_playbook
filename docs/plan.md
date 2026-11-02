@@ -5,9 +5,15 @@ continue in a fresh session with no other context. Update it when a step lands.
 
 ## Start here (next session)
 
-1. **Read [`strategy.md`](strategy.md) first.** The coach wants the next session to set direction: how player and disc behavior should work (rules with adjustable knobs), how AI fits in (CLI, MCP or neither), originality versus other playbook apps, smooth motion with throws in flight, and offense and defense behavior. It has options, recommendations, an order and questions for the coach. Mostly a conversation; decisions go into `00-open-questions.md`. (The cutting candidates in step 3 below are inputs to it.)
-2. **GitHub setup is finished:** `main` is protected (tested), v0.8 is released, and stale branches are gone.
-3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main` publishes it, then checks it's being served.
+1. **The strategy session is done** (November 2026, decisions #23–#37). Read
+   [`strategy.md`](strategy.md) for the results: the coach's feedback on the vertical-stack
+   plays, the first coaching vocabulary, and the order of work. **Focus: the vertical stack
+   only, for now.**
+2. **Next: the authoring loop** (strategy.md, step 2): a play-check command that draws each
+   step and prints a draft link, the phone-preview toggle, and `docs/play-authoring.md`.
+   Then the vertical stack setup and quick fixes (step 3), then motion and throws (step 4).
+3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main`
+   publishes it, then checks it's being served.
 
 ## Where we are (November 2026)
 
@@ -109,23 +115,22 @@ Decisions #17–#19: the plays are public (recreational league), anyone can make
 3. **Share links** (`src/model/share.ts`, spec D-3). `#play=<code>`: the play, rounded to the centimetre, deflate-compressed and base64url-encoded (about 2 KB for an example play). No server, nothing stored. Opening a link shows the watch view with **Make my own copy**. Broken or cut-off links get a plain explanation. The editor and the watch view both have **Share** (the phone's share sheet when there is one, otherwise Copy link).
 4. **The public playbook** (`playbook()` in `src/plays/index.ts`). The built-in plays, always the latest version, each with a short link: `#playbook=<slug>`. The watch view's **Plays** list shows the playbook, then the plays saved in this browser. **First visits** now start with one copy of the first playbook play (not all of them); a phone's first visit watches the playbook. The next new play replaces that starter copy if it was never edited. Still to come: adding playbook plays through the AI authoring loop (step 4 below).
 
-### 3. Cutting: refine how offense and defense move (with the coach)
+### 3. Next: the order from the strategy session
 
-Today every player in a step starts and stops together, along one smooth curve, and defenders react instantly. Candidates, to rank with the coach:
-1. **Timing within a step** (spec S-5): a cutter starts, their defender reacts a beat late; a clear finishes before the next cut starts; the receiver keeps running through the catch.
-2. **Cut shape:** a set-up (jab, or walking the defender away) and then a sharp change of direction, rather than one smooth arc. Probably a run with a plant point.
-3. **Defender reaction:** hip to hip with the cutter versus trailing, and who gets beaten by how much.
-4. **Lead passes** (spec S-6): the throw goes to space ahead of a running receiver.
-5. **The new mark** arrives after the catch, and the force shows once they're set.
-6. **Automatic clears:** a cutter who doesn't get the disc clears out to a sensible spot by themselves.
-7. **Speed:** sprints versus jogs; deep cuts flat out.
+The strategy session (decisions #23–#37) replaced the old candidate lists for cutting and
+AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended-order-updated-after-the-strategy-session):
+1. **The authoring loop:** a play-check command (validate, a picture of each step, a draft
+   share link), the phone-preview toggle, and `docs/play-authoring.md`.
+2. **Vertical stack setup and quick fixes,** and relative positions in the script.
+3. **Motion and throws:** cuts with plant points, no stopping between steps, defenders
+   reacting a beat late, lead passes, throw type, shape and pace, and a comparison page for
+   the timing values.
+4. **Checks:** bad throw angles, cuts through the stack.
+5. **Rebuild the four vertical plays** with the coach, then the end-zone play (front cuts
+   first; the cut-from-the-back test then needs an end-zone exemption, by title or tag).
 
-### 4. AI authoring tools
-- **Authoring guide** (`docs/play-authoring.md`): field coordinates (yards; attacking to the right; home sideline at the bottom, y = 40), the script format, the coaching rules from the decisions, and what the app does automatically (so a script only describes the offense and any deliberate defense).
-- **Import a script:** the app's Import accepts a play script as well as a full play file, so a play an AI wrote can be pasted straight in.
-- **A review command:** `npm run play <script>` validates a script and saves a picture of each step, so an AI session can check a play and send the pictures to the coach.
-- **First play through the loop:** "Vertical stack: end zone, front cuts first" (the coach's rule: end-zone cuts come from the front). The cut-from-the-back test then needs an end-zone exemption, by title or tag.
-- **Later:** a "describe a play" box in the app that calls Claude directly. That needs an API key and a budget, so it waits.
+A "describe a play" box in the app that calls Claude directly stays out: it needs an API
+key and a budget, and the app must stay complete without AI (decision #33).
 
 ### 5. Then
 - **Video pilot (Spec 2):** record one stack play with a voiceover, to learn what the tool still needs for video.
@@ -134,7 +139,7 @@ Today every player in a step starts and stops together, along one smooth curve, 
 ## Working notes (gotchas we've hit)
 
 - **Commands** (run in `app/`): `npm run check` before every push. It runs lint, types, unit tests and browser tests. `npm run screenshots` saves pictures to `screenshots/` for checking plays by eye; look at them after changing a play. `npm run test:mutation` runs Stryker (about 10 min, report in `reports/mutation/`).
-- **Playwright is pinned to 1.56.1** because that version matches the Chromium pre-installed in cloud sessions (`/opt/pw-browsers/chromium-1194`). CI runs browser tests in the `mcr.microsoft.com/playwright:v1.56.1-noble` container, because GitHub's `ubuntu-latest` (26.04) can't install Playwright 1.56's browser. If you upgrade Playwright, update both.
+- **Playwright is pinned to 1.56.1** because that version matched the Chromium pre-installed in cloud sessions (`/opt/pw-browsers/chromium-1194`). **Since late October 2026 cloud sessions have Chromium 1243 instead,** which Playwright 1.56.1 doesn't look for. `playwright.config.ts` uses `/opt/pw-browsers/chromium` directly when it exists (not in CI), so local browser tests and screenshots still work. CI runs browser tests in the `mcr.microsoft.com/playwright:v1.56.1-noble` container, because GitHub's `ubuntu-latest` (26.04) can't install Playwright 1.56's browser. If you upgrade Playwright, update both.
 - **TypeScript is 6.0**, not 7, because `typescript-eslint` doesn't support 7 yet.
 - **Property tests use a fixed seed** (`src/test/setup.ts`). `FC_SEED=random npm test` explores new cases.
 - **Plays from outside are untrusted.** Share links, imports and saved browser data all go through `readPlay` (`src/model/sanitize.ts`). A new field on `Play` or `Frame` must be added there too, or it will be dropped when a play is shared or reloaded; the example-plays test in `sanitize.test.ts` catches that.
