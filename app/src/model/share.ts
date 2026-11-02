@@ -89,7 +89,12 @@ export function pageAddress(): string {
   return window.location.href.split('#')[0];
 }
 
+/** A link to `page` that carries a whole play, given its code from `encodePlay`. */
+export function playLink(page: string, code: string): string {
+  return `${page.split('#')[0]}#play=${code}`;
+}
+
 /** The link that opens a play: short for a playbook play, otherwise with the whole play inside. */
 export async function linkFor(play: Play, slug?: string): Promise<string> {
-  return slug ? `${pageAddress()}#playbook=${slug}` : `${pageAddress()}#play=${await encodePlay(play)}`;
+  return slug ? `${pageAddress()}#playbook=${slug}` : playLink(pageAddress(), await encodePlay(play));
 }

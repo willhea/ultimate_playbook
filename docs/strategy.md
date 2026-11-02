@@ -261,8 +261,8 @@ decide, with the motion work.
 Vertical stack only. Each step is small enough to review in one sitting and merges on its own.
 
 1. ~~**Strategy session.**~~ Done (decisions #23–#37).
-2. **The authoring loop, with today's format** (so every later step is built and tuned the
-   way the coach will actually work):
+2. ~~**The authoring loop, with today's format**~~ (built, November 2026; see the
+   [plan](plan.md)):
    - a command that checks a play script, saves a picture of each step, and prints a
      share link to the live app (the draft preview);
    - a **phone preview** toggle in the app (decision #22): the watch view in a phone-sized

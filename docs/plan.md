@@ -9,9 +9,11 @@ continue in a fresh session with no other context. Update it when a step lands.
    [`strategy.md`](strategy.md) for the results: the coach's feedback on the vertical-stack
    plays, the first coaching vocabulary, and the order of work. **Focus: the vertical stack
    only, for now.**
-2. **Next: the authoring loop** (strategy.md, step 2): a play-check command that draws each
-   step and prints a draft link, the phone-preview toggle, and `docs/play-authoring.md`.
-   Then the vertical stack setup and quick fixes (step 3), then motion and throws (step 4).
+2. **The authoring loop is built** (strategy.md, step 2): `npm run play -- <script.json>`
+   checks a draft, saves a picture of each step and prints a draft link; the watch view has
+   **Phone preview** on computers; [`play-authoring.md`](play-authoring.md) is the guide for
+   Claude. **Next:** the vertical stack setup and quick fixes (step 3), then motion and
+   throws (step 4).
 3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main`
    publishes it, then checks it's being served.
 
@@ -25,7 +27,7 @@ continue in a fresh session with no other context. Update it when a step lands.
   - Keeping and sharing it: undo/redo, autosave, import/export, share links that carry the whole play, and a public playbook of the seven built-in plays (four vertical stack, three horizontal stack).
   - Live at https://willhea.github.io/ultimate_playbook/, published on every merge into `main`.
 - **Private preview link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (only the owner can open it; for sharing, use the live app). Publishing steps are under "Working notes" below.
-- **Tests:** 107 unit tests (about 3 s, including two fuzzers) and 22 browser tests (about 20 s). CI runs both on every pull request and on `main`.
+- **Tests:** 124 unit tests (about 3 s, including two fuzzers) and 23 browser tests (about 25 s). CI runs both on every pull request and on `main`.
   - Mutation testing: Stryker catches 74% of planted bugs across the logic (78% on the newest code); see the audit in section 1.
   - Testing rules are in the app README.
 - **Branches:** `main` holds the released code and is protected: a pull request can't merge until "Lint, types and unit tests" and "Browser tests" pass (tested by pushing a deliberate bug). Work happens on a `claude/…` branch and reaches `main` through pull requests.
@@ -119,8 +121,21 @@ Decisions #17–#19: the plays are public (recreational league), anyone can make
 
 The strategy session (decisions #23–#37) replaced the old candidate lists for cutting and
 AI tools. The order, with details, is in [`strategy.md`](strategy.md#recommended-order-updated-after-the-strategy-session):
-1. **The authoring loop:** a play-check command (validate, a picture of each step, a draft
-   share link), the phone-preview toggle, and `docs/play-authoring.md`.
+1. ~~**The authoring loop.**~~ Built (November 2026):
+   - **`npm run play -- <script.json>`** (`scripts/play.mjs`, which runs
+     `e2e/draft.spec.ts` in a browser): reads a JSON play script and explains anything
+     malformed (`parseScript` in `src/plays/draft.ts`), runs `validatePlay` and lists the
+     issues by step name, saves a picture of each step to `app/drafts/pictures/`, and
+     prints a draft link to the live app (`LIVE_APP`). It checks that the link survives
+     `readPlay`, as any shared link must. Exits 1 on errors; warnings are allowed.
+     `app/drafts/` is ignored by git.
+   - **Phone preview** (`src/components/PhonePreview.tsx`): a button in the watch view on
+     computers. The app itself runs in a phone-sized frame (390 × 844, upright or
+     sideways), opened with the play's link, so its own phone layout is what you see. The
+     frame shrinks to fit a small window. It isn't offered on phones or inside the frame.
+   - **[`play-authoring.md`](play-authoring.md):** the loop, the field coordinates, the
+     script, what the app does automatically, and the coach's rules.
+   - Seen in the preview, to fix later: held sideways, the step's notes are cut off.
 2. **Vertical stack setup and quick fixes,** and relative positions in the script.
 3. **Motion and throws:** cuts with plant points, no stopping between steps, defenders
    reacting a beat late, lead passes, throw type, shape and pace, and a comparison page for

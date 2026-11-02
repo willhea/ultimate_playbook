@@ -24,9 +24,11 @@ interface Props {
   onCopy: () => void;
   /** Open your own play in the editor. */
   onEdit: () => void;
+  /** Show the play in a phone-sized frame. Offered on computers only. */
+  onPreview?: () => void;
 }
 
-export function Watch({ play, playback, guest, notice, onPlays, onShare, onCopy, onEdit }: Props) {
+export function Watch({ play, playback, guest, notice, onPlays, onShare, onCopy, onEdit, onPreview }: Props) {
   const view = evaluate(play, playback.time);
   const active = playback.frame ?? view.index;
   const frame = play.frames[active];
@@ -112,6 +114,11 @@ export function Watch({ play, playback, guest, notice, onPlays, onShare, onCopy,
         ) : (
           <button type="button" className="btn btn-quiet" onClick={onEdit}>
             Edit this play
+          </button>
+        )}
+        {onPreview && (
+          <button type="button" className="btn btn-quiet" onClick={onPreview} title="See the play the way your team will on a phone">
+            <Icon name="phone" size={16} /> Phone preview
           </button>
         )}
         <p className="watch-rotate-hint">Turn your phone sideways for a bigger field.</p>
