@@ -93,10 +93,6 @@ export function easeInOut(u: number): number {
   return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
 }
 
-export function easeInOutDeriv(u: number): number {
-  return u < 0.5 ? 12 * u * u : 3 * Math.pow(2 - 2 * u, 2);
-}
-
 export function smoothstep(e0: number, e1: number, x: number): number {
   if (e1 <= e0) return x >= e1 ? 1 : 0;
   const t = clamp((x - e0) / (e1 - e0), 0, 1);
