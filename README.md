@@ -1,27 +1,28 @@
-# Ultimate Animations
+# Ultimate Playbook
 
 Tools and a video series for teaching ultimate frisbee visually.
 
-> **Status: first Play Animator prototype built** ([`play-animator/`](play-animator/)).
+> **Status: first Ultimate Playbook prototype built** ([`app/`](app/)).
 > Decisions so far, and the questions still open, are in
 > [`docs/00-open-questions.md`](docs/00-open-questions.md). Anything still marked
 > **[ASSUMPTION]** is a guess to confirm or change.
 >
-> **Next up:** see [`docs/plan.md`](docs/plan.md): refine how cutters and defenders move, then tools for
-> building plays by describing them to an AI (decision #16).
+> **Live:** https://willhea.github.io/ultimate_playbook/ (published on every merge into `main`).
+> **Next up:** see [`docs/plan.md`](docs/plan.md): refine how cutters and defenders move, then tools
+> for building plays by describing them to an AI.
 
 ## The three workstreams
 
 | # | Workstream | What it is | Spec | Status |
 |---|------------|------------|------|--------|
-| 1 | **Play Animator** (the tool) | A web app, laptop-first (iPad later), for drawing ultimate plays from overhead (X's and O's style) and animating players and the disc. | [`docs/01-play-animator-spec.md`](docs/01-play-animator-spec.md) | **Current focus** |
-| 2 | **Strategy video series** | Instructional videos made by recording the Play Animator, with a voiceover. | [`docs/02-video-series-spec.md`](docs/02-video-series-spec.md) | Parked until the tool MVP |
+| 1 | **Ultimate Playbook** (the tool) | A web app, laptop-first (iPad later), for drawing ultimate plays from overhead (X's and O's style) and animating players and the disc. | [`docs/01-app-spec.md`](docs/01-app-spec.md) | **Current focus** |
+| 2 | **Strategy video series** | Instructional videos made by recording the Ultimate Playbook, with a voiceover. | [`docs/02-video-series-spec.md`](docs/02-video-series-spec.md) | Parked until the tool MVP |
 | 3 | **3D technique videos** | Separate from the tool: 3D human-like figures showing body mechanics such as marking, footwork, and reading a defender's hips. | [`docs/03-3d-technique-videos-spec.md`](docs/03-3d-technique-videos-spec.md) | Not started |
 
 How they fit together:
 
 ```
- Play Animator ──(screen record / export)──► Strategy videos ◄── voiceover
+ Ultimate Playbook ──(screen record / export)──► Strategy videos ◄── voiceover
                                                   ▲
  3D technique clips ──(rendered video)────────────┘  (some episodes mix both)
 ```
@@ -33,7 +34,7 @@ can start whenever you want.
 ## Suggested order
 
 1. **Confirm the specs.** ✅ First round done.
-2. **Play Animator MVP.** Draw a play, animate it, save it, and replay it in a laptop browser. 🟡 Prototype built; see the status table in the spec.
+2. **Ultimate Playbook MVP.** Draw a play, animate it, save it, and replay it in a laptop browser. 🟡 Prototype built; see the status table in the spec.
 3. **Use it.** Build a handful of real plays and note what's slow or missing. 🟡 Six stack plays built; the main lesson so far, that defenders should follow their player automatically, is now built.
 4. **Revisit videos.** Decide the video workflow (Spec 2) and make a pilot episode.
 5. **Tool V2.** Fix whatever slowed down steps 3–4. iPad support, annotations, and presentation features land here.
@@ -53,3 +54,7 @@ Ultimate terms (force, mark, open and break side, cuts, throws) are in [`docs/gl
 - **Rigged character:** a 3D model with a skeleton, so it can be posed and animated.
 - **Motion capture (mocap):** recording a real person's movement and applying it to a 3D character. You can now do this from ordinary phone video.
 - **Render:** turning a 3D scene into video frames.
+
+## License
+
+[MIT](LICENSE): anyone may use, copy, change and share the code and the plays, as long as they keep the copyright notice.

@@ -1,9 +1,10 @@
 /** The saved plays, which one is open, and undo/redo history for the open play. */
 import type { Play } from '../model/types';
 import { createPlay } from '../model/defaults';
-import { buildExamplePlays } from '../plays';
 import { newId } from '../model/edit';
 import { loadCurrentId, loadPlays } from '../model/storage';
+import { examplePlays } from '../plays';
+import { scriptPlay } from '../plays/script';
 
 const HISTORY_LIMIT = 200;
 
@@ -14,6 +15,10 @@ export interface LibraryState {
   future: Play[];
   /** The play as it was when a drag started, so the whole drag undoes in one step. */
   dragBase: Play | null;
+  /** Nothing was saved in this browser before: the app opens the playbook to watch. */
+  firstVisit?: boolean;
+  /** The play a first visit starts with. The next new play replaces it if it was never edited. */
+  starterId?: string;
 }
 
 export type LibraryAction =
@@ -29,11 +34,17 @@ export type LibraryAction =
 
 export function initLibrary(): LibraryState {
   let plays = loadPlays();
-  // First visit: start with the example plays so there's something to watch.
-  if (plays.length === 0) plays = buildExamplePlays();
+  // First visit: a copy of the first playbook play, so the editor has something to show.
+  const firstVisit = plays.length === 0;
+  if (firstVisit) plays = [scriptPlay(examplePlays[0])];
   const savedId = loadCurrentId();
   const currentId = plays.some((p) => p.id === savedId) ? savedId! : plays[0].id;
-  return { plays, currentId, past: [], future: [], dragBase: null };
+  return { plays, currentId, past: [], future: [], dragBase: null, firstVisit, starterId: firstVisit ? plays[0].id : undefined };
+}
+
+/** Never edited since it was made, like the play a first visit starts with. */
+function untouched(play: Play): boolean {
+  return play.createdAt === play.updatedAt;
 }
 
 export function currentPlay(state: LibraryState): Play {
@@ -110,7 +121,9 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
       return fresh(state, state.plays, action.id);
     case 'create': {
       const play = action.play ?? createPlay();
-      return fresh(state, [play, ...state.plays], play.id);
+      // A new play replaces the untouched play a first visit starts with, so copies don't pile up.
+      const keep = state.plays.filter((p) => !(p.id === state.starterId && untouched(p)));
+      return { ...fresh(state, [play, ...keep], play.id), starterId: undefined };
     }
     case 'duplicate': {
       const now = Date.now();

@@ -1,7 +1,7 @@
-# Ultimate Animations
+# Ultimate Playbook
 
-Tools and videos for teaching ultimate frisbee. The main code is the Play Animator web
-app in `play-animator/`. The specs and research are in `docs/`.
+Tools and videos for teaching ultimate frisbee. The main code is the Ultimate Playbook web
+app in `app/`. The specs and research are in `docs/`.
 
 **Start with [`docs/plan.md`](docs/plan.md)**: it has where things stand, what to build
 next (with designs), the coach's decisions, and the gotchas we've hit.
@@ -13,9 +13,9 @@ next (with designs), the coach's decisions, and the gotchas we've hit.
   "break side". The coach says "force side" for the open side, but sources disagree, so don't write it.
 - Coaching decisions in `docs/00-open-questions.md` are rules, e.g. vertical-stack cuts come
   from the back (break-side and end-zone cuts come from the front).
-- Run `npm run check` in `play-animator/` before every push. Logic goes in unit tests;
+- Run `npm run check` in `app/` before every push. Logic goes in unit tests;
   browser tests cover one user journey each; no screenshot comparisons. See the testing
-  section of `play-animator/README.md`.
+  section of `app/README.md`.
 - Every built-in play must pass `validatePlay()` (`src/model/validate.ts`).
 - **`main` is protected; every change goes through a pull request.** Work on the branch named in
   the session instructions, commit and push when a step lands, and open a pull request into `main`

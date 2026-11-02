@@ -7,8 +7,8 @@ import type { Play, Vec } from '../src/model/types';
 
 export { expect };
 
-const PLAYS_KEY = 'ultimate-animations:plays';
-const CURRENT_KEY = 'ultimate-animations:current';
+const PLAYS_KEY = 'ultimate-playbook:plays';
+const CURRENT_KEY = 'ultimate-playbook:current';
 
 export interface PlayerState {
   x: number;
@@ -47,6 +47,18 @@ export class AppPage {
 
   button(name: string | RegExp): Locator {
     return this.page.getByRole('button', { name, exact: typeof name === 'string' });
+  }
+
+  /** The watch view's field. */
+  get watchField(): Locator {
+    return this.page.locator('.watch-stage').getByTestId('field');
+  }
+
+  /** Open a link to a play (the part after #), which shows the watch view. */
+  async openLink(hash: string, opts: { fakeClock?: boolean } = {}) {
+    if (opts.fakeClock) await this.page.clock.install();
+    await this.page.goto(`/#${hash}`);
+    await expect(this.watchField).toBeVisible();
   }
 
   async open(opts: OpenOptions = {}) {

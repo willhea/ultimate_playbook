@@ -81,9 +81,9 @@ describe('browser storage', () => {
   it('drops anything saved that is not a valid play', () => {
     const store = memoryStorage();
     vi.stubGlobal('localStorage', store);
-    store.setItem('ultimate-animations:plays', JSON.stringify([createDemoPlay(), { junk: true }]));
+    store.setItem('ultimate-playbook:plays', JSON.stringify([createDemoPlay(), { junk: true }]));
     expect(loadPlays()).toHaveLength(1);
-    store.setItem('ultimate-animations:plays', 'not json');
+    store.setItem('ultimate-playbook:plays', 'not json');
     expect(loadPlays()).toEqual([]);
   });
 

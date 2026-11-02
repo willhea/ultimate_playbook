@@ -4,12 +4,12 @@ import { test, expect } from './fixtures';
 import { createPlay } from '../src/model/defaults';
 import { createDemoPlay, examplePlays } from '../src/plays';
 
-test('a first visit opens the example plays, and edits survive a reload', async ({ app, page }) => {
+test('a first visit opens the first playbook play, and edits survive a reload', async ({ app, page }) => {
   await app.open();
-  await expect(page.getByLabel('Ultimate Play Animator')).toHaveValue(examplePlays[0].title);
+  await expect(page.getByLabel('Ultimate Playbook')).toHaveValue(examplePlays[0].title);
   const start = await app.playerState('O7');
   await app.dragPlayer('O7', { x: start.x + 4, y: 6 });
-  await expect.poll(async () => (await app.savedPlays()).length).toBe(examplePlays.length);
+  await expect.poll(async () => (await app.savedPlays()).length).toBe(1);
   await expect.poll(async () => (await app.savedPlays())[0].frames[0].positions.O7.y).toBeCloseTo(6, 0);
   await page.reload();
   expect((await app.playerState('O7')).y).toBeCloseTo(6, 0);
@@ -18,7 +18,7 @@ test('a first visit opens the example plays, and edits survive a reload', async 
 test('the plays list starts new plays, copies examples and deletes plays', async ({ app, page }) => {
   await app.open({ plays: [createPlay('Mine')] });
   const dialog = page.getByRole('dialog');
-  const title = page.getByLabel('Ultimate Play Animator');
+  const title = page.getByLabel('Ultimate Playbook');
 
   await app.button('Plays').click();
   await dialog.getByRole('button', { name: 'New horizontal stack' }).click();

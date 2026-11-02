@@ -4,8 +4,10 @@ import type { Formation } from '../model/defaults';
 import { exportPlay, fileNameFor, importPlay } from '../model/storage';
 import { Icon } from './Icon';
 import { detectDownloads, saveFile, type DownloadSupport } from '../hostDownloads';
+import { linkFor } from '../model/share';
+import type { PlaybookEntry } from '../plays';
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -98,8 +100,8 @@ export function PlaysDialog({
           </li>
         ))}
       </ul>
-      <h3 className="dialog-subhead">Example plays</h3>
-      <p className="hint">Add a fresh copy of an example to change it without losing the original.</p>
+      <h3 className="dialog-subhead">Playbook</h3>
+      <p className="hint">The plays built into the app. Add a copy of one to change it without losing the original.</p>
       <ul className="example-list">
         {examples.map((title, i) => (
           <li key={title}>
@@ -239,6 +241,118 @@ export function ShortcutsDialog({ onClose }: { onClose: () => void }) {
           </div>
         ))}
       </dl>
+    </Modal>
+  );
+}
+
+const steps = (play: Play) => {
+  const n = play.frames.length - 1;
+  return `${n} ${n === 1 ? 'step' : 'steps'}`;
+};
+
+/** Picking a play to watch: the public playbook, then the plays saved in this browser. */
+export function WatchPlaysDialog({
+  entries,
+  mine,
+  onPlaybook,
+  onMine,
+  onNew,
+  onClose,
+}: {
+  entries: PlaybookEntry[];
+  mine: Play[];
+  onPlaybook: (slug: string) => void;
+  onMine: (id: string) => void;
+  onNew: () => void;
+  onClose: () => void;
+}) {
+  const sorted = [...mine].sort((a, b) => b.updatedAt - a.updatedAt);
+  return (
+    <Modal title="Plays" onClose={onClose}>
+      <h3 className="dialog-subhead">Playbook</h3>
+      <ul className="play-list">
+        {entries.map((e) => (
+          <li key={e.slug}>
+            <button type="button" className="play-open" onClick={() => onPlaybook(e.slug)}>
+              <span className="play-title">{e.play.title}</span>
+              <span className="play-meta">{steps(e.play)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <h3 className="dialog-subhead">Your plays</h3>
+      <p className="hint">Saved in this browser.</p>
+      <ul className="play-list">
+        {sorted.map((p) => (
+          <li key={p.id}>
+            <button type="button" className="play-open" onClick={() => onMine(p.id)}>
+              <span className="play-title">{p.title || 'Untitled play'}</span>
+              <span className="play-meta">{steps(p)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="button-row">
+        <button type="button" className="btn btn-quiet" onClick={onNew}>
+          Make a new play
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/** A link to a play, to send to the team. */
+export function ShareDialog({ play, slug, onClose }: { play: Play; slug?: string; onClose: () => void }) {
+  const [link, setLink] = useState('');
+  const [status, setStatus] = useState('');
+  const field = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    let live = true;
+    linkFor(play, slug).then((l) => live && setLink(l));
+    return () => {
+      live = false;
+    };
+  }, [play, slug]);
+
+  const canShare = typeof navigator.share === 'function';
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setStatus('Link copied. Paste it into a message to your team.');
+    } catch {
+      field.current?.select();
+      setStatus('Copying was blocked. The link is selected: copy it from the box.');
+    }
+  };
+  const share = async () => {
+    try {
+      await navigator.share({ title: play.title, url: link });
+    } catch {
+      // Cancelled, or the browser refused; the link is still in the box.
+    }
+  };
+
+  return (
+    <Modal title="Share this play" onClose={onClose}>
+      <p className="hint">
+        {slug
+          ? 'This play is in the public playbook, so its link is short and always shows the latest version.'
+          : 'The whole play is inside this link, so nothing is uploaded. Anyone who opens it can watch the play and make their own copy.'}
+      </p>
+      <input ref={field} className="text-input code" readOnly value={link} aria-label="Link to this play" onFocus={(e) => e.target.select()} />
+      <div className="button-row">
+        {canShare && (
+          <button type="button" className="btn btn-primary" onClick={share} data-autofocus>
+            Share…
+          </button>
+        )}
+        <button type="button" className={canShare ? 'btn btn-quiet' : 'btn btn-primary'} onClick={copy} {...(!canShare && { 'data-autofocus': true })}>
+          Copy link
+        </button>
+      </div>
+      <p className="status" role="status">
+        {status}
+      </p>
     </Modal>
   );
 }
