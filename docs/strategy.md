@@ -76,7 +76,8 @@ contract. Every AI path builds on it. In order of cost:
 **Updated after decision #21:** the coach's main loop is a conversation with Claude working
 in this repository, so path 2 comes first, with one addition: **draft previews as share
 links**. A share link carries the whole play, so Claude can send a link to the live app for
-any draft; the coach watches it on their phone, asks for changes, and only finished plays
+any draft; the coach opens it on their computer (with a phone preview toggle to see what
+teammates will see), asks for changes, and only finished plays
 go into a pull request for the playbook. Path 1 follows, for other coaches and other AIs.
 
 1. **Neither.** Publish an AI guide on the site: the format, the coaching
@@ -86,7 +87,7 @@ go into a pull request for the playbook. Path 1 follows, for other coaches and o
    no keys or servers.
 2. **CLI, for building the public playbook in the repository.** A command that checks a
    play and makes a picture of each step, so an AI coding session (like this one) can
-   check its own work and open a pull request with pictures you review on your phone.
+   check its own work and open a pull request with pictures you can review.
 3. **MCP, later and only if the paste loop is painful.** A connector that lets Claude or
    ChatGPT check a play, draw it and hand back a share link inside the chat. It needs a
    hosted server (a cost and something to maintain), and it only pays off once the format
@@ -149,13 +150,16 @@ force:
 
 ## Recommended order (updated after decision #21)
 
-1. **Strategy session (next session, mostly talking).** Watch the plays on a phone and list
+1. **Strategy session (next session, mostly talking).** Watch the plays and list
    what looks wrong. Agree the first vocabulary, the defense defaults and the offense checks.
    Run the originality check (priority 3).
 2. **The authoring loop, with today's format** (small, so every later step is built and
    tuned the way the coach will actually work):
    - a command that checks a play script, saves a picture of each step, and prints a
      share link to the live app (the draft preview);
+   - a **phone preview** toggle in the app (decision #22): the watch view in a phone-sized
+     frame, portrait or landscape, on the computer, so the coach never needs a phone in the
+     loop;
    - a short authoring guide for Claude (`docs/play-authoring.md`): coordinates, the
      script format, the coach's rules, what the app does automatically;
    - prove it on the end-zone play: the coach describes it, Claude drafts it, the coach
@@ -170,7 +174,7 @@ force:
    other AIs, once the vocabulary has settled.
 7. **Rebuild the example plays in the new vocabulary,** and run a video pilot.
 
-Each step should be small enough to watch on a phone and merge on its own.
+Each step should be small enough to review in one sitting and merge on its own.
 
 ## Questions to bring to the strategy session
 

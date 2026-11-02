@@ -7,8 +7,9 @@ app in `app/`. The specs and research are in `docs/`.
 next (with designs), the coach's decisions, and the gotchas we've hit.
 
 ## Conventions
-- The user coaches ultimate and reviews from a phone. Explain in plain language, and look at
-  `npm run screenshots` output after changing a play, because the user can't easily check it.
+- The user coaches ultimate. Explain in plain language, and look at `npm run screenshots`
+  output after changing a play. Drafts are reviewed on a computer, with a phone preview for
+  what teammates will see (decision #22); the user sometimes reviews from a phone.
 - Use the ultimate terms as defined in [`docs/glossary.md`](docs/glossary.md). Write "open side" and
   "break side". The coach says "force side" for the open side, but sources disagree, so don't write it.
 - Coaching decisions in `docs/00-open-questions.md` are rules, e.g. vertical-stack cuts come
