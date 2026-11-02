@@ -83,7 +83,7 @@ export function Watch({ play, playback, guest, notice, onPlays, onShare, onCopy,
         >
           <Icon name={playback.playing ? 'pause' : 'play'} size={30} />
         </button>
-        <button type="button" className="round-btn" aria-label="Next" onClick={playback.stepForward} disabled={playback.frame === steps}>
+        <button type="button" className="round-btn" aria-label="Next step" onClick={playback.stepForward} disabled={playback.frame === steps}>
           <Icon name="stepForward" size={22} />
         </button>
       </nav>
