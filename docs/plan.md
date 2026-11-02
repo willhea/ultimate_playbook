@@ -70,7 +70,7 @@ The coach expects to build plays mostly by describing them to an AI like Claude,
 
 The coach asked for tighter version control: `main` is protected and every change goes through a pull request.
 - **`main`** was created from the v0.7 code. This session's branch keeps working and opens pull requests into it.
-- **CI** (`.github/workflows/ci.yml`) runs lint, types, unit and browser tests on every pull request (no path filters, so required checks never hang) and on every push to `main`. On `main` it then builds the app and attaches a downloadable `ultimate-playbook-<commit>` file, kept for 90 days.
+- **CI** (`.github/workflows/ci.yml`) runs lint, types, unit and browser tests on every pull request (no path filters, so required checks never hang) and on every push to `main`. After the tests pass it builds the app as one downloadable HTML file: `ultimate-playbook-pr-<number>` on a pull request (kept 14 days, to try before merging) and `ultimate-playbook-<commit>` on `main` (kept 90 days).
 - **Dependabot** (`.github/dependabot.yml`) opens grouped weekly updates into `main`. It skips `@playwright/test` (pinned) and TypeScript 7.
 - **Pull request template** (`.github/pull_request_template.md`): what changes for the coach, how it was checked, and decisions.
 - **Owner steps (only the repository owner can do these, in GitHub's settings on the website):**

@@ -63,9 +63,9 @@ jobs:
 
   build:
     name: Build the app
-    # Each change that lands on main, once the tests pass, produces a downloadable copy of
-    # the app: one self-contained HTML file that opens in any browser.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Every pull request and every change on main, once the tests pass, produces a
+    # downloadable copy of the app: one self-contained HTML file that opens in any browser,
+    # so a pull request can be tried before it's merged.
     needs: [checks, browser]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -80,9 +80,9 @@ jobs:
       - run: npm run build:single
       - uses: actions/upload-artifact@v5
         with:
-          name: ultimate-playbook-${{ github.sha }}
+          name: ultimate-playbook-${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || github.sha }}
           path: app/dist-single/index.html
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 14 || 90 }}
 
   deploy:
     name: Publish to GitHub Pages
