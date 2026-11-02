@@ -3,20 +3,26 @@
 Where the project stands, what to build next, and how. Written so that work can
 continue in a fresh session with no other context. Update it when a step lands.
 
+## Start here (next session)
+
+1. **Cutting refinements** (step 3 below) are next. Ask the coach which of the candidates matter most, or what looks wrong when they watch the stack plays on their phone.
+2. **Owner steps still open** (only the coach can do these, in GitHub's settings on the website): the ruleset protecting `main` (the audit below proved it isn't in place), the first release tag, and deleting two stale Dependabot branches. Steps are in section 1.
+3. The live app is https://willhea.github.io/ultimate_playbook/. Every merge into `main` publishes it, then checks it's being served.
+
 ## Where we are (November 2026)
 
 - **Specs:** [`01-app-spec.md`](01-app-spec.md) for the tool (its §10 has a status table), plus [`02-video-series-spec.md`](02-video-series-spec.md) (parked) and [`03-3d-technique-videos-spec.md`](03-3d-technique-videos-spec.md) (not started). Decisions so far are in [`00-open-questions.md`](00-open-questions.md).
 - **Research:** [`research/stacks.md`](research/stacks.md) covers the vertical and horizontal stack.
 - **App:** [`app/`](../app/), a laptop-first web app (React, TypeScript, Vite, SVG field).
   - Building a play: numbered players with automatic facing, defenders who follow their player, step-by-step plays, curved runs and throws.
-  - Watching it: playback, a close-up view, and Present mode.
-  - Keeping it: undo/redo, autosave, import/export.
-  - Seven example plays: four vertical stack, three horizontal stack.
-- **Prototype link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (v0.7). Publishing steps are under "Working notes" below.
-- **Tests:** 87 unit tests (about 2 s) and 21 browser tests (about 16 s). CI runs both on every push.
+  - Watching it: playback, a close-up view, Present mode, and a watch view made for phones.
+  - Keeping and sharing it: undo/redo, autosave, import/export, share links that carry the whole play, and a public playbook of the seven built-in plays (four vertical stack, three horizontal stack).
+  - Live at https://willhea.github.io/ultimate_playbook/, published on every merge into `main`.
+- **Private preview link:** https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ (only the owner can open it; for sharing, use the live app). Publishing steps are under "Working notes" below.
+- **Tests:** 93 unit tests (about 3 s, including two fuzzers) and 22 browser tests (about 20 s). CI runs both on every pull request and on `main`.
   - Mutation testing: Stryker catches 76.5% of its logic edits, and every hand-made breakage of the app is caught by the browser tests.
   - Testing rules are in the app README.
-- **Branches:** `main` holds the released code (v0.7) and is protected; work happens on `claude/wonderful-ptolemy-gluy7w` and reaches `main` through pull requests.
+- **Branches:** `main` holds the released code; work happens on a `claude/…` branch and reaches `main` through pull requests. `main` is meant to be protected, but the ruleset isn't in place yet (see the audit in section 1).
 
 ### Coaching decisions to respect
 - USA Ultimate field, with the stack spacing the coach confirmed (12 yd and 5 yd vertical; 15 yd horizontal). Offense attacks left to right. **Force home**, with a right-handed thrower forced to flick for demos: the open side is the home sideline at the bottom of the screen (y → 40), and the mark stands on the top (backhand) side. The field labels the home and away sidelines.
@@ -66,7 +72,7 @@ The coach expects to build plays mostly by describing them to an AI like Claude,
 - **Automatic behavior is the multiplier.** The more the app fills in by itself (defense, how cuts look, timing), the less an AI or a person has to spell out, and the more real every play looks. That is the next step.
 - **An AI needs to check its own work,** because the coach reviews from a phone: `validatePlay` plus pictures of each step (as `npm run screenshots` does for the examples).
 
-### 1. Version control and CI (November 2026; owner steps pending)
+### 1. Version control and CI (November 2026; owner steps still open)
 
 The coach asked for tighter version control: `main` is protected and every change goes through a pull request.
 - **`main`** was created from the v0.7 code. This session's branch keeps working and opens pull requests into it.
@@ -75,10 +81,22 @@ The coach asked for tighter version control: `main` is protected and every chang
 - **Pull request template** (`.github/pull_request_template.md`): what changes for the coach, how it was checked, and decisions.
 - **Owner steps (only the repository owner can do these, in GitHub's settings on the website):**
   1. Settings → General → Default branch: switch to `main`.
-  2. Settings → Rules → Rulesets → New branch ruleset for `main`: restrict deletions, require a pull request before merging (0 approvals, since the coach is the only reviewer and can't approve their own pull requests), require status checks "Lint, types and unit tests" and "Browser tests", and block force pushes.
-  3. Releases → Draft a new release → new tag `v0.7` on `main`. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
-  4. Close Dependabot pull request #1 (it targets the old default branch); the new config reopens updates against `main`.
+  1. ~~Default branch: `main`.~~ Done.
+  2. **Protect `main` (not done; the audit proved a failing pull request could be merged):** Settings → Rules → Rulesets → New ruleset → New branch ruleset. Name it `main`, set Enforcement status to **Active**, Target branches → Add target → **Include default branch**. Turn on: **Restrict deletions**, **Require a pull request before merging** (required approvals 0: the coach is the only reviewer and GitHub won't let them approve their own pull requests), **Require status checks to pass** with "Lint, types and unit tests" and "Browser tests" added, and **Block force pushes**. Save. To confirm, the branch list should then show `main` as protected.
+  3. **A release tag:** Releases → Draft a new release → choose a tag such as `v0.8` → target `main` → Publish. The cloud session's connection refuses tag pushes, so tags are made on GitHub.
+  4. **Delete two stale branches** left by closed Dependabot pull requests #4 and #5: the "Delete branch" button on each closed pull request.
+  5. ~~Close Dependabot #1, #5.~~ Done (and the grouped update #11 replaced #7–#9).
+  6. ~~GitHub Pages source: GitHub Actions.~~ Done.
 - **The repository is public and was renamed `willhea/ultimate_playbook`** (November 2026), and everything followed the new name (decision #20): the app is "Ultimate Playbook" in `app/`, CI is `.github/workflows/ci.yml`, and browser storage keys start `ultimate-playbook:`. The cloud session's clone may still sit in a folder with the old name, and GitHub forwards the old repository name.
+- **Audit: trying to break it (November 2026).** What held, what broke, and what changed:
+  - **The merge gate doesn't hold yet.** A deliberately broken pull request (#12) turned both test jobs red and skipped the build and publish, but GitHub still reported it as mergeable: the ruleset (owner step 2) isn't in place. Publishing was still safe, because it only happens after the tests pass on `main`.
+  - **Crafted links could crash the app** for whoever opened them: steps missing their curves or facing, notes that aren't text, 10,000 steps, a step a trillion seconds long. Every play from outside (links, imports, saved data) now goes through `readPlay` in `src/model/sanitize.ts`, which rebuilds it field by field within limits, or refuses it. A short link that unpacks into megabytes is refused. Tests: `sanitize.test.ts` damages the example plays at random 600 times.
+  - **A random-editing fuzzer** (`src/model/fuzz.test.ts`: random sequences of every editing operation, checked after each one) found a real bug: a defender removed and added back stood on the sideline instead of marking or following. Fixed in `addPlayer`.
+  - **A recovery screen** (`src/components/Recover.tsx`) replaces a blank page if drawing ever fails, with a way into the playbook (which doesn't touch saved plays).
+  - **CI:** a later merge no longer cancels a run on `main` partway through publishing; the workflow's token is read-only except for publishing; and after publishing, a step checks the live site serves the page and its script (tested against a working and a broken copy).
+  - **Phone interface:** hammering the controls, editing on a phone and sharing caused no errors or sideways scrolling. A 100-letter title took over half the watch screen; titles now stop at two lines.
+  - **Held up:** five runs of the property tests with fresh random seeds found nothing new; the live app has no known vulnerabilities (`npm audit --omit=dev`); the workflow uses `pull_request` (not `pull_request_target`), so pull requests from forks get no write access.
+  - **Accepted for now:** GitHub Actions are pinned to version tags rather than exact commits (normal for GitHub's own actions); a moderate advisory in ESLint's `minimatch` needs a major ESLint upgrade and only affects development.
 - **Repository check before going public (November 2026):** every file and the whole history of every branch were checked: no secrets, keys or tokens, no personal email or names (all commits are by "Claude <noreply@anthropic.com>" or Dependabot), and no private hosts. The only private things are claude.ai links (the prototype and session links), which only the owner can open.
 
 ### 2. Go public: a web address, share links, and a phone watch view (built, November 2026)
@@ -118,6 +136,7 @@ Today every player in a step starts and stops together, along one smooth curve, 
 - **Playwright is pinned to 1.56.1** because that version matches the Chromium pre-installed in cloud sessions (`/opt/pw-browsers/chromium-1194`). CI runs browser tests in the `mcr.microsoft.com/playwright:v1.56.1-noble` container, because GitHub's `ubuntu-latest` (26.04) can't install Playwright 1.56's browser. If you upgrade Playwright, update both.
 - **TypeScript is 6.0**, not 7, because `typescript-eslint` doesn't support 7 yet.
 - **Property tests use a fixed seed** (`src/test/setup.ts`). `FC_SEED=random npm test` explores new cases.
+- **Plays from outside are untrusted.** Share links, imports and saved browser data all go through `readPlay` (`src/model/sanitize.ts`). A new field on `Play` or `Frame` must be added there too, or it will be dropped when a play is shared or reloaded; the example-plays test in `sanitize.test.ts` catches that.
 - **Browser tests read what's drawn,** not test-only attributes: positions come from SVG transforms, and facing from the wedge's rotation. `e2e/fixtures.ts` `snapshot()` reads a whole frame in one go; don't read attributes one at a time while an animation runs.
 - **The playbook is always current; saved copies aren't.** Playbook plays (watch view → Plays, or `#playbook=` links) always show the latest version. A copy saved in a browser keeps whatever version was copied.
 - **Publishing the prototype link** (https://claude.ai/artifact/HqEAW4ffwiQ3BZGMWdpdaJ). Run `npm run build:single`, then use whichever publishing tool the session has:

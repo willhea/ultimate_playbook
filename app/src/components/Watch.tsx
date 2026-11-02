@@ -38,7 +38,9 @@ export function Watch({ play, playback, guest, notice, onPlays, onShare, onCopy,
         <button type="button" className="btn btn-quiet" onClick={onPlays}>
           <Icon name="list" size={16} /> Plays
         </button>
-        <h1 className="watch-title">{play.title || 'Untitled play'}</h1>
+        <h1 className="watch-title" title={play.title}>
+          {play.title || 'Untitled play'}
+        </h1>
         <button type="button" className="btn btn-quiet" onClick={onShare}>
           <Icon name="share" size={16} /> Share
         </button>

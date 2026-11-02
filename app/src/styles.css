@@ -1182,6 +1182,12 @@ input[type='range'] {
   font: 700 20px/1.15 var(--font-display);
   text-align: center;
   overflow-wrap: anywhere;
+  /* A long title never pushes the field off a phone screen: two lines at most. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .watch-notice {
